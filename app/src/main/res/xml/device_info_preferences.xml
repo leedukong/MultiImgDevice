@@ -1,0 +1,17 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+   <EditTextPreference
+        app:defaultValue="0.0.0.0"
+        app:key="ip_address"
+        app:title="IP 주소"
+        app:useSimpleSummaryProvider="true"
+        android:enabled="false" />
+
+    <Preference
+        app:defaultValue=""
+        app:key="serial_no"
+        app:title="기기 시리얼 확인"
+        app:useSimpleSummaryProvider="true" />
+
+</PreferenceScreen>

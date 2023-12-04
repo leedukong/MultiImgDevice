@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/constraintLayout"
+    android:layout_width="1920dp"
+    android:layout_height="1080dp"
+    android:background="@android:color/transparent"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
+
+    <ImageButton
+        android:id="@+id/option_back"
+        android:layout_width="106dp"
+        android:layout_height="106dp"
+        android:layout_marginStart="309dp"
+        android:layout_marginTop="190dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/option_product_image"
+        android:layout_width="282dp"
+        android:layout_height="550dp"
+        android:layout_marginStart="376dp"
+        android:layout_marginTop="288dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <RadioGroup
+        android:id="@+id/option_group_hot_ice"
+        android:layout_width="408dp"
+        android:layout_height="116dp"
+        android:layout_marginStart="721dp"
+        android:layout_marginTop="267dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RadioButton
+            android:id="@+id/option_hot_button"
+            android:layout_width="204dp"
+            android:layout_height="116dp"
+            android:button="@android:color/transparent" />
+
+        <RadioButton
+            android:id="@+id/option_ice_button"
+            android:layout_width="204dp"
+            android:layout_height="116dp"
+            android:button="@android:color/transparent" />
+    </RadioGroup>
+
+    <RadioGroup
+        android:id="@+id/option_group_size"
+        android:layout_width="408dp"
+        android:layout_height="116dp"
+        android:layout_marginStart="721dp"
+        android:layout_marginTop="409dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RadioButton
+            android:id="@+id/option_medium_button"
+            android:layout_width="204dp"
+            android:layout_height="116dp"
+            android:button="@android:color/transparent"
+            android:enabled="false" />
+
+        <RadioButton
+            android:id="@+id/option_large_button"
+            android:layout_width="204dp"
+            android:layout_height="116dp"
+            android:button="@android:color/transparent"
+            android:enabled="false" />
+    </RadioGroup>
+
+    <RadioGroup
+        android:id="@+id/option_group_shot"
+        android:layout_width="389dp"
+        android:layout_height="116dp"
+        android:layout_marginStart="730dp"
+        android:layout_marginTop="562dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RadioButton
+            android:id="@+id/option_shot_0_button"
+            android:layout_width="85dp"
+            android:layout_height="80dp"
+            android:button="@android:color/transparent"
+            android:enabled="false" />
+
+        <Space
+            android:layout_width="17dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <RadioButton
+            android:id="@+id/option_shot_1_button"
+            android:layout_width="85dp"
+            android:layout_height="80dp"
+            android:button="@android:color/transparent"
+            android:enabled="false" />
+
+        <Space
+            android:layout_width="17dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <RadioButton
+            android:id="@+id/option_shot_2_button"
+            android:layout_width="85dp"
+            android:layout_height="80dp"
+            android:button="@android:color/transparent"
+            android:enabled="false" />
+
+        <Space
+            android:layout_width="17dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <RadioButton
+            android:id="@+id/option_shot_3_button"
+            android:layout_width="85dp"
+            android:layout_height="80dp"
+            android:button="@android:color/transparent"
+            android:enabled="false" />
+    </RadioGroup>
+
+    <com.releasetech.multidevice.View.RadioGridGroup
+        android:id="@+id/option_group_blend"
+        android:layout_width="391dp"
+        android:layout_height="158dp"
+        android:layout_marginStart="728dp"
+        android:layout_marginTop="731dp"
+        android:columnCount="2"
+        android:useDefaultMargins="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RadioButton
+            android:id="@+id/option_blend_1_button"
+            android:layout_width="181dp"
+            android:layout_height="70dp"
+            android:layout_columnWeight="1"
+            android:button="@android:color/transparent"
+            android:enabled="false" />
+
+        <RadioButton
+            android:id="@+id/option_blend_2_button"
+            android:layout_width="181dp"
+            android:layout_height="70dp"
+            android:layout_columnWeight="1"
+            android:layout_marginLeft="29dp"
+            android:button="@android:color/transparent"
+            android:enabled="false" />
+
+        <RadioButton
+            android:id="@+id/option_blend_3_button"
+            android:layout_width="181dp"
+            android:layout_height="70dp"
+            android:layout_columnWeight="1"
+            android:layout_marginTop="18dp"
+            android:button="@android:color/transparent"
+            android:enabled="false" />
+
+        <RadioButton
+            android:id="@+id/option_blend_4_button"
+            android:layout_width="181dp"
+            android:layout_height="70dp"
+            android:layout_columnWeight="1"
+            android:layout_marginLeft="29dp"
+            android:layout_marginTop="18dp"
+            android:button="@android:color/transparent"
+            android:enabled="false" />
+
+    </com.releasetech.multidevice.View.RadioGridGroup>
+
+    <ImageButton
+        android:id="@+id/option_incr"
+        android:text="증가"
+        android:textStyle="bold"
+        android:layout_width="140dp"
+        android:layout_height="64dp"
+        android:layout_marginStart="1440dp"
+        android:layout_marginTop="600dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/option_count"
+        android:fontFamily="@font/nanum_gothic_extrabold"
+        android:text="1"
+        android:textSize="25dp"
+        android:textColor="@color/black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="1406dp"
+        android:layout_marginTop="616dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/option_decr"
+        android:text="감소"
+        android:textStyle="bold"
+        android:layout_width="140dp"
+        android:layout_height="64dp"
+        android:layout_marginStart="1247dp"
+        android:layout_marginTop="600dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/option_ok"
+        android:layout_width="293dp"
+        android:layout_height="64dp"
+        android:layout_marginStart="1267dp"
+        android:layout_marginTop="783dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_width="293dp"
+        android:layout_height="300dp"
+        android:layout_marginStart="1267dp"
+        android:layout_marginTop="267dp"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/option_receipt_menu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/nanum_gothic_extrabold"
+                android:textColor="@color/black"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/option_receipt_menu_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/nanum_gothic_extrabold"
+                android:textAlignment="textEnd"
+                android:textColor="@color/black"
+                android:textSize="24sp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/option_receipt_hot_ice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:fontFamily="@font/nanum_gothic_extrabold"
+            android:textColor="@color/black"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/option_receipt_size"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:fontFamily="@font/nanum_gothic_extrabold"
+            android:textColor="@color/black"
+            android:textSize="24sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/option_receipt_shot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/nanum_gothic_extrabold"
+                android:textColor="@color/black"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/option_receipt_shot_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/nanum_gothic_extrabold"
+                android:textAlignment="textEnd"
+                android:textColor="@color/black"
+                android:textSize="24sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/option_receipt_blend"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/nanum_gothic_extrabold"
+                android:textColor="@color/black"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/option_receipt_blend_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/nanum_gothic_extrabold"
+                android:textAlignment="textEnd"
+                android:textColor="@color/black"
+                android:textSize="24sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="293dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="1267dp"
+        android:layout_marginTop="725dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/nanum_gothic_extrabold"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:text="결제 금액"
+            android:textColor="@color/black"
+            android:textSize="28sp" />
+
+        <TextView
+            android:id="@+id/option_total_price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/nanum_gothic_extrabold"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:text="원"
+            android:textColor="@color/black"
+            android:textSize="28sp" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/option_check_hot_ice"
+        android:layout_width="1920dp"
+        android:layout_height="1080dp"
+        android:clickable="false"
+        android:focusable="false"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/option_check_size"
+        android:layout_width="1920dp"
+        android:layout_height="1080dp"
+        android:clickable="false"
+        android:focusable="false"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/option_check_shot"
+        android:layout_width="1920dp"
+        android:layout_height="1080dp"
+        android:clickable="false"
+        android:focusable="false"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/option_check_blend"
+        android:layout_width="1920dp"
+        android:layout_height="1080dp"
+        android:clickable="false"
+        android:focusable="false"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,11 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <Preference
+        app:key="data_backup_header"
+        app:title="외부 저장장치로 데이터 백업" />
+    <Preference
+        app:key="data_load_header"
+        app:title="외부 저장장치에서 데이터 로드" />
+
+</PreferenceScreen>

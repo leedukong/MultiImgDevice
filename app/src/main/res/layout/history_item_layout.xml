@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/history_item_layout"
+    android:layout_width="1880dp"
+    android:layout_height="wrap_content"
+    android:paddingVertical="5dp">
+
+    <View
+        android:id="@+id/divider4"
+        android:layout_width="1dp"
+        android:layout_height="50dp"
+        android:background="?android:attr/listDivider" />
+
+    <TextView
+        android:id="@+id/history_item_datetime"
+        android:layout_width="400dp"
+        android:layout_height="match_parent"
+        android:fontFamily="@font/nanum_gothic_extrabold"
+        android:gravity="center"
+        android:text="22년 08월 10일 03시 53분 27초"
+        android:textSize="24sp" />
+
+    <View
+        android:id="@+id/divider5"
+        android:layout_width="1dp"
+        android:layout_height="50dp"
+        android:background="?android:attr/listDivider" />
+
+    <TextView
+        android:id="@+id/history_item_approval_id"
+        android:layout_width="150dp"
+        android:layout_height="match_parent"
+        android:fontFamily="@font/nanum_gothic_extrabold"
+        android:gravity="center"
+        android:text="99121143"
+        android:textSize="24sp" />
+
+    <View
+        android:id="@+id/divider6"
+        android:layout_width="1dp"
+        android:layout_height="50dp"
+        android:background="?android:attr/listDivider" />
+
+    <TextView
+        android:id="@+id/history_item_category"
+        android:layout_width="200dp"
+        android:layout_height="match_parent"
+        android:fontFamily="@font/nanum_gothic_extrabold"
+        android:gravity="center"
+        android:text="논커피"
+        android:textSize="24sp" />
+
+    <View
+        android:id="@+id/divider7"
+        android:layout_width="1dp"
+        android:layout_height="50dp"
+        android:background="?android:attr/listDivider" />
+
+    <TextView
+        android:id="@+id/history_item_product"
+        android:layout_width="370dp"
+        android:layout_height="match_parent"
+        android:fontFamily="@font/nanum_gothic_extrabold"
+        android:gravity="center"
+        android:text="초코그린티우유"
+        android:textSize="24sp" />
+
+    <View
+        android:id="@+id/divider8"
+        android:layout_width="1dp"
+        android:layout_height="50dp"
+        android:background="?android:attr/listDivider" />
+
+    <TextView
+        android:id="@+id/history_item_hot_ice_option"
+        android:layout_width="80dp"
+        android:layout_height="match_parent"
+        android:fontFamily="@font/nanum_gothic_extrabold"
+        android:gravity="center"
+        android:text="HOT"
+        android:textSize="24sp" />
+
+    <View
+        android:id="@+id/divider9"
+        android:layout_width="1dp"
+        android:layout_height="50dp"
+        android:background="?android:attr/listDivider" />
+
+    <TextView
+        android:id="@+id/history_item_size_option"
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:fontFamily="@font/nanum_gothic_extrabold"
+        android:gravity="center"
+        android:text="L"
+        android:textSize="24sp" />
+
+    <View
+        android:id="@+id/divider10"
+        android:layout_width="1dp"
+        android:layout_height="50dp"
+        android:background="?android:attr/listDivider" />
+
+    <TextView
+        android:id="@+id/history_item_blend_option"
+        android:layout_width="200dp"
+        android:layout_height="match_parent"
+        android:fontFamily="@font/nanum_gothic_extrabold"
+        android:gravity="center"
+        android:text="에티오피아"
+        android:textSize="24sp" />
+
+    <View
+        android:id="@+id/divider11"
+        android:layout_width="1dp"
+        android:layout_height="50dp"
+        android:background="?android:attr/listDivider" />
+
+    <TextView
+        android:id="@+id/history_item_shot_option"
+        android:layout_width="80dp"
+        android:layout_height="match_parent"
+        android:fontFamily="@font/nanum_gothic_extrabold"
+        android:gravity="center"
+        android:text="+2샷"
+        android:textSize="24sp" />
+
+    <View
+        android:id="@+id/divider12"
+        android:layout_width="1dp"
+        android:layout_height="50dp"
+        android:background="?android:attr/listDivider" />
+
+    <TextView
+        android:id="@+id/history_item_price"
+        android:layout_width="150dp"
+        android:layout_height="match_parent"
+        android:fontFamily="@font/nanum_gothic_extrabold"
+        android:gravity="center"
+        android:text="12,600원"
+        android:textSize="24sp" />
+
+    <View
+        android:id="@+id/divider13"
+        android:layout_width="1dp"
+        android:layout_height="50dp"
+        android:background="?android:attr/listDivider" />
+
+    <TextView
+        android:id="@+id/history_item_canceled"
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:fontFamily="@font/nanum_gothic_extrabold"
+        android:gravity="center"
+        android:text="정상승인"
+        android:textSize="24sp" />
+
+    <Button
+        android:id="@+id/history_item_checkout_info"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginVertical="2dp"
+        android:fontFamily="@font/nanum_gothic_extrabold"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:paddingLeft="0dp"
+        android:paddingTop="0dp"
+        android:paddingRight="0dp"
+        android:paddingBottom="0dp"
+        android:text="결제정보"
+        android:textSize="16sp" />
+
+</LinearLayout>

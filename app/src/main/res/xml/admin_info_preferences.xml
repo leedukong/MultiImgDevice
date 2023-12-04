@@ -1,0 +1,28 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" 
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <EditTextPreference
+        app:defaultValue="@string/staff_phone_number"
+        app:key="staff_phone_number"
+        app:title="관리자 연락처"
+        app:useSimpleSummaryProvider="true" />
+    <EditTextPreference
+        android:inputType="number"
+        app:defaultValue="@string/manager_password"
+        app:key="manager_password"
+        app:title="매니저 패스워드"
+        app:useSimpleSummaryProvider="true" />
+    <EditTextPreference
+        android:inputType="number"
+        app:defaultValue="@string/admin_password"
+        app:key="admin_password"
+        app:title="관리자 패스워드"
+        app:useSimpleSummaryProvider="true" />
+    <EditTextPreference
+        android:inputType="number"
+        app:defaultValue="@string/dessert_password"
+        app:key="dessert_password"
+        app:title="디저트 제품 관리 패스워드"
+        app:useSimpleSummaryProvider="true" />
+
+</PreferenceScreen>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_system">
+
+    <fragment
+        android:id="@+id/navigation_history"
+        android:name="com.releasetech.multidevice.ManagerSettings.Fragment.HistoryFragment"
+        android:label="판매 기록"
+        tools:layout="@layout/fragment_history" />
+
+    <fragment
+        android:id="@+id/navigation_statistics"
+        android:name="com.releasetech.multidevice.ManagerSettings.Fragment.StatisticsFragment"
+        android:label="통계"
+        tools:layout="@layout/fragment_statistics" />
+
+    <fragment
+        android:id="@+id/navigation_logs"
+        android:name="com.releasetech.multidevice.ManagerSettings.Fragment.LogsFragment"
+        android:label="로그"
+        tools:layout="@layout/fragment_logs" />
+
+</navigation>

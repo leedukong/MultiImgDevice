@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "318092238054",
+    "project_id": "multidevice-3fbda",
+    "storage_bucket": "multidevice-3fbda.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:318092238054:android:89b46d857a3906d5512f27",
+        "android_client_info": {
+          "package_name": "com.releasetech.multidevice"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCpWbRyOpJ57N66FBpWC9oRr7DXOZqVYkM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

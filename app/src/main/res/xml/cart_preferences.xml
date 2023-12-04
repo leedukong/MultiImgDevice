@@ -1,0 +1,45 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <EditTextPreference
+        android:inputType="number"
+        app:defaultValue="@integer/cart_quantity"
+        app:key="cart_quantity"
+        app:title="장바구니 최대 개수"
+        app:useSimpleSummaryProvider="true" />
+
+    <SwitchPreference
+        app:defaultValue="@bool/free_of_charge"
+        app:key="free_of_charge"
+        app:summaryOff="현재 정상 결제 모드입니다"
+        app:summaryOn="현재 무결제 모드입니다. 운영 시 반드시 종료해주세요."
+        app:title="무결제 모드" />
+
+    <SwitchPreference
+        app:defaultValue="@bool/free_of_charge_text"
+        app:dependency="free_of_charge"
+        app:key="free_of_charge_text"
+        app:summaryOff="무결제 모드 텍스트를 표시하지 않습니다."
+        app:summaryOn="무결제 모드 텍스트를 표시합니다."
+        app:title="무결제 모드 텍스트 표시" />
+
+    <SwitchPreference
+        app:defaultValue="true"
+        app:key="cancel_payment"
+        app:summaryOff="에러 발생 시 자동 결제 취소를 진행하지 않습니다."
+        app:summaryOn="에러 발생 시 자동 결제 취소를 진행합니다."
+        app:title="자동 결제 취소 사용 여부" />
+
+
+    <PreferenceCategory app:title="">
+        <Preference
+            app:key="checkout_settings"
+            app:title="카드 가맹점 설정 (관리자 비밀번호 12345)" />
+
+        <Preference
+            app:fragment="com.releasetech.multidevice.AdminSettings.AdminSettingsActivity$PaycoSettingsFragment"
+            app:key="payco_settings"
+            app:title="페이코 설정" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">MultiDevice</string>
+
+    <!-- todo 수정해야함 -->
+    <string name="preferences_name">com.releasetech.multidevice_preferences</string>
+    <string name="latest_app_version_url">http://49.247.44.162/BASIC/app/version.version</string>
+    <string name="latest_app_version_name_url">http://49.247.44.162/BASIC/app/versionname.version</string>
+    <string name="latest_app_url">http://49.247.44.162/BASIC/app/app-release.apk</string>
+    <string name="report_url">http://49.247.44.162/BASIC/report.php</string>
+    <string name="update_design_url">http://49.247.44.162/BASIC/design/update</string>
+</resources>

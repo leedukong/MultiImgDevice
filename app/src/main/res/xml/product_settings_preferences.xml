@@ -1,0 +1,12 @@
+<PreferenceScreen xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <Preference
+        app:key="dessert_settings"
+        app:title="디저트 카테고리 및 제품 설정" />
+
+    <ListPreference
+        app:key="dessert_port"
+        app:title="멀티 자판기 시리얼 포트"
+        app:useSimpleSummaryProvider="true" />
+</PreferenceScreen>

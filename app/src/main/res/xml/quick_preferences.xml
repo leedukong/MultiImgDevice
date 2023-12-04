@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <SwitchPreference
+        app:defaultValue="@bool/free_of_charge"
+        app:key="free_of_charge"
+        app:summaryOff="현재 정상 결제 모드입니다"
+        app:summaryOn="현재 무결제 모드입니다. 운영 시 반드시 종료해주세요."
+        app:title="무결제 모드" />
+
+</PreferenceScreen>

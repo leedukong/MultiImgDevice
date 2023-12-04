@@ -1,0 +1,247 @@
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
+plugins {
+    id 'com.android.application'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
+}
+
+def getCurrentVariant() {
+    Gradle gradle = getGradle()
+    String tskReqStr = gradle.getStartParameter().getTaskRequests().toString()
+    Pattern pattern
+
+    if (tskReqStr.contains("assemble"))
+        pattern = Pattern.compile("assemble(\\w+)(Major|Minor|Release|Debug)")
+    else
+        pattern = Pattern.compile("generate(\\w+)(Major|Minor|Release|Debug)")
+
+    Matcher matcher = pattern.matcher(tskReqStr)
+
+    if (matcher.find()){
+        return matcher.group(2).toLowerCase()
+    }else{
+        println "NO MATCH FOUND"
+        return ""
+    }
+}
+
+android {
+    namespace 'com.releasetech.multidevice'
+
+    signingConfigs {
+        'default' {
+            storeFile file(System.getenv("MULTIDEVICE_KEY_STORE"))
+            storePassword 'fixn1809'
+            keyAlias 'MultiDevice'
+            keyPassword 'fixn1809'
+        }
+    }
+    compileSdk 34
+    def versionPropsFile
+    def versionMajor
+    def versionMinor
+    def versionPatch
+    def versionBuild
+    def versionNumber
+    def versionString
+    def variantName = getCurrentVariant()
+    //project.logger.lifecycle("flavor: " + flavor)
+    project.logger.lifecycle("variantName: " + variantName)
+    versionPropsFile = file('version.properties')
+    //if (!flavor.isEmpty() && !variantName.isEmpty() && versionPropsFile.canRead()) {
+    if (!variantName.isEmpty() && versionPropsFile.canRead()) {
+        def versionProps = new Properties()
+        versionProps.load(new FileInputStream(versionPropsFile))
+        versionMajor = versionProps['VERSION_MAJOR'].toInteger()
+        versionMinor = versionProps['VERSION_MINOR'].toInteger()
+        versionPatch = versionProps['VERSION_PATCH'].toInteger()
+        versionBuild = versionProps['VERSION_BUILD'].toInteger()
+        versionNumber = versionProps['VERSION_CODE'].toInteger()
+        versionString = "$versionMajor.$versionMinor.$versionPatch ($versionBuild)"
+
+        if (variantName == "debug") {
+            versionNumber = versionProps['VERSION_CODE'].toInteger() + 1
+            versionProps.setProperty('VERSION_CODE', versionNumber.toString())
+            versionBuild = versionProps['VERSION_BUILD'].toInteger() + 1
+            versionProps.setProperty('VERSION_BUILD', versionBuild.toString())
+            versionString = "$versionMajor.$versionMinor.$versionPatch ($versionBuild)"
+            versionProps.setProperty('VERSION_NAME', versionString)
+            versionProps.store(versionPropsFile.newWriter(), null)
+        }
+        else if(variantName == "release") {
+            versionNumber = versionProps['VERSION_CODE'].toInteger() + 1
+            versionProps.setProperty('VERSION_CODE', versionNumber.toString())
+            versionBuild = 1
+            versionProps.setProperty('VERSION_BUILD', "1")
+            versionPatch = versionProps['VERSION_PATCH'].toInteger() + 1
+            versionProps.setProperty('VERSION_PATCH', versionPatch.toString())
+            versionString = "$versionMajor.$versionMinor.$versionPatch"
+            versionProps.setProperty('VERSION_NAME', versionString)
+            versionProps.store(versionPropsFile.newWriter(), null)
+        }
+        else if(variantName == "minor") {
+            versionNumber = versionProps['VERSION_CODE'].toInteger() + 1
+            versionProps.setProperty('VERSION_CODE', versionNumber.toString())
+            versionBuild = 1
+            versionPatch = 0
+            versionProps.setProperty('VERSION_BUILD', "1")
+            versionProps.setProperty('VERSION_PATCH', "0")
+            versionMinor = versionProps['VERSION_MINOR'].toInteger() + 1
+            versionProps.setProperty('VERSION_MINOR', versionMinor.toString())
+            versionString = "$versionMajor.$versionMinor.$versionPatch"
+            versionProps.setProperty('VERSION_NAME', versionString)
+            versionProps.store(versionPropsFile.newWriter(), null)
+        }
+        else if(variantName == "major") {
+            versionNumber = versionProps['VERSION_CODE'].toInteger() + 1
+            versionProps.setProperty('VERSION_CODE', versionNumber.toString())
+            versionBuild = 1
+            versionPatch = 0
+            versionMinor = 0
+            versionProps.setProperty('VERSION_BUILD', "1")
+            versionProps.setProperty('VERSION_PATCH', "0")
+            versionProps.setProperty('VERSION_MINOR', "0")
+            versionMajor = versionProps['VERSION_MAJOR'].toInteger() + 1
+            versionProps.setProperty('VERSION_MAJOR', versionMajor.toString())
+            versionString = "$versionMajor.$versionMinor.$versionPatch"
+            versionProps.setProperty('VERSION_NAME', versionString)
+            versionProps.store(versionPropsFile.newWriter(), null)
+        }
+
+        defaultConfig {
+            applicationId "com.releasetech.multidevice"
+            minSdk 27
+            targetSdk 34
+            versionCode versionNumber
+            versionName versionString
+            testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+            externalNativeBuild {
+                ndkBuild {
+                    cppFlags ''
+                }
+            }
+            ndk {
+                // Specifies the ABI configurations of your native
+                // libraries Gradle should build and package with your app.
+                abiFilters 'x86', 'x86_64', 'armeabi-v7a',
+                        'arm64-v8a'
+            }
+        }
+    } else {
+//        throw new FileNotFoundException("Could not read version.properties!")
+    }
+
+
+    defaultConfig {
+        applicationId "com.releasetech.multidevice"
+        minSdk 24
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary true
+        }
+    }
+
+    buildTypes {
+        debug {
+            buildConfigField("int", "VERSION_CODE", "${defaultConfig.versionCode}")
+            buildConfigField("String","VERSION_NAME","\"${defaultConfig.versionName}\"")
+            buildConfigField "boolean","IS_DEBUG","true"
+            signingConfig signingConfigs.'default'
+        }
+        release {
+            buildConfigField("int", "VERSION_CODE", "${defaultConfig.versionCode}")
+            buildConfigField("String","VERSION_NAME","\"${defaultConfig.versionName}\"")
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "boolean","IS_DEBUG","false"
+            applicationVariants.all { variant ->
+                variant.outputs.each { output ->
+                    def newName = "${rootProject.name}_v${versionMajor}.${versionMinor}.${versionPatch}.apk"
+                    output.outputFileName =  newName
+                }
+            }
+            signingConfig signingConfigs.'default'
+        }
+        minor {
+            buildConfigField("int", "VERSION_CODE", "${defaultConfig.versionCode}")
+            buildConfigField("String","VERSION_NAME","\"${defaultConfig.versionName}\"")
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "boolean","IS_DEBUG","false"
+            applicationVariants.all { variant ->
+                variant.outputs.each { output ->
+                    def newName = "${rootProject.name}_v${versionMajor}.${versionMinor}.${versionPatch}.apk"
+                    output.outputFileName =  newName
+                }
+            }
+            signingConfig signingConfigs.'default'
+        }
+        major {
+            buildConfigField("int", "VERSION_CODE", "${defaultConfig.versionCode}")
+            buildConfigField("String","VERSION_NAME","\"${defaultConfig.versionName}\"")
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "boolean","IS_DEBUG","false"
+            applicationVariants.all { variant ->
+                variant.outputs.each { output ->
+                    def newName = "${rootProject.name}_v${versionMajor}.${versionMinor}.${versionPatch}.apk"
+                    output.outputFileName =  newName
+                }
+            }
+            signingConfig signingConfigs.'default'
+        }
+    }
+
+
+    externalNativeBuild {
+        ndkBuild {
+            path file('../../MultiDevice/app/src/main/jni/Android.mk')
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_9
+        targetCompatibility JavaVersion.VERSION_1_9
+    }
+    buildFeatures {
+        viewBinding = true
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.4.3'
+    }
+    ndkVersion '21.4.7075529'
+}
+
+dependencies {
+    implementation platform('com.google.firebase:firebase-bom:32.6.0')
+    implementation 'com.google.firebase:firebase-crashlytics'
+    implementation 'com.google.firebase:firebase-analytics'
+
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation 'androidx.activity:activity-compose:1.8.1'
+    implementation platform('androidx.compose:compose-bom:2023.03.00')
+    implementation 'androidx.compose.ui:ui'
+    implementation 'androidx.compose.ui:ui-graphics'
+    implementation 'androidx.compose.ui:ui-tooling-preview'
+    implementation 'androidx.compose.material3:material3'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation platform('androidx.compose:compose-bom:2023.03.00')
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
+    debugImplementation 'androidx.compose.ui:ui-tooling'
+    debugImplementation 'androidx.compose.ui:ui-test-manifest'
+    implementation 'com.journeyapps:zxing-android-embedded:4.3.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'com.takisoft.preferencex:preferencex:1.1.0'
+    implementation 'androidx.navigation:navigation-fragment:2.5.2'
+    implementation 'androidx.navigation:navigation-ui:2.5.2'
+    implementation 'com.github.dhaval2404:colorpicker:2.3'
+    implementation 'com.github.tobiasschuerg:android-prefix-suffix-edit-text:1.3.1'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+}

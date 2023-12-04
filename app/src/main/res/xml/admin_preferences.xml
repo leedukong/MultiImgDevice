@@ -1,0 +1,81 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="AP 설정">
+        <ListPreference
+            app:defaultValue="@string/com_port"
+            app:key="com_port"
+            app:title="시리얼 포트"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:defaultValue="@string/device_name"
+            app:key="device_name"
+            app:title="장치 이름"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            app:defaultValue="기기 점검중입니다.\n다음에 이용해주세요."
+            app:key="error_message"
+            app:title="점검 중 메시지"
+            app:useSimpleSummaryProvider="true" />
+        <Preference
+            app:fragment="com.releasetech.multidevice.AdminSettings.AdminSettingsActivity$CartFragment"
+            app:key="cart_header"
+            app:title="장바구니 및 결제" />
+        <Preference
+            app:fragment="com.releasetech.multidevice.AdminSettings.AdminSettingsActivity$IdleScreenFragment"
+            app:key="idle_screen_header"
+            app:title="대기화면" />
+        <Preference
+            app:fragment="com.releasetech.multidevice.AdminSettings.AdminSettingsActivity$MenuScreenFragment"
+            app:key="menu_screen_header"
+            app:title="메뉴화면" />
+        <Preference
+            app:fragment="com.releasetech.multidevice.AdminSettings.AdminSettingsActivity$AdFragment"
+            app:key="ad_header"
+            app:title="광고" />
+        <Preference
+            app:fragment="com.releasetech.multidevice.AdminSettings.AdminSettingsActivity$DesignFragment"
+            app:key="design_header"
+            app:title="디자인 교체" />
+        <Preference
+            app:fragment="com.releasetech.multidevice.AdminSettings.AdminSettingsActivity$AdminInfoFragment"
+            app:key="manager_header"
+            app:title="관리자 정보" />
+        <Preference
+            app:fragment="com.releasetech.multidevice.AdminSettings.AdminSettingsActivity$AppInfoFragment"
+            app:key="app_info_header"
+            app:title="앱 정보" />
+        <Preference
+            app:fragment="com.releasetech.multidevice.AdminSettings.AdminSettingsActivity$DeviceInfoFragment"
+            app:key="app_info_header"
+            app:title="디바이스 정보" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="제품 설정">
+        <Preference
+            app:fragment="com.releasetech.multidevice.AdminSettings.AdminSettingsActivity$ProductSettingsFragment"
+            app:key="product_header"
+            app:title="카테고리 및 제품 관리" />
+    </PreferenceCategory>
+    <PreferenceCategory app:title="시스템">
+        <Preference
+            app:fragment="com.releasetech.multidevice.AdminSettings.AdminSettingsActivity$DataFragment"
+            app:key="data_header"
+            app:title="데이터 백업/로드" />
+        <Preference
+            app:key="rustdesk_settings"
+            app:title="원격 앱 (RustDesk) 실행" />
+        <Preference
+            app:key="remoteview_settings"
+            app:title="원격 앱 (RemoteView) 실행" />
+        <Preference
+            app:key="android_settings"
+            app:title="안드로이드 설정" />
+        <Preference
+            app:key="restart_app"
+            app:title="AP 재시작" />
+        <Preference
+            app:key="android_reboot"
+            app:title="기기 재시작" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

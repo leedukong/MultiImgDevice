@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+    <item
+        android:id="@+id/navigation_system"
+        android:icon="@drawable/ic_system"
+        android:title="시스템" />
+
+    <item
+        android:id="@+id/navigation_refill_powder"
+        android:icon="@drawable/ic_powder"
+        android:title="재고 관리" />-->
+
+    <item
+        android:id="@+id/navigation_history"
+        android:icon="@drawable/ic_history"
+        android:title="판매 기록" />
+    <item
+        android:id="@+id/navigation_statistics"
+        android:icon="@drawable/ic_statistics"
+        android:title="통계" />
+    <item
+        android:id="@+id/navigation_logs"
+        android:icon="@drawable/ic_logs"
+        android:title="로그" />
+
+</menu>

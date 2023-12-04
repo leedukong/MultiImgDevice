@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <Button
+        android:id ="@+id/payco_keypad"
+        android:layout_width="175dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="435dp"
+        android:layout_marginEnd="180dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id ="@+id/payco_countdown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="665dp"
+        android:layout_marginEnd="410dp"
+        android:text=""
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+
+    <ImageView
+        android:id ="@+id/payco_keypad_background"
+        android:layout_width="235dp"
+        android:layout_height="260dp"
+        android:layout_marginTop="310dp"
+        android:layout_marginEnd="150dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@android:color/black" />
+
+    <TextView
+        android:id ="@+id/payco_keypad_input_string"
+        android:layout_width="240dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="145dp"
+        android:text=""
+        android:textSize="17sp"
+        android:textAlignment="center"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/payco_keypad_background"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <ImageButton
+        android:id ="@+id/payco_keypad_1"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:textColor="@color/black"
+        android:background="@color/white"
+        app:layout_constraintTop_toTopOf="@id/payco_keypad_background"
+        app:layout_constraintStart_toStartOf="@id/payco_keypad_background"
+        />
+
+    <ImageButton
+        android:id ="@+id/payco_keypad_2"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/white"
+        app:layout_constraintTop_toTopOf="@id/payco_keypad_background"
+        app:layout_constraintStart_toEndOf="@id/payco_keypad_1"
+        app:layout_constraintEnd_toStartOf="@id/payco_keypad_3"
+        />
+
+    <ImageButton
+        android:id ="@+id/payco_keypad_3"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:background="@color/white"
+        app:layout_constraintTop_toTopOf="@id/payco_keypad_background"
+        app:layout_constraintEnd_toEndOf="@id/payco_keypad_background"
+        />
+
+    <ImageButton
+        android:id ="@+id/payco_keypad_4"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:background="@color/white"
+        app:layout_constraintTop_toBottomOf="@id/payco_keypad_1"
+        app:layout_constraintStart_toStartOf="@id/payco_keypad_background"
+        />
+
+    <ImageButton
+        android:id ="@+id/payco_keypad_5"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/white"
+        app:layout_constraintTop_toBottomOf="@id/payco_keypad_2"
+        app:layout_constraintBottom_toTopOf="@id/payco_keypad_8"
+        app:layout_constraintStart_toEndOf="@id/payco_keypad_4"
+        app:layout_constraintEnd_toStartOf="@id/payco_keypad_6"
+        />
+
+    <ImageButton
+        android:id ="@+id/payco_keypad_6"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:background="@color/white"
+        app:layout_constraintTop_toBottomOf="@id/payco_keypad_3"
+        app:layout_constraintEnd_toEndOf="@id/payco_keypad_background"
+        />
+
+    <ImageButton
+        android:id ="@+id/payco_keypad_7"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:background="@color/white"
+        app:layout_constraintTop_toBottomOf="@id/payco_keypad_4"
+        app:layout_constraintStart_toStartOf="@id/payco_keypad_background"
+        />
+
+    <ImageButton
+        android:id ="@+id/payco_keypad_8"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/white"
+        app:layout_constraintTop_toBottomOf="@id/payco_keypad_5"
+        app:layout_constraintStart_toEndOf="@id/payco_keypad_7"
+        app:layout_constraintEnd_toStartOf="@id/payco_keypad_9"
+        />
+
+    <ImageButton
+        android:id ="@+id/payco_keypad_9"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:background="@color/white"
+        app:layout_constraintTop_toBottomOf="@id/payco_keypad_6"
+        app:layout_constraintEnd_toEndOf="@id/payco_keypad_background"
+        />
+
+    <ImageButton
+        android:id ="@+id/payco_keypad_backspace"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:background="@color/white"
+        app:layout_constraintTop_toBottomOf="@id/payco_keypad_7"
+        app:layout_constraintStart_toStartOf="@id/payco_keypad_background"
+        />
+
+    <ImageButton
+        android:id ="@+id/payco_keypad_0"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/white"
+        app:layout_constraintTop_toBottomOf="@id/payco_keypad_8"
+        app:layout_constraintStart_toEndOf="@id/payco_keypad_backspace"
+        app:layout_constraintEnd_toStartOf="@id/payco_keypad_enter"
+        />
+
+    <ImageButton
+        android:id ="@+id/payco_keypad_enter"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:background="@color/white"
+        app:layout_constraintTop_toBottomOf="@id/payco_keypad_9"
+        app:layout_constraintEnd_toEndOf="@id/payco_keypad_background"
+        />
+
+    <Button
+        android:id="@+id/payco_cancel_button"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:layout_marginTop="690dp"
+        android:layout_marginEnd="10dp"
+        android:text="닫기"
+        android:textSize="30sp"
+        android:textColor="@color/black"
+        android:background="@android:color/transparent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

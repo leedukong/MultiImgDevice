@@ -1,0 +1,51 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" 
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <SwitchPreference
+        app:defaultValue="@bool/use_payco"
+        app:key="use_payco"
+        app:title="페이코 사용"
+        app:summaryOn="페이코 사용"
+        app:summaryOff="페이코 사용 안 함"
+        app:useSimpleSummaryProvider="true" />
+    <EditTextPreference
+        app:defaultValue="@string/registration_number"
+        app:key="registration_number"
+        app:title="사업자 등록번호"
+        app:dependency="use_payco"
+        app:summary="@string/registration_number"
+        app:useSimpleSummaryProvider="true" />
+    <Preference
+        app:fragment="com.releasetech.multidevice.AdminSettings.AdminSettingsActivity$VanCorpCodeSettingFragment"
+        app:defaultValue="@string/van_corp_code"
+        app:key="van_corp_code"
+        app:title="VAN사 코드"
+        app:dependency="use_payco"
+        app:summary="@string/van_corp_code"
+        app:useSimpleSummaryProvider="true" />
+    <EditTextPreference
+        app:defaultValue="@string/van_pos_tid"
+        app:key="van_pos_tid"
+        app:title="VAN POS TID"
+        app:dependency="use_payco"
+        app:summary="@string/van_pos_tid"
+        app:useSimpleSummaryProvider="true" />
+
+    <Preference
+        app:key="regist_payco"
+        app:title="등록하기"
+        app:dependency="use_payco"
+        app:useSimpleSummaryProvider="true" />
+
+
+    <PreferenceCategory app:title="">
+        <EditTextPreference
+            app:defaultValue="180"
+            app:key="payco_countdown"
+            app:title="승인 대기 시간 초"
+            app:dependency="use_payco"
+            app:summary="@string/van_pos_tid"
+            app:useSimpleSummaryProvider="true" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

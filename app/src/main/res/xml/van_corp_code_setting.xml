@@ -1,0 +1,21 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" 
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <CheckBoxPreference
+        app:key="van_corp_code_1"
+        app:title="㈜ 한국사이버결제" />
+
+    <CheckBoxPreference
+        app:key="van_corp_code_2"
+        app:title="한국정보통신주식회사" />
+
+    <CheckBoxPreference
+        app:key="van_corp_code_3"
+        app:title="나이스 정보통신" />
+
+    <CheckBoxPreference
+        app:key="van_corp_code_4"
+        app:title="KIS정보통신 주식회사" />
+
+
+</PreferenceScreen>

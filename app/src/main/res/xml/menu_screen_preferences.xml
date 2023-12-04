@@ -1,0 +1,16 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!--
+    <Preference
+        android:key="menu_theme"
+        android:title="메뉴화면 테마 설정"
+        app:useSimpleSummaryProvider="true" />-->
+
+    <EditTextPreference
+        android:inputType="text"
+        app:defaultValue="#ffffff"
+        app:key="menu_background_color"
+        app:title="배경 색상 지정"
+        app:useSimpleSummaryProvider="true" />
+</PreferenceScreen>

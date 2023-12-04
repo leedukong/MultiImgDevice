@@ -1,0 +1,12 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <Preference
+        android:key="replace_design"
+        android:title="USB로 디자인 교체"
+        app:useSimpleSummaryProvider="true" />
+
+    <!--    <Preference-->
+    <!--        app:key="replace_design_from_server"-->
+    <!--        app:title="서버에서 디자인 내려받기"-->
+    <!--        app:useSimpleSummaryProvider="true" />-->
+</PreferenceScreen>
