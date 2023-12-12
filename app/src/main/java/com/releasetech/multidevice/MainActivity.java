@@ -9,6 +9,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -18,6 +19,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Looper;
 import android.provider.Settings;
 import android.text.Html;
@@ -56,6 +58,7 @@ import com.releasetech.multidevice.Database.Data.Order;
 import com.releasetech.multidevice.Database.Data.Product;
 import com.releasetech.multidevice.Database.DessertDataLoader;
 import com.releasetech.multidevice.DessertSettings.DessertSettingsActivity;
+import com.releasetech.multidevice.Log.LogService;
 import com.releasetech.multidevice.MainActivityViews.OptionDialog;
 import com.releasetech.multidevice.Manager.CartManager;
 import com.releasetech.multidevice.Manager.CheckoutManager;
@@ -155,8 +158,19 @@ public class MainActivity extends AppCompatActivity {
     LinearLayout menuLayout;
     LinearLayout[] categoryLineLayout = new LinearLayout[LINE_COUNT];
 
-
     private DBManager dbManager;
+
+    private static LogService logService;
+    private static boolean logServiceConnected = false;
+    static ServiceConnection logConn = new ServiceConnection() {
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            LogService.LogBinder mb = (LogService.LogBinder) service;
+            logService = mb.getService();
+        }
+        public void onServiceDisconnected(ComponentName name) {
+        }
+    };
+
 
     /* Init Functions */
     private void initializeHiddenButton() {
@@ -188,8 +202,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
 
-        //TODO
-        //UIManager.hideSystemUI(this);
+        UIManager.hideSystemUI(this);
         super.onCreate(savedInstanceState);
         Utils.logD(TAG, "화면 표시됨");
         setContentView(R.layout.activity_main);
@@ -206,6 +219,17 @@ public class MainActivity extends AppCompatActivity {
             mActivityManager.killBackgroundProcesses(packageInfo.packageName);
         }
 
+        if (!logServiceConnected) {
+            LogService.logDirectoryPath = this.getExternalCacheDir() + "/logs";
+            Intent logServiceIntent = new Intent(getApplicationContext(), LogService.class);
+            if (PreferenceManager.getBoolean(this, "rebooted")) {
+                logServiceIntent.putExtra("rebooted", true);
+                PreferenceManager.setBoolean(this, "rebooted", false);
+            }
+            bindService(logServiceIntent, logConn, Context.BIND_AUTO_CREATE);
+        }
+
+        //todo
         /* 업데이트 필요 여부
         if (PreferenceManager.getBoolean(this, "auto_update") && updatePopup) {
             ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -213,30 +237,29 @@ public class MainActivity extends AppCompatActivity {
             updateState.checkUpdate(this, connManager);
         }*/
 
-
-        //if (!BuildConfig.VERSION_NAME.equals(PreferenceManager.getString(this, "version"))) {
-        UpdateApp.updatedDialog(this, PreferenceManager.getString(this, "version"), BuildConfig.VERSION_NAME);
-        UpdateDesign updateDesign = new UpdateDesign(this);
-        updateDesign.execute(UpdateDesign.DEFAULT);
-        View view = getWindow().getDecorView().findViewById(android.R.id.content);
-        UIImageLoader.loadMenuImage(this, view);
-        //}
+        if (!BuildConfig.VERSION_NAME.equals(PreferenceManager.getString(this, "version"))) {
+            UpdateApp.updatedDialog(this, PreferenceManager.getString(this, "version"), BuildConfig.VERSION_NAME);
+            UpdateDesign updateDesign = new UpdateDesign(this);
+            updateDesign.execute(UpdateDesign.DEFAULT);
+            View view = getWindow().getDecorView().findViewById(android.R.id.content);
+            UIImageLoader.loadMenuImage(this, view);
+        }
 
         IntentFilter filter = new IntentFilter(Intent.ACTION_MAIN);
         filter.addCategory(Intent.CATEGORY_HOME);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         ComponentName mainComponent = new ComponentName(getApplicationContext(), MainActivity.class);
 
-//        String device_name = Settings.Global.getString(getContentResolver(), "device_name");
-//        if (device_name.equals("eightpresso_basic_b")) {
-//            Utils.logD(TAG, "2023.07.13 이후 기기");
-//        } else {
-//            Utils.logD(TAG, "2023.07.13 이전 기기");
-//            DevicePolicyManager dpm =
-//                    (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
-//            dpm.addPersistentPreferredActivity(
-//                    AdminReceiver.getComponentName(getApplicationContext()), filter, mainComponent);
-//        }
+        String device_name = Settings.Global.getString(getContentResolver(), "device_name");
+        if (device_name.equals("eightpresso_basic_b")) {
+            Utils.logD(TAG, "2023.07.13 이후 기기");
+        } else {
+            Utils.logD(TAG, "2023.07.13 이전 기기");
+            DevicePolicyManager dpm =
+                    (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
+            dpm.addPersistentPreferredActivity(
+                    AdminReceiver.getComponentName(getApplicationContext()), filter, mainComponent);
+        }
 
         dbManager = new DBManager(this);
         passwordManager = new PasswordManager(this);
@@ -244,7 +267,6 @@ public class MainActivity extends AppCompatActivity {
         dbManager.create();
         stock = new Stock(this, dbManager);
 
-        //todo
         initializeHiddenButton();
         initializeUI();
         setupCart();
@@ -262,8 +284,7 @@ public class MainActivity extends AppCompatActivity {
         loadMenuItems();
         setupRecyclerView();
         setupViews();
-        //TODO
-        //UIManager.hideSystemUI(this);
+        UIManager.hideSystemUI(this);
 
         if (loadCartCache) {
             try {
@@ -961,7 +982,7 @@ public class MainActivity extends AppCompatActivity {
             CartItem cartItem = mList.get(position);
             holder.product.setText(cartItem.productName);
             holder.price.setText(cartItem.getPriceText());
-            holder.coupon.setVisibility(View.INVISIBLE);
+            //holder.coupon.setVisibility(View.INVISIBLE);
 
             holder.cancel.setOnClickListener(view -> {
                 if (cartManager.getCount() <= 1) return;
@@ -1262,14 +1283,14 @@ public class MainActivity extends AppCompatActivity {
             queueString += s;
         }
         if (queueString.contains("admin")) {
-            //UIManager.showSystemUI(this);
+            UIManager.showSystemUI(this);
             Intent intent = new Intent(this, AdminSettingsActivity.class);
             this.startActivity(intent);
         } else if (queueString.contains("manager")) {
             Intent intent = new Intent(this, ManagerSettings.class);
             this.startActivity(intent);
         } else if (queueString.contains(PreferenceManager.getString(this, "admin_password"))) {
-            //UIManager.showSystemUI(this);
+            UIManager.showSystemUI(this);
             Intent intent = new Intent(this, AdminSettingsActivity.class);
             this.startActivity(intent);
         } else if (queueString.contains(PreferenceManager.getString(this, "manager_password"))) {
@@ -1279,7 +1300,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, DessertSettingsActivity.class);
             this.startActivity(intent);
         } else if (queueString.contains("5555")) {
-            //UIManager.showSystemUI(this);
+            UIManager.showSystemUI(this);
             Intent intent = new Intent(this, AdminSettingsActivity.class);
             this.startActivity(intent);
         }

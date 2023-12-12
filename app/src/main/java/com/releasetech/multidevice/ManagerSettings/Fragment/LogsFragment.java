@@ -102,9 +102,6 @@ public class LogsFragment extends Fragment {
 
         sendLogButton.setOnClickListener(view1 -> new
                 Thread(() -> {
-            if (!isAdded()) {
-                return;
-            }
             if (LogService.uploadLogsToServer(requireContext(), logDescriptionEditText.getText().toString())) {
                 Utils.logD(TAG, "로그 전송 성공 " + getString(R.string.report_url));
                 requireActivity().runOnUiThread(() -> Utils.timedAlert(requireContext(), "로그 전송 성공", 2));

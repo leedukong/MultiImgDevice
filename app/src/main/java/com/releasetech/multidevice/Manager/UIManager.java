@@ -13,7 +13,6 @@ import android.view.WindowManager;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.releasetech.multidevice.MainActivity;
-//import com.releasetech.multidevice.Receiver.AdminReceiver;
 import com.releasetech.multidevice.Receiver.AdminReceiver;
 import com.releasetech.multidevice.Tool.Utils;
 
@@ -130,13 +129,12 @@ public class UIManager {
     }
 
     private static void setUserRestriction(String restriction, boolean disallow) {
-        //todo 주석제거
-//        if (disallow) {
-//            devicePolicyManager.addUserRestriction(adminComponentName,
-//                    restriction);
-//        } else {
-//            devicePolicyManager.clearUserRestriction(adminComponentName,
-//                    restriction);
-//        }
+        if (disallow) {
+            devicePolicyManager.addUserRestriction(adminComponentName,
+                    restriction);
+        } else {
+            devicePolicyManager.clearUserRestriction(adminComponentName,
+                    restriction);
+        }
     }
 }

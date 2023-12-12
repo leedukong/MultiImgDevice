@@ -10,6 +10,7 @@ plugins {
 def getCurrentVariant() {
     Gradle gradle = getGradle()
     String tskReqStr = gradle.getStartParameter().getTaskRequests().toString()
+
     Pattern pattern
 
     if (tskReqStr.contains("assemble"))
@@ -50,7 +51,6 @@ android {
     //project.logger.lifecycle("flavor: " + flavor)
     project.logger.lifecycle("variantName: " + variantName)
     versionPropsFile = file('version.properties')
-    //if (!flavor.isEmpty() && !variantName.isEmpty() && versionPropsFile.canRead()) {
     if (!variantName.isEmpty() && versionPropsFile.canRead()) {
         def versionProps = new Properties()
         versionProps.load(new FileInputStream(versionPropsFile))
@@ -133,7 +133,6 @@ android {
 //        throw new FileNotFoundException("Could not read version.properties!")
     }
 
-
     defaultConfig {
         applicationId "com.releasetech.multidevice"
         minSdk 24
@@ -195,7 +194,6 @@ android {
         }
     }
 
-
     externalNativeBuild {
         ndkBuild {
             path file('../../MultiDevice/app/src/main/jni/Android.mk')
@@ -206,12 +204,19 @@ android {
         targetCompatibility JavaVersion.VERSION_1_9
     }
     buildFeatures {
-        viewBinding = true
+        viewBinding true
         compose true
     }
     composeOptions {
         kotlinCompilerExtensionVersion '1.4.3'
     }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+
     ndkVersion '21.4.7075529'
 }
 

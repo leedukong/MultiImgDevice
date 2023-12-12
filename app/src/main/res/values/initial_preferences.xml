@@ -29,6 +29,6 @@
     <string name="van_corp_code">KCP</string>
     <string name="van_pos_tid"></string>
     <string name="pos_dev_corp_name">ReleaseTech</string>
-    <string name="pos_solution_name">EightPresso</string>
+    <string name="pos_solution_name">MultiDevice</string>
     <string name="pos_solution_version">Ver 1.0.0.0</string>
 </resources>

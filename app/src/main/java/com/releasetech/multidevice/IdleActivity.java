@@ -30,8 +30,7 @@ public class IdleActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        //TODO
-        //UIManager.hideSystemUI(this);
+        UIManager.hideSystemUI(this);
         ViewFlipper viewFlipper = findViewById(R.id.idle_ad);
         if (!AdLoader.loadIdleAds(this, viewFlipper)) {
             Utils.logD(TAG, "광고가 없습니다.");

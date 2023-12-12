@@ -58,11 +58,11 @@ public class UIImageLoader {
         checkoutDialogMap.put(R.id.button_dialog_checkout_cancel, "버튼_취소");
     }
 
-    /*
+
     static {
-        checkoutItemHolderMap.put(R.id.dialog_checkout_item_coupon, "버튼_쿠폰적용");
+        //checkoutItemHolderMap.put(R.id.dialog_checkout_item_coupon, "버튼_쿠폰적용");
         checkoutItemHolderMap.put(R.id.dialog_checkout_item_cancel, "버튼_수량취소");
-    }*/
+    }
 
     static{
         checkoutDialogSelectorMap.put(R.id.checkout_card,

@@ -4,76 +4,35 @@
     android:id="@+id/dialog_checkout_item_layout"
     android:layout_width="630dp"
     android:layout_height="wrap_content"
-    android:background="@android:color/transparent"
     android:layout_marginStart="50dp"
     android:layout_marginTop="20dp"
+    android:background="@android:color/transparent"
+    app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintBottom_toBottomOf="parent">
+    app:layout_constraintTop_toTopOf="parent">
 
     <TextView
         android:id="@+id/dialog_checkout_item_product"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/nanum_gothic_extrabold"
-        android:text="스페셜티"
+        android:text="스페셜 디저트"
         android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/dialog_checkout_item_cancel"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/dialog_checkout_item_cancel"
-        app:layout_constraintBottom_toBottomOf="@+id/dialog_checkout_item_cancel"/>
-
-    <TextView
-        android:id="@+id/dialog_checkout_item_hot_ice_option"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/nanum_gothic_extrabold"
-        android:text="HOT"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dialog_checkout_item_product" />
-
-
-    <TextView
-        android:id="@+id/dialog_checkout_item_size_option"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/nanum_gothic_extrabold"
-        android:text="M"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dialog_checkout_item_hot_ice_option" />
-
-    <TextView
-        android:id="@+id/dialog_checkout_item_blend_option"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/nanum_gothic_extrabold"
-        android:text="블렌딩원두"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dialog_checkout_item_size_option" />
-
-    <TextView
-        android:id="@+id/dialog_checkout_item_shot_option"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dialog_checkout_item_blend_option"
-        android:fontFamily="@font/nanum_gothic_extrabold"
-        android:text="+2샷"
-        android:textSize="16sp" />
+        app:layout_constraintTop_toTopOf="@+id/dialog_checkout_item_cancel"/>
 
     <TextView
         android:id="@+id/dialog_checkout_item_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/nanum_gothic_extrabold"
         android:layout_marginEnd="10dp"
+        android:fontFamily="@font/nanum_gothic_extrabold"
         android:text="2,600원"
         android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/dialog_checkout_item_cancel"
         app:layout_constraintEnd_toStartOf="@+id/dialog_checkout_item_cancel"
-        app:layout_constraintTop_toTopOf="@+id/dialog_checkout_item_cancel"
-        app:layout_constraintBottom_toBottomOf="@+id/dialog_checkout_item_cancel" />
+        app:layout_constraintTop_toTopOf="@+id/dialog_checkout_item_cancel" />
 
     <ImageButton
         android:id="@+id/dialog_checkout_item_cancel"
@@ -89,10 +48,10 @@
         android:id="@+id/dialog_checkout_item_coupon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
         android:layout_marginStart="200dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="@+id/dialog_checkout_item_cancel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/dialog_checkout_item_cancel"
-        app:layout_constraintBottom_toBottomOf="@+id/dialog_checkout_item_cancel" />
+        app:layout_constraintTop_toTopOf="@+id/dialog_checkout_item_cancel" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

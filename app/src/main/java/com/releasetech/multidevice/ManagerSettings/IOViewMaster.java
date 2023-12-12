@@ -1,5 +1,4 @@
 package com.releasetech.multidevice.ManagerSettings;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
@@ -9,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -31,8 +31,6 @@ public class IOViewMaster {
     private final ProgressBar[] functionStates = new ProgressBar[4];
     private final ComState[] comStates = new ComState[3];
 
-    private final OperationTime[] operationTimes = new OperationTime[11];
-
     private Spinner operationBeanSpinner;
     private Spinner operationPowderSpinner;
     private Spinner operationIceSpinner;
@@ -43,16 +41,13 @@ public class IOViewMaster {
 
     public IOViewMaster(Context context, View view, boolean operation, boolean function, boolean sensor, boolean com, boolean error) {
         if (operation) initializeOperationFrame(context, view);
+        if (function) initializeFunctionFrame(context, view);
+        if (sensor) initializeSensorFrame(context, view);
         if (com) initializeComFrame(context, view);
         if (error) initializeErrorFrame(context, view);
     }
 
     private void initializeOperationFrame(Context context, View view) {
-        int[] OPERATIONBARIDS = {R.id.operation_bean_time_bar, R.id.operation_grinding_time_bar, R.id.operation_coffee_amount_bar, R.id.operation_powder_time_bar, R.id.operation_mixer_hot_water_amount_bar, R.id.operation_mixing_time_bar, R.id.operation_hot_water_amount_bar, R.id.operation_cold_water_time_bar, R.id.operation_syrup_time_bar, R.id.operation_carbonated_water_time_bar};
-        int[] OPERATIONTIMEIDS = {R.id.operation_bean_time, R.id.operation_grinding_time, R.id.operation_coffee_amount, R.id.operation_powder_time, R.id.operation_mixer_hot_water_amount, R.id.operation_mixing_time, R.id.operation_hot_water_amount, R.id.operation_cold_water_time, R.id.operation_ice_time, R.id.operation_syrup_time, R.id.operation_carbonated_water_time};
-        for (int i = 0; i < OPERATIONBARIDS.length; i++) {
-            operationTimes[i] = new OperationTime(view, OPERATIONBARIDS[i], OPERATIONTIMEIDS[i]);
-        }
 
         operationBeanSpinner = view.findViewById(R.id.operation_bean_spinner);
         operationPowderSpinner = view.findViewById(R.id.operation_powder_spinner);
@@ -89,32 +84,12 @@ public class IOViewMaster {
         }
         ArrayAdapter operationSyrupAdapter = new ArrayAdapter(context, R.layout.spinner_item, syrupNames);
         operationSyrupSpinner.setAdapter(operationSyrupAdapter);
+    }
 
-        Button btnOperateBean = view.findViewById(R.id.btn_operate_bean);
+    private void initializeFunctionFrame(Context context, View view) {
+    }
 
-        Button btnOperatePowder = view.findViewById(R.id.btn_operate_powder);
-
-        Button btnOperateMixerHotWater = view.findViewById(R.id.btn_operate_mixer_hot_water);
-
-        Button btnOperateMixing = view.findViewById(R.id.btn_operate_mixing);
-
-        Button btnOperatePowderMixing = view.findViewById(R.id.btn_operate_powder_mixing);
-        btnOperatePowderMixing.setOnClickListener(v -> {
-        });
-
-        Button btnOperateColdWater = view.findViewById(R.id.btn_operate_cold_water);
-
-        Button btnOperateIce = view.findViewById(R.id.btn_operate_ice);
-
-        Button btnOperateSyrup = view.findViewById(R.id.btn_operate_syrup);
-
-        Button btnOperateCarbonatedWater = view.findViewById(R.id.btn_operate_carbonated_water);
-
-        Button btnOperateGrind = view.findViewById(R.id.btn_operate_grinding);
-
-        operationTimes[2].bar.setProgress(0);
-        Button btnOperateCoffee = view.findViewById(R.id.btn_operate_coffee);
-        Button btnOperateHotWater = view.findViewById(R.id.btn_operate_hot_water);
+    private void initializeSensorFrame(Context context, View view) {
     }
 
     private void initializeComFrame(Context context, View view) {
@@ -142,24 +117,6 @@ public class IOViewMaster {
 
     public void setFirmwareVersion(String version) {
         sensorTemperatures[sensorTemperatures.length - 1].setText(version);
-    }
-
-    public void setErrorState(ArrayList<Integer> errorArray) {
-        errors.clear();
-        errorAdapter.notifyDataSetChanged();
-    }
-
-    public void setErrorState(ArrayList<Integer> errorArray, ArrayList<Integer> errorArray2) {
-        try {
-            errors.clear();
-            errorAdapter.notifyDataSetChanged();
-        } catch (Exception e) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            e.printStackTrace(pw);
-            String sStackTrace = sw.toString();
-            Log.e("Error", sStackTrace);
-        }
     }
 
     public void setFunctionState(int index, int state) {

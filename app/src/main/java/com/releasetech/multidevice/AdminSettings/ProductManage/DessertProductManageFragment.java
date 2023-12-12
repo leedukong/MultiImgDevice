@@ -218,17 +218,17 @@ public class DessertProductManageFragment extends Fragment {
 
         Button addCategoryButton = requireView().findViewById(R.id.addCategoryButton);
         addCategoryButton.setOnClickListener(v -> {
-            if(categoryListView.getCount() <4) {
+            if(categoryListView.getCount() <5) {
                 addCategory();
             }else{
-                Toast.makeText(getContext(), "디저트 카테고리는 최대 4개까지 추가 가능합니다.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "디저트 카테고리는 최대 5개 까지 추가 가능합니다.", Toast.LENGTH_SHORT).show();
             }
         });
 
 
         Button removeCategoryButton = requireView().findViewById(R.id.removeCategoryButton);
         removeCategoryButton.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "해당 기능 수정중입니다", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "해당 기능 수정중입니다, 카테고리 판매 여부 off 해주세요", Toast.LENGTH_SHORT).show();
             /*
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setMessage("카테고리를 삭제하시겠습니까?").setPositiveButton("Yes", ((dialogInterface, i) -> removeCategory()))

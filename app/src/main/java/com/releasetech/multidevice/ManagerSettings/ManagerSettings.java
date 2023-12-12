@@ -33,12 +33,14 @@ public class ManagerSettings extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         binding = ActivityManagerSettingsBinding.inflate(getLayoutInflater());
+        //setContentView(binding.getRoot());
         setContentView(binding.getRoot());
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+                //R.id.navigation_system, R.id.navigation_refill_powder,
                 R.id.navigation_history, R.id.navigation_statistics, R.id.navigation_logs)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_manager_settings);
@@ -73,9 +75,12 @@ public class ManagerSettings extends AppCompatActivity {
                     }
                 }else if (PreferenceManager.getString(this, "checkout_reader").equals("nice")){
                     recvFS(data.getStringExtra("NVCATRECVDATA"));
+                    Log.i("여기 찍힘 1", "1");
                     if (strRecv03.equals("0000") || strRecv03.equals("6003") || strRecv03.equals("6000")){
+                        Log.i("여기 찍힘 2", "2");
                         dbManager.insertColumnNice(DBManager.CHECKOUT, "", strRecv01, cardNum, strRecv13, "", strPrice, String.valueOf(Math.floor(strPrice/11)), strRecv03, strRecv17, strRecv08, strRecv09, "", "", "", "", "", "", "");
                         Utils.timedAlert(this, "결제가 취소되었습니다.", 3);
+                        Log.i("여기 찍힘 3", "3");
                     }else{
                         Utils.timedAlert(this, "결제 취소에 실패했습니다.", 3);
                     }
@@ -288,6 +293,7 @@ public class ManagerSettings extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         return;
     }
 

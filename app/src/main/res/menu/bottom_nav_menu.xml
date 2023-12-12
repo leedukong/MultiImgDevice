@@ -10,8 +10,8 @@
     <item
         android:id="@+id/navigation_refill_powder"
         android:icon="@drawable/ic_powder"
-        android:title="재고 관리" />-->
-
+        android:title="재고 관리" />
+        -->
     <item
         android:id="@+id/navigation_history"
         android:icon="@drawable/ic_history"

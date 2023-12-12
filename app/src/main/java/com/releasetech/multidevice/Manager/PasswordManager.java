@@ -69,8 +69,7 @@ public class PasswordManager {
                     context.startActivity(intent);
                     Utils.logD(TAG, "관리 페이지 진입");
                 } else if (userEnteredPassword.equals(adminPassword)) {
-                    //TODO
-                    //UIManager.showSystemUI(activity);
+                    UIManager.showSystemUI(activity);
                     Intent intent = new Intent(context, AdminSettingsActivity.class);
                     context.startActivity(intent);
                     Utils.logD(TAG, "설정 페이지 진입");

@@ -3,7 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_system">
+    app:startDestination="@+id/navigation_history">
+
+    <fragment
+        android:id="@+id/navigation_system"
+        android:name="com.releasetech.multidevice.ManagerSettings.Fragment.SystemFragment"
+        android:label="시스템"
+        tools:layout="@layout/fragment_system" />
+
+    <fragment
+        android:id="@+id/navigation_refill_powder"
+        android:name="com.releasetech.multidevice.ManagerSettings.Fragment.StockFragment"
+        android:label="재고 관리"
+        tools:layout="@layout/fragment_stock" />
 
     <fragment
         android:id="@+id/navigation_history"
@@ -22,5 +34,4 @@
         android:name="com.releasetech.multidevice.ManagerSettings.Fragment.LogsFragment"
         android:label="로그"
         tools:layout="@layout/fragment_logs" />
-
 </navigation>

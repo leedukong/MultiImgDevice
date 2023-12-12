@@ -86,21 +86,6 @@ public class SystemFragment extends Fragment {
 
         Utils.logD(TAG, "화면 표시됨");
         ioViewMaster = new IOViewMaster(activity, view, true, true, true, true, true);
-        new Thread(() -> {
-            while (true) {
-                if (!pauseThread) {
-                    try {
-                        Thread.sleep(33);
-                    } catch (InterruptedException ignored) {
-                    }
-                    activity.runOnUiThread(() -> {
-                        if (ioViewMaster == null) {
-                            return;
-                        }
-                    });
-                }
-            }
-        }).start();
 
         Button buttonQuickSettings = view.findViewById(R.id.button_quick_settings);
         buttonQuickSettings.setOnClickListener(v -> {

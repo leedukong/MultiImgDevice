@@ -51,6 +51,7 @@ import java.net.UnknownHostException;
 import java.nio.ByteOrder;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import android_serialport_api.SerialPortFinder;
 
@@ -107,8 +108,7 @@ public class AdminSettingsActivity extends AppCompatActivity implements
                 ((ParentPreferenceFragment) fragment).changeTitles();
             }
         });
-        //TODO 주석삭제
-        //Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         checkSettingsWritable();
         rustDeskIntent = getPackageManager().getLaunchIntentForPackage("com.carriez.flutter_hbb");
         remoteViewIntent = getPackageManager().getLaunchIntentForPackage("com.rsupport.mobile.agent");

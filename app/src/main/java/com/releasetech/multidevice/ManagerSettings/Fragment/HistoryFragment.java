@@ -27,6 +27,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -241,7 +242,7 @@ public class HistoryFragment extends Fragment {
             }
             holder.layout.setBackgroundColor(lineColors[lineColorCount % lineColors.length]);
             holder.datetime.setText(order.year + "년 " + order.month + "월 " + order.day + "일 " + order.time.split("\\.")[0]);
-            holder.approvalId.setText(order.approvalId);
+            holder.approvalId.setText(order.approvalId.replaceAll(" ", ""));
             holder.category.setText(order.category);
             holder.product.setText(order.product);
             holder.hotIceOption.setText(order.hotIceOption);
@@ -262,7 +263,12 @@ public class HistoryFragment extends Fragment {
                         // split by underscore
                         holder.checkoutPaycoInformationDialog(order.approvalId.split("_")[1]);
                     }else {
-                        holder.checkoutInformationDialog(order.approvalId);
+                        //if(PreferenceManager.getString(getContext(), "checkout_reader").equals("kicc")) {
+                        holder.checkoutPaycoInformationDialog(order.approvalId);
+                        //}
+                        /*else if(PreferenceManager.getString(getContext(), "checkout_reader").equals("nice")){
+                            holder.checkoutNiceInfoDialog(order.approvalId);
+                        }*/
                     }
                 });
             }
@@ -303,17 +309,17 @@ public class HistoryFragment extends Fragment {
                 checkoutInfo = itemView.findViewById(R.id.history_item_checkout_info);
             }
 
-            void checkoutInformationDialog(String approvalId) {
+            void checkoutInfoDialog(String approvalId) {
                 LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 ConstraintLayout checkoutInfoDialogLayout = (ConstraintLayout) vi.inflate(R.layout.dialog_checkout_info, null);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                TextView checkoutInformationDialogTitle = new TextView(getContext());
-                checkoutInformationDialogTitle.setText("결제 정보");
-                checkoutInformationDialogTitle.setPadding(0, 32, 0, 32);
-                checkoutInformationDialogTitle.setGravity(Gravity.CENTER_HORIZONTAL);
-                checkoutInformationDialogTitle.setTextSize(32);
-                AlertDialog checkoutInformationDialog = builder.setCustomTitle(checkoutInformationDialogTitle).setView(checkoutInfoDialogLayout)
+                TextView checkoutInfoDialogTitle = new TextView(getContext());
+                checkoutInfoDialogTitle.setText("결제 정보");
+                checkoutInfoDialogTitle.setPadding(0, 32, 0, 32);
+                checkoutInfoDialogTitle.setGravity(Gravity.CENTER_HORIZONTAL);
+                checkoutInfoDialogTitle.setTextSize(32);
+                AlertDialog checkoutInfoDialog = builder.setCustomTitle(checkoutInfoDialogTitle).setView(checkoutInfoDialogLayout)
                         .setPositiveButton("닫기", (dialog, which) -> dialog.dismiss()).show();
 
                 boolean canceled = false;
@@ -376,7 +382,7 @@ public class HistoryFragment extends Fragment {
                             AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
                             builder1.setMessage("결제를 취소 하시겠습니까?").setPositiveButton("Yes", (dialogInterface, i) -> {
                                         cancelPayment(getActivity(), approvalId, finalApprovalDate, finalPrice);
-                                        checkoutInformationDialog.dismiss();
+                                        checkoutInfoDialog.dismiss();
                                     })
                                     .setNegativeButton("No", null).show();
                         });
@@ -386,30 +392,29 @@ public class HistoryFragment extends Fragment {
                 }
                 dbManager.close();
 
-                Button btnPositive = checkoutInformationDialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                Button btnPositive = checkoutInfoDialog.getButton(AlertDialog.BUTTON_POSITIVE);
 
                 LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) btnPositive.getLayoutParams();
                 layoutParams.width = 150;
                 btnPositive.setLayoutParams(layoutParams);
                 btnPositive.setTextSize(24);
 
-                Window window = checkoutInformationDialog.getWindow();
+                Window window = checkoutInfoDialog.getWindow();
                 window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
                 window.setLayout(1500, 500);
             }
-
 
             void checkoutPaycoInformationDialog(String approvalId) {
                 LayoutInflater vi = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 ConstraintLayout checkoutPaycoInfoDialogLayout = (ConstraintLayout) vi.inflate(R.layout.dialog_checkout_info, null);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                TextView checkoutPaycoInformationDialogTitle = new TextView(getContext());
-                checkoutPaycoInformationDialogTitle.setText("결제 정보");
-                checkoutPaycoInformationDialogTitle.setPadding(0, 32, 0, 32);
-                checkoutPaycoInformationDialogTitle.setGravity(Gravity.CENTER_HORIZONTAL);
-                checkoutPaycoInformationDialogTitle.setTextSize(32);
-                AlertDialog checkoutPaycoInfoDialog = builder.setCustomTitle(checkoutPaycoInformationDialogTitle).setView(checkoutPaycoInfoDialogLayout)
+                TextView checkoutPaycoInfoDialogTitle = new TextView(getContext());
+                checkoutPaycoInfoDialogTitle.setText("결제 정보");
+                checkoutPaycoInfoDialogTitle.setPadding(0, 32, 0, 32);
+                checkoutPaycoInfoDialogTitle.setGravity(Gravity.CENTER_HORIZONTAL);
+                checkoutPaycoInfoDialogTitle.setTextSize(32);
+                AlertDialog checkoutPaycoInfoDialog = builder.setCustomTitle(checkoutPaycoInfoDialogTitle).setView(checkoutPaycoInfoDialogLayout)
                         .setPositiveButton("닫기", (dialog, which) -> dialog.dismiss()).show();
 
                 boolean canceled = false;
