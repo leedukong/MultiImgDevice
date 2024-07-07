@@ -490,13 +490,15 @@ public class DBManager {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
+            //todo su 임시 비활성화
+            /*
             try {
                 String permission_command = "";
                 permission_command = "su -c chmod 777 /data/data/com.releasetech.multidevice/databases/MainDatabase.db";
                 Runtime.getRuntime().exec(permission_command);
             } catch (IOException e) {
                 throw new RuntimeException(e);
-            }
+            }*/
             db.execSQL(DataBase.CreateCategoryDB._CREATE0);
             db.execSQL(DataBase.CreateProductImageDB._CREATE0);
             db.execSQL(DataBase.CreateSalesDB._CREATE0);
