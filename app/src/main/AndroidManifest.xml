@@ -53,43 +53,12 @@
         android:theme="@style/Theme.MultiDevice"
         android:requestLegacyExternalStorage="true"
         android:testOnly="false">
-        <service
-            android:name=".Log.LogService"
-            android:enabled="true"
-            android:exported="false"
-            android:launchMode="singleInstance" />
-        <service
-            android:name=".Client.ClientService"
-            android:enabled="true"
-            android:exported="false"
-            android:launchMode="singleInstance" />
-        <service
-            android:name=".Sound.SoundService"
-            android:exported="false"
-            android:launchMode="singleInstance" />
-
-        <activity
-            android:name=".IdleActivity"
-            android:exported="false"
-            android:launchMode="singleInstance" />
-        <activity
-            android:name=".ManagerSettings.ManagerSettings"
-            android:exported="false"
-            android:label="매니저 페이지"
-            android:launchMode="singleInstance" />
-
-        <activity
-            android:name=".DessertSettings.DessertSettingsActivity"
-            android:exported="false"
-            android:label="디저트 재고 관리 및 테스트"
-            android:launchMode="singleInstance"
-            android:parentActivityName=".MainActivity" >
-        </activity>
 
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:launchMode="singleInstance">
+            android:launchMode="singleInstance"
+            android:theme="@style/Theme.MultiDevice.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.HOME" />
@@ -98,38 +67,17 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".OrderActivity"
+            android:exported="true"
+            android:launchMode="singleInstance"
+            android:theme="@style/Theme.MultiDevice.NoActionBar">\
+        </activity>
+
+        <activity
             android:name=".AdminSettings.AdminSettingsActivity"
             android:exported="false"
             android:label="관리자 설정"
             android:launchMode="singleInstance" />
-
-        <receiver
-            android:name=".Receiver.AdminReceiver"
-            android:description="@string/app_name"
-            android:exported="false"
-            android:label="@string/app_name"
-            android:permission="android.permission.BIND_DEVICE_ADMIN">
-            <meta-data
-                android:name="android.app.device_admin"
-                android:resource="@xml/device_admin_receiver" />
-
-            <intent-filter>
-                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
-                <action android:name="android.app.action.DEVICE_ADMIN_DISABLE_REQUESTED" />
-                <action android:name="android.app.action.DEVICE_ADMIN_DISABLED" />
-                <action android:name="android.intent.action.PROFILE_PROVISIONING_COMPLETE" />
-            </intent-filter>
-        </receiver>
-        <receiver
-            android:name=".Receiver.BootCompleteReceiver"
-            android:enabled="true"
-            android:exported="false"
-            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </receiver>
     </application>
 
 </manifest>

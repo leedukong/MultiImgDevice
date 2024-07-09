@@ -37,10 +37,7 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
-import com.releasetech.multidevice.Database.DBManager;
 import com.releasetech.multidevice.MainActivity;
-import com.releasetech.multidevice.Manager.PreferenceManager;
-import com.releasetech.multidevice.R;
 
 //import com.releasetech.multidevice.Database.DBManager;
 //import com.releasetech.multidevice.MainActivity;
@@ -195,14 +192,6 @@ public class Utils {
         System.exit(0);
     }
 
-    public static void reserveLaunch(Context context) {
-        Intent mStartActivity = new Intent(context, MainActivity.class);
-        int mPendingIntentId = 123456;
-        PendingIntent mPendingIntent = PendingIntent.getActivity(context, mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
-        AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 30000, mPendingIntent);
-    }
-
     public static Dialog alert(Context context, String msg) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         disableDialogCancel(builder);
@@ -304,16 +293,6 @@ public class Utils {
         Log.e(MainActivity.DEVTAG, tag + " " + str);
     }
 
-    public static void deleteAllData(Context context) {
-        DBManager dbManager = new DBManager(context);
-        if (!DBManager.mDB.isOpen()) {
-            dbManager.open();
-            dbManager.create();
-        }
-        dbManager.deleteAllColumns(DBManager.SALES);
-        dbManager.deleteAllColumns(DBManager.CHECKOUT);
-    }
-
     public static void setRangeFilter(PreferenceFragmentCompat preferenceFragmentCompat, String preferenceName, int min, int max) {
 
         EditTextPreference pref = preferenceFragmentCompat.findPreference(preferenceName);
@@ -344,13 +323,6 @@ public class Utils {
         }
     }
 
-    public static float getFloatPreference(Context context, String key) {
-        if (PreferenceManager.hasKey(context, key)) {
-            return Utils.getFloat(PreferenceManager.getString(context, key));
-        } else {
-            return 0;
-        }
-    }
 
     public static long directorySize(File directory) {
         long length = 0;
@@ -471,16 +443,6 @@ public class Utils {
             e.printStackTrace();
         }
         return bitmap;
-    }
-
-    public static Dialog alertBitmap(Context context, Bitmap bitmap) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        disableDialogCancel(builder);
-        Dialog tempDialog = builder.setView(R.layout.dialog_qrcode).setPositiveButton("확인", null).show();
-        ImageView iv = tempDialog.findViewById(R.id.qrcode);
-        iv.setImageBitmap(bitmap);
-        logE("테스트", "" + bitmap.getByteCount());
-        return tempDialog;
     }
 
     public static byte[] getHmacSHA256(String key, String input)

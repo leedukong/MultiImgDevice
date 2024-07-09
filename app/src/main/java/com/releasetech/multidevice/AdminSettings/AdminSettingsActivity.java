@@ -1,56 +1,28 @@
 package com.releasetech.multidevice.AdminSettings;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.provider.Settings;
 import android.text.InputFilter;
 import android.view.MenuItem;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.preference.CheckBoxPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
-import androidx.preference.SwitchPreference;
 
-import com.releasetech.multidevice.AdminSettings.ProductManage.DessertProductManageFragment;
-import com.releasetech.multidevice.Client.Payco;
-import com.releasetech.multidevice.Database.Backup;
-import com.releasetech.multidevice.Manager.CheckoutManager;
-import com.releasetech.multidevice.Manager.PreferenceManager;
 import com.releasetech.multidevice.R;
 import com.releasetech.multidevice.Tool.MediaReplacer;
 import com.releasetech.multidevice.Tool.Utils;
-import com.releasetech.multidevice.Update.UpdateApp;
 import com.takisoft.preferencex.EditTextPreference;
 import com.takisoft.preferencex.PreferenceFragmentCompat;
-
-import java.io.IOException;
-import java.math.BigInteger;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.net.UnknownHostException;
-import java.nio.ByteOrder;
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 
 import android_serialport_api.SerialPortFinder;
@@ -64,20 +36,11 @@ public class AdminSettingsActivity extends AppCompatActivity implements
     protected static Intent rustDeskIntent;
     protected static Intent remoteViewIntent;
 
-    @SuppressLint("HandlerLeak")
-    final Handler handler = new Handler() {
-        public void handleMessage(Message msg) {
-            try {
-                ImageView img = findViewById(R.id.product_serial_state);
 
-            } catch (NullPointerException e) {
-            }
-        }
-    };
-
-    public Handler getHandler() {
-        return handler;
-    }
+    //todo 핸들러
+//    public Handler getHandler() {
+//        return handler;
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -233,20 +196,6 @@ public class AdminSettingsActivity extends AppCompatActivity implements
         }
     }
 
-    public static class CartFragment extends PreferenceFragmentCompat {
-        @Override
-        public void onCreatePreferencesFix(Bundle savedInstanceState, String rootKey) {
-            setPreferencesFromResource(R.xml.cart_preferences, rootKey);
-            Utils.setRangeFilter(this, "cart_quantity", 1, 5);
-
-            Preference btnCheckoutSettings = findPreference("checkout_settings");
-            btnCheckoutSettings.setOnPreferenceClickListener(preference -> {
-                CheckoutManager.openSettings(getActivity());
-                return true;
-            });
-        }
-    }
-
     @Override
     public void onBackPressed() {
         if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
@@ -266,90 +215,91 @@ public class AdminSettingsActivity extends AppCompatActivity implements
             comPort.setEntries(ports);
             comPort.setEntryValues(ports);
 
-            setupSpecialPreferences();
+            //todo 수정
+            //setupSpecialPreferences();
         }
 
-        private void setupSpecialPreferences() {
-
-            EditTextPreference deviceName = findPreference("device_name");
-            if (deviceName != null) {
-                deviceName.setOnPreferenceChangeListener((preference, newValue) -> {
-                    String name = ((String) newValue).replaceAll("\\s+", "");
-                    if (name.equals("데이터초기화")) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                        Dialog tempDialog = builder.setMessage("판매 및 결제 데이터를 삭제하시겠습니까?\n\n*주의* 삭제된 데이터는 복구되지 않습니다")
-                                .setPositiveButton("Yes", (dialog, which) -> {
-                                            Utils.deleteAllData(getContext());
-                                            Utils.alert(getContext(), "데이터 초기화 완료");
-                                        }
-                                )
-                                .setNegativeButton("No", null).show();
-                        TextView messageView = tempDialog.findViewById(android.R.id.message);
-                        messageView.setTextSize(26);
-                        return false;
-                    }
-                    //remove spaces
-                    else if (name.equals("기본 홈")) {
-                        Intent launchIntent = requireContext().getPackageManager().getLaunchIntentForPackage("com.android.launcher3");
-                        startActivity(launchIntent);
-                    }
-                    return true;
-                });
-            }
-
-            Preference btnRustDesk = findPreference("rustdesk_settings");
-            btnRustDesk.setOnPreferenceClickListener(preference -> {
-                if (rustDeskIntent != null) {
-                    startActivity(rustDeskIntent);
-                } else {
-                    Utils.alert(getContext(), "RustDesk 설치가 필요합니다");
-                }
-                return true;
-            });
-
-            Preference btnRemoteView = findPreference("remoteview_settings");
-            btnRemoteView.setOnPreferenceClickListener(preference -> {
-                if (remoteViewIntent != null) {
-                    startActivity(remoteViewIntent);
-                } else {
-                    Utils.alert(getContext(), "RemoteView 설치가 필요합니다");
-                }
-                return true;
-            });
-
-            Preference btnAndroidSettings = findPreference("android_settings");
-            btnAndroidSettings.setOnPreferenceClickListener(preference -> {
-                startActivity(new Intent(Settings.ACTION_SETTINGS));
-                return true;
-            });
-
-            Preference btnRestartApp = findPreference("restart_app");
-            btnRestartApp.setOnPreferenceClickListener(preference -> {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                Dialog tempDialog = builder.setMessage("8PRESSO를 재시작하시겠습니까?").setPositiveButton("Yes", (dialog, which) -> Utils.restart(getContext()))
-                        .setNegativeButton("No", null).show();
-                TextView messageView = tempDialog.findViewById(android.R.id.message);
-                messageView.setTextSize(26);
-                return true;
-            });
-            Preference btnAndroidReboot = findPreference("android_reboot");
-            btnAndroidReboot.setOnPreferenceClickListener(preference -> {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                Dialog tempDialog = builder.setMessage("기기를 재시작하시겠습니까?")
-                        .setPositiveButton("Yes", (dialog, which) -> {
-                            String cmd = "su -c reboot";
-                            try {
-                                Runtime.getRuntime().exec(cmd);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        })
-                        .setNegativeButton("No", null).show();
-                TextView messageView = tempDialog.findViewById(android.R.id.message);
-                messageView.setTextSize(26);
-                return true;
-            });
-        }
+//        private void setupSpecialPreferences() {
+//
+//            EditTextPreference deviceName = findPreference("device_name");
+//            if (deviceName != null) {
+//                deviceName.setOnPreferenceChangeListener((preference, newValue) -> {
+//                    String name = ((String) newValue).replaceAll("\\s+", "");
+//                    if (name.equals("데이터초기화")) {
+//                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+//                        Dialog tempDialog = builder.setMessage("판매 및 결제 데이터를 삭제하시겠습니까?\n\n*주의* 삭제된 데이터는 복구되지 않습니다")
+//                                .setPositiveButton("Yes", (dialog, which) -> {
+//                                            Utils.deleteAllData(getContext());
+//                                            Utils.alert(getContext(), "데이터 초기화 완료");
+//                                        }
+//                                )
+//                                .setNegativeButton("No", null).show();
+//                        TextView messageView = tempDialog.findViewById(android.R.id.message);
+//                        messageView.setTextSize(26);
+//                        return false;
+//                    }
+//                    //remove spaces
+//                    else if (name.equals("기본 홈")) {
+//                        Intent launchIntent = requireContext().getPackageManager().getLaunchIntentForPackage("com.android.launcher3");
+//                        startActivity(launchIntent);
+//                    }
+//                    return true;
+//                });
+//            }
+//
+//            Preference btnRustDesk = findPreference("rustdesk_settings");
+//            btnRustDesk.setOnPreferenceClickListener(preference -> {
+//                if (rustDeskIntent != null) {
+//                    startActivity(rustDeskIntent);
+//                } else {
+//                    Utils.alert(getContext(), "RustDesk 설치가 필요합니다");
+//                }
+//                return true;
+//            });
+//
+//            Preference btnRemoteView = findPreference("remoteview_settings");
+//            btnRemoteView.setOnPreferenceClickListener(preference -> {
+//                if (remoteViewIntent != null) {
+//                    startActivity(remoteViewIntent);
+//                } else {
+//                    Utils.alert(getContext(), "RemoteView 설치가 필요합니다");
+//                }
+//                return true;
+//            });
+//
+//            Preference btnAndroidSettings = findPreference("android_settings");
+//            btnAndroidSettings.setOnPreferenceClickListener(preference -> {
+//                startActivity(new Intent(Settings.ACTION_SETTINGS));
+//                return true;
+//            });
+//
+//            Preference btnRestartApp = findPreference("restart_app");
+//            btnRestartApp.setOnPreferenceClickListener(preference -> {
+//                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+//                Dialog tempDialog = builder.setMessage("8PRESSO를 재시작하시겠습니까?").setPositiveButton("Yes", (dialog, which) -> Utils.restart(getContext()))
+//                        .setNegativeButton("No", null).show();
+//                TextView messageView = tempDialog.findViewById(android.R.id.message);
+//                messageView.setTextSize(26);
+//                return true;
+//            });
+//            Preference btnAndroidReboot = findPreference("android_reboot");
+//            btnAndroidReboot.setOnPreferenceClickListener(preference -> {
+//                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+//                Dialog tempDialog = builder.setMessage("기기를 재시작하시겠습니까?")
+//                        .setPositiveButton("Yes", (dialog, which) -> {
+//                            String cmd = "su -c reboot";
+//                            try {
+//                                Runtime.getRuntime().exec(cmd);
+//                            } catch (IOException e) {
+//                                e.printStackTrace();
+//                            }
+//                        })
+//                        .setNegativeButton("No", null).show();
+//                TextView messageView = tempDialog.findViewById(android.R.id.message);
+//                messageView.setTextSize(26);
+//                return true;
+//            });
+//        }
     }
 
     public static class AdFragment extends PreferenceFragmentCompat {
@@ -481,76 +431,76 @@ public class AdminSettingsActivity extends AppCompatActivity implements
         }
     }
 
-    public static class AppInfoFragment extends PreferenceFragmentCompat {
-        int autoResetCount = 0;
+//    public static class AppInfoFragment extends PreferenceFragmentCompat {
+//        int autoResetCount = 0;
+//
+//        @Override
+//        public void onCreatePreferencesFix(Bundle savedInstanceState, String rootKey) {
+//            setPreferencesFromResource(R.xml.app_info_preferences, rootKey);
+//            Preference versionName = findPreference("version_name");
+//            Preference launchUpdate = findPreference("launch_update");
+//            launchUpdate.setOnPreferenceClickListener(preference -> {
+//                UpdateApp updateApp = new UpdateApp();
+//                updateApp.setContext(requireContext());
+//                updateApp.execute();
+//                return false;
+//            });
+//        }
+//    }
 
-        @Override
-        public void onCreatePreferencesFix(Bundle savedInstanceState, String rootKey) {
-            setPreferencesFromResource(R.xml.app_info_preferences, rootKey);
-            Preference versionName = findPreference("version_name");
-            Preference launchUpdate = findPreference("launch_update");
-            launchUpdate.setOnPreferenceClickListener(preference -> {
-                UpdateApp updateApp = new UpdateApp();
-                updateApp.setContext(requireContext());
-                updateApp.execute();
-                return false;
-            });
-        }
-    }
 
-
-    public static class DeviceInfoFragment extends PreferenceFragmentCompat {
-        @Override
-        public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
-            setPreferencesFromResource(R.xml.device_info_preferences, rootKey);
-
-            EditTextPreference ipAddress = findPreference("ip_address");
-            ipAddress.setText(getWifiIpAddress(getActivity()));
-            Preference serialNumber = findPreference("serial_no");
-            //serialNumber.setText(Utils.getSerialNumber());
-
-            serialNumber.setOnPreferenceClickListener(preference -> {
-                Bitmap bitmap = Utils.textToQR(Utils.getSerialNumber(getContext()));
-                Utils.alertBitmap(getContext(), bitmap);
-                return true;
-            });
-        }
-
-        protected String getWifiIpAddress(Context context) {
-            try {
-                List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
-                for (NetworkInterface intf : interfaces) {
-                    List<InetAddress> addrs = Collections.list(intf.getInetAddresses());
-                    for (InetAddress addr : addrs) {
-                        if (!addr.isLoopbackAddress()) {
-                            String sAddr = addr.getHostAddress();
-                            boolean isIPv4 = sAddr.indexOf(':') < 0;
-                            if (isIPv4) return sAddr;
-                        }
-                    }
-                }
-            } catch (SocketException ignore) {
-            }
-
-            WifiManager wifiManager = (WifiManager) context.getSystemService(WIFI_SERVICE);
-            int ipAddress = wifiManager.getConnectionInfo().getIpAddress();
-
-            if (ByteOrder.nativeOrder().equals(ByteOrder.LITTLE_ENDIAN)) {
-                ipAddress = Integer.reverseBytes(ipAddress);
-            }
-
-            byte[] ipByteArray = BigInteger.valueOf(ipAddress).toByteArray();
-
-            String ipAddressString;
-            try {
-                ipAddressString = InetAddress.getByAddress(ipByteArray).getHostAddress();
-                return ipAddressString;
-            } catch (UnknownHostException ex) {
-                Utils.logE(TAG, "IP 주소 불러오기 실패");
-                return "IP를 불러올 수 없습니다";
-            }
-        }
-    }
+//    public static class DeviceInfoFragment extends PreferenceFragmentCompat {
+//        @Override
+//        public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
+//            setPreferencesFromResource(R.xml.device_info_preferences, rootKey);
+//
+//            EditTextPreference ipAddress = findPreference("ip_address");
+//            ipAddress.setText(getWifiIpAddress(getActivity()));
+//            Preference serialNumber = findPreference("serial_no");
+//            //serialNumber.setText(Utils.getSerialNumber());
+//
+//            serialNumber.setOnPreferenceClickListener(preference -> {
+//                Bitmap bitmap = Utils.textToQR(Utils.getSerialNumber(getContext()));
+//                Utils.alertBitmap(getContext(), bitmap);
+//                return true;
+//            });
+//        }
+//
+//        protected String getWifiIpAddress(Context context) {
+//            try {
+//                List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
+//                for (NetworkInterface intf : interfaces) {
+//                    List<InetAddress> addrs = Collections.list(intf.getInetAddresses());
+//                    for (InetAddress addr : addrs) {
+//                        if (!addr.isLoopbackAddress()) {
+//                            String sAddr = addr.getHostAddress();
+//                            boolean isIPv4 = sAddr.indexOf(':') < 0;
+//                            if (isIPv4) return sAddr;
+//                        }
+//                    }
+//                }
+//            } catch (SocketException ignore) {
+//            }
+//
+//            WifiManager wifiManager = (WifiManager) context.getSystemService(WIFI_SERVICE);
+//            int ipAddress = wifiManager.getConnectionInfo().getIpAddress();
+//
+//            if (ByteOrder.nativeOrder().equals(ByteOrder.LITTLE_ENDIAN)) {
+//                ipAddress = Integer.reverseBytes(ipAddress);
+//            }
+//
+//            byte[] ipByteArray = BigInteger.valueOf(ipAddress).toByteArray();
+//
+//            String ipAddressString;
+//            try {
+//                ipAddressString = InetAddress.getByAddress(ipByteArray).getHostAddress();
+//                return ipAddressString;
+//            } catch (UnknownHostException ex) {
+//                Utils.logE(TAG, "IP 주소 불러오기 실패");
+//                return "IP를 불러올 수 없습니다";
+//            }
+//        }
+//    }
 
     public static class IdleScreenFragment extends PreferenceFragmentCompat {
 
@@ -595,220 +545,220 @@ public class AdminSettingsActivity extends AppCompatActivity implements
         }
     }
 
-    public static class ProductSettingsFragment extends PreferenceFragmentCompat {
-        @Override
-        public void onCreatePreferencesFix(Bundle savedInstanceState, String rootKey) {
-            setPreferencesFromResource(R.xml.product_settings_preferences, rootKey);
+//    public static class ProductSettingsFragment extends PreferenceFragmentCompat {
+//        @Override
+//        public void onCreatePreferencesFix(Bundle savedInstanceState, String rootKey) {
+//            setPreferencesFromResource(R.xml.product_settings_preferences, rootKey);
+//
+//            Preference dessertSettings = findPreference("dessert_settings");
+//            ListPreference dessertPort = findPreference("dessert_port");
+//
+//            dessertSettings.setOnPreferenceClickListener(preference -> {
+//                Fragment productFragment = new DessertProductManageFragment();
+//                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+//                String title = dessertSettings.getTitle().toString();
+//                getActivity().setTitle(title);
+//                transaction.replace(R.id.settings, productFragment, title); // give your fragment container id in first parameter
+//                transaction.addToBackStack(title);  // if written, this transaction will be added to backstack
+//                transaction.commit();
+//                return true;
+//            });
+//
+//            String[] ports = SerialPortFinder.getAllDevicesPath();
+//            dessertPort.setEntries(ports);
+//            dessertPort.setEntryValues(ports);
+//        }
+//    }
 
-            Preference dessertSettings = findPreference("dessert_settings");
-            ListPreference dessertPort = findPreference("dessert_port");
+//    public static class DataFragment extends PreferenceFragmentCompat {
+//
+//        @Override
+//        public void onCreatePreferencesFix(Bundle savedInstanceState, String rootKey) {
+//            setPreferencesFromResource(R.xml.data_preferences, rootKey);
+//
+//            Preference btnDataBackup = findPreference("data_backup_header");
+//            btnDataBackup.setOnPreferenceClickListener(preference -> {
+//                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+//                Dialog tempDialog = builder.setMessage("데이터를 백업하시겠습니까?").setPositiveButton("Yes", (dialogInterface, i) -> {
+//                            try {
+//                                String msg = "";
+//                                switch (Backup.exportData(getContext(), 0)) {
+//                                    case Backup.RESULT_SUCCESS:
+//                                        msg = "백업을 완료했습니다.";
+//                                        break;
+//                                    case Backup.RESULT_NO_DISK:
+//                                        msg = "USB 또는 마이크로 SD 카드가 없습니다.";
+//                                        break;
+//                                    case Backup.RESULT_UNKNOWN:
+//                                        msg = "백업을 실패했습니다.";
+//                                        break;
+//                                    default:
+//                                }
+//                                Utils.alert(getContext(), msg);
+//                            } catch (Exception e) {
+//                                e.printStackTrace();
+//                            }
+//                        })
+//                        .setNegativeButton("No", null).show();
+//                TextView messageView = tempDialog.findViewById(android.R.id.message);
+//                messageView.setTextSize(26);
+//                return true;
+//            });
+//
+//            Preference btnDataLoad = findPreference("data_load_header");
+//            btnDataLoad.setOnPreferenceClickListener(preference -> {
+//                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+//                Dialog tempDialog = builder.setMessage("데이터를 불러오시겠습니까?\n\n*주의* 기존 데이터는 삭제됩니다.").setPositiveButton("Yes", (dialogInterface, i) -> {
+//                            try {
+//                                String msg = "";
+//                                switch (Backup.importData(getContext(), 0)) {
+//                                    case Backup.RESULT_SUCCESS:
+//                                        msg = "로드를 완료했습니다.\n앱을 재시작합니다.";
+//                                        final Handler handler = new Handler(Looper.getMainLooper());
+//                                        handler.postDelayed(() -> Utils.restart(getContext()), 3000);
+//                                        break;
+//                                    case Backup.RESULT_NO_DISK:
+//                                        msg = "USB 또는 마이크로 SD 카드가 없습니다.";
+//                                        break;
+//                                    case Backup.RESULT_NO_FILE:
+//                                        msg = "불러올 백업 파일이 없습니다.";
+//                                        break;
+//                                    case Backup.RESULT_UNKNOWN:
+//                                        msg = "로드를 실패했습니다.";
+//                                        break;
+//                                    default:
+//                                }
+//                                Utils.alert(getContext(), msg);
+//                            } catch (Exception e) {
+//                                e.printStackTrace();
+//                            }
+//                        })
+//                        .setNegativeButton("No", null).show();
+//                TextView messageView = tempDialog.findViewById(android.R.id.message);
+//                messageView.setTextSize(26);
+//                return true;
+//            });
+//
+//        }
+//    }
 
-            dessertSettings.setOnPreferenceClickListener(preference -> {
-                Fragment productFragment = new DessertProductManageFragment();
-                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                String title = dessertSettings.getTitle().toString();
-                getActivity().setTitle(title);
-                transaction.replace(R.id.settings, productFragment, title); // give your fragment container id in first parameter
-                transaction.addToBackStack(title);  // if written, this transaction will be added to backstack
-                transaction.commit();
-                return true;
-            });
+//    public static class PaycoSettingsFragment extends PreferenceFragmentCompat {
+//        @Override
+//        public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
+//            setPreferencesFromResource(R.xml.payco_settings_preferences, rootKey);
+//            SwitchPreference usePayco = findPreference("use_payco");
+//
+//            usePayco.setOnPreferenceChangeListener((preference, newValue) -> {
+//                PreferenceManager.setBoolean(getContext(), "use_payco", (boolean) newValue);
+//                return true;
+//            });
+//
+//            EditTextPreference registrationNumber = findPreference("registration_number");
+//            registrationNumber.setOnPreferenceChangeListener((preference, newValue) -> {
+//                PreferenceManager.setString(getContext(), "registration_number", newValue.toString());
+//                registrationNumber.setText(newValue.toString());
+//                return false;
+//            });
+//
+//            EditTextPreference vanPosTid = findPreference("van_pos_tid");
+//            vanPosTid.setOnPreferenceChangeListener((preference, newValue) -> {
+//                PreferenceManager.setString(getContext(), "van_pos_tid", newValue.toString());
+//                vanPosTid.setText(newValue.toString());
+//                return false;
+//            });
+//
+//            Preference registPayco = findPreference("regist_payco");
+//            registPayco.setOnPreferenceClickListener(preference -> {
+//                Payco payco = new Payco(getContext());
+//                payco.setOnRegisterCallback(new Payco.OnRegisterCallback(){
+//                    Handler handler = new Handler();
+//                    @Override
+//                    public void onRegisterResult(String result) {
+//                        if (result.equals("OK")) {
+//                            handler.post(() -> Toast.makeText(getContext(), "가맹점 등록이 완료되었습니다.", Toast.LENGTH_SHORT).show());
+//                        }
+//                    }
+//                    @Override
+//                    public void onRegisterException(Exception e) {
+//                        handler.post(() -> Toast.makeText(getContext(), "가맹점 등록에 실패했습니다.", Toast.LENGTH_SHORT).show());
+//                    }
+//                });
+//
+//
+//                payco.execute(Payco.REGISTER);
+//                return false;
+//            });
+//
+//            EditTextPreference paycoCountdown = findPreference("payco_countdown");
+//            paycoCountdown.setOnPreferenceChangeListener((preference, newValue) -> {
+//                PreferenceManager.setString(getContext(), "payco_countdown", newValue.toString());
+//                paycoCountdown.setText(newValue.toString());
+//                return false;
+//            });
+//        }
+//    }
 
-            String[] ports = SerialPortFinder.getAllDevicesPath();
-            dessertPort.setEntries(ports);
-            dessertPort.setEntryValues(ports);
-        }
-    }
-
-    public static class DataFragment extends PreferenceFragmentCompat {
-
-        @Override
-        public void onCreatePreferencesFix(Bundle savedInstanceState, String rootKey) {
-            setPreferencesFromResource(R.xml.data_preferences, rootKey);
-
-            Preference btnDataBackup = findPreference("data_backup_header");
-            btnDataBackup.setOnPreferenceClickListener(preference -> {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                Dialog tempDialog = builder.setMessage("데이터를 백업하시겠습니까?").setPositiveButton("Yes", (dialogInterface, i) -> {
-                            try {
-                                String msg = "";
-                                switch (Backup.exportData(getContext(), 0)) {
-                                    case Backup.RESULT_SUCCESS:
-                                        msg = "백업을 완료했습니다.";
-                                        break;
-                                    case Backup.RESULT_NO_DISK:
-                                        msg = "USB 또는 마이크로 SD 카드가 없습니다.";
-                                        break;
-                                    case Backup.RESULT_UNKNOWN:
-                                        msg = "백업을 실패했습니다.";
-                                        break;
-                                    default:
-                                }
-                                Utils.alert(getContext(), msg);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        })
-                        .setNegativeButton("No", null).show();
-                TextView messageView = tempDialog.findViewById(android.R.id.message);
-                messageView.setTextSize(26);
-                return true;
-            });
-
-            Preference btnDataLoad = findPreference("data_load_header");
-            btnDataLoad.setOnPreferenceClickListener(preference -> {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                Dialog tempDialog = builder.setMessage("데이터를 불러오시겠습니까?\n\n*주의* 기존 데이터는 삭제됩니다.").setPositiveButton("Yes", (dialogInterface, i) -> {
-                            try {
-                                String msg = "";
-                                switch (Backup.importData(getContext(), 0)) {
-                                    case Backup.RESULT_SUCCESS:
-                                        msg = "로드를 완료했습니다.\n앱을 재시작합니다.";
-                                        final Handler handler = new Handler(Looper.getMainLooper());
-                                        handler.postDelayed(() -> Utils.restart(getContext()), 3000);
-                                        break;
-                                    case Backup.RESULT_NO_DISK:
-                                        msg = "USB 또는 마이크로 SD 카드가 없습니다.";
-                                        break;
-                                    case Backup.RESULT_NO_FILE:
-                                        msg = "불러올 백업 파일이 없습니다.";
-                                        break;
-                                    case Backup.RESULT_UNKNOWN:
-                                        msg = "로드를 실패했습니다.";
-                                        break;
-                                    default:
-                                }
-                                Utils.alert(getContext(), msg);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        })
-                        .setNegativeButton("No", null).show();
-                TextView messageView = tempDialog.findViewById(android.R.id.message);
-                messageView.setTextSize(26);
-                return true;
-            });
-
-        }
-    }
-
-    public static class PaycoSettingsFragment extends PreferenceFragmentCompat {
-        @Override
-        public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
-            setPreferencesFromResource(R.xml.payco_settings_preferences, rootKey);
-            SwitchPreference usePayco = findPreference("use_payco");
-            
-            usePayco.setOnPreferenceChangeListener((preference, newValue) -> {
-                PreferenceManager.setBoolean(getContext(), "use_payco", (boolean) newValue);
-                return true;
-            });
-
-            EditTextPreference registrationNumber = findPreference("registration_number");
-            registrationNumber.setOnPreferenceChangeListener((preference, newValue) -> {
-                PreferenceManager.setString(getContext(), "registration_number", newValue.toString());
-                registrationNumber.setText(newValue.toString());
-                return false;
-            });
-
-            EditTextPreference vanPosTid = findPreference("van_pos_tid");
-            vanPosTid.setOnPreferenceChangeListener((preference, newValue) -> {
-                PreferenceManager.setString(getContext(), "van_pos_tid", newValue.toString());
-                vanPosTid.setText(newValue.toString());
-                return false;
-            });
-
-            Preference registPayco = findPreference("regist_payco");
-            registPayco.setOnPreferenceClickListener(preference -> {
-                Payco payco = new Payco(getContext());
-                payco.setOnRegisterCallback(new Payco.OnRegisterCallback(){
-                    Handler handler = new Handler();
-                    @Override
-                    public void onRegisterResult(String result) {
-                        if (result.equals("OK")) {
-                            handler.post(() -> Toast.makeText(getContext(), "가맹점 등록이 완료되었습니다.", Toast.LENGTH_SHORT).show());
-                        }
-                    }
-                    @Override
-                    public void onRegisterException(Exception e) {
-                        handler.post(() -> Toast.makeText(getContext(), "가맹점 등록에 실패했습니다.", Toast.LENGTH_SHORT).show());
-                    }
-                });
-
-
-                payco.execute(Payco.REGISTER);
-                return false;
-            });
-
-            EditTextPreference paycoCountdown = findPreference("payco_countdown");
-            paycoCountdown.setOnPreferenceChangeListener((preference, newValue) -> {
-                PreferenceManager.setString(getContext(), "payco_countdown", newValue.toString());
-                paycoCountdown.setText(newValue.toString());
-                return false;
-            });
-        }
-    }
-
-    public static class VanCorpCodeSettingFragment extends PreferenceFragmentCompat {
-        @Override
-        public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
-            setPreferencesFromResource(R.xml.van_corp_code_setting, rootKey);
-
-            CheckBoxPreference vanCorpCode1 = findPreference("van_corp_code_1");
-            CheckBoxPreference vanCorpCode2 = findPreference("van_corp_code_2");
-            CheckBoxPreference vanCorpCode3 = findPreference("van_corp_code_3");
-            CheckBoxPreference vanCorpCode4 = findPreference("van_corp_code_4");
-
-            vanCorpCode1.setOnPreferenceChangeListener((preference, newValue) -> {
-                if(newValue.toString().equals("true")){
-                    PreferenceManager.setString(getContext(), "van_corp_code", "KCP");
-                    vanCorpCode1.setChecked(true);
-                    vanCorpCode2.setChecked(false);
-                    vanCorpCode3.setChecked(false);
-                    vanCorpCode4.setChecked(false);
-                }else{
-                    PreferenceManager.setString(getContext(), "van_corp_code", "");
-                }
-                return false;
-            });
-
-            vanCorpCode2.setOnPreferenceChangeListener((preference, newValue) -> {
-                if (newValue.toString().equals("true")) {
-                    PreferenceManager.setString(getContext(), "van_corp_code", "KICC");
-                    vanCorpCode1.setChecked(false);
-                    vanCorpCode2.setChecked(true);
-                    vanCorpCode3.setChecked(false);
-                    vanCorpCode4.setChecked(false);
-                }else{
-                    PreferenceManager.setString(getContext(), "van_corp_code", "");
-                }
-                return false;
-            });
-
-            vanCorpCode3.setOnPreferenceChangeListener((preference, newValue) -> {
-                if (newValue.toString().equals("true")) {
-                    PreferenceManager.setString(getContext(), "van_corp_code", "NICE");
-                    vanCorpCode1.setChecked(false);
-                    vanCorpCode2.setChecked(false);
-                    vanCorpCode3.setChecked(true);
-                    vanCorpCode4.setChecked(false);
-                }else{
-                    PreferenceManager.setString(getContext(), "van_corp_code", "");
-                }
-                return false;
-            });
-
-            vanCorpCode4.setOnPreferenceChangeListener((preference, newValue) -> {
-                if (newValue.toString().equals("true")) {
-                    PreferenceManager.setString(getContext(), "van_corp_code", "KIS");
-                    vanCorpCode1.setChecked(false);
-                    vanCorpCode2.setChecked(false);
-                    vanCorpCode3.setChecked(false);
-                    vanCorpCode4.setChecked(true);
-                }else{
-                    PreferenceManager.setString(getContext(), "van_corp_code", "");
-                }
-                return false;
-            });
-        }
-    }
+//    public static class VanCorpCodeSettingFragment extends PreferenceFragmentCompat {
+//        @Override
+//        public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
+//            setPreferencesFromResource(R.xml.van_corp_code_setting, rootKey);
+//
+//            CheckBoxPreference vanCorpCode1 = findPreference("van_corp_code_1");
+//            CheckBoxPreference vanCorpCode2 = findPreference("van_corp_code_2");
+//            CheckBoxPreference vanCorpCode3 = findPreference("van_corp_code_3");
+//            CheckBoxPreference vanCorpCode4 = findPreference("van_corp_code_4");
+//
+//            vanCorpCode1.setOnPreferenceChangeListener((preference, newValue) -> {
+//                if(newValue.toString().equals("true")){
+//                    PreferenceManager.setString(getContext(), "van_corp_code", "KCP");
+//                    vanCorpCode1.setChecked(true);
+//                    vanCorpCode2.setChecked(false);
+//                    vanCorpCode3.setChecked(false);
+//                    vanCorpCode4.setChecked(false);
+//                }else{
+//                    PreferenceManager.setString(getContext(), "van_corp_code", "");
+//                }
+//                return false;
+//            });
+//
+//            vanCorpCode2.setOnPreferenceChangeListener((preference, newValue) -> {
+//                if (newValue.toString().equals("true")) {
+//                    PreferenceManager.setString(getContext(), "van_corp_code", "KICC");
+//                    vanCorpCode1.setChecked(false);
+//                    vanCorpCode2.setChecked(true);
+//                    vanCorpCode3.setChecked(false);
+//                    vanCorpCode4.setChecked(false);
+//                }else{
+//                    PreferenceManager.setString(getContext(), "van_corp_code", "");
+//                }
+//                return false;
+//            });
+//
+//            vanCorpCode3.setOnPreferenceChangeListener((preference, newValue) -> {
+//                if (newValue.toString().equals("true")) {
+//                    PreferenceManager.setString(getContext(), "van_corp_code", "NICE");
+//                    vanCorpCode1.setChecked(false);
+//                    vanCorpCode2.setChecked(false);
+//                    vanCorpCode3.setChecked(true);
+//                    vanCorpCode4.setChecked(false);
+//                }else{
+//                    PreferenceManager.setString(getContext(), "van_corp_code", "");
+//                }
+//                return false;
+//            });
+//
+//            vanCorpCode4.setOnPreferenceChangeListener((preference, newValue) -> {
+//                if (newValue.toString().equals("true")) {
+//                    PreferenceManager.setString(getContext(), "van_corp_code", "KIS");
+//                    vanCorpCode1.setChecked(false);
+//                    vanCorpCode2.setChecked(false);
+//                    vanCorpCode3.setChecked(false);
+//                    vanCorpCode4.setChecked(true);
+//                }else{
+//                    PreferenceManager.setString(getContext(), "van_corp_code", "");
+//                }
+//                return false;
+//            });
+//        }
+//    }
 }
