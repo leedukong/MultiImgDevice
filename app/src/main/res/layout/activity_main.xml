@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    tools:context=".MainActivity">
+    android:gravity="center">
 
+    <!-- trigger_button -->
     <Button
         android:id="@+id/trigger_button"
         android:layout_width="match_parent"
@@ -14,5 +13,27 @@
         android:text="이미지 적용 및 문구 수정"
         android:textSize="24sp"
         android:textColor="@android:color/white"
-        android:background="@android:color/holo_blue_light" />
-</LinearLayout>
+        android:background="@android:color/holo_blue_light"
+        android:onClick="onTriggerButtonClick" />
+
+    <!-- setting_button -->
+    <Button
+        android:id="@+id/setting_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="열 번 클릭"
+        android:textSize="24sp"
+        android:textColor="@android:color/black"
+        android:background="@android:color/holo_blue_light"
+        android:layout_gravity="top|end"
+        android:onClick="onSettingButtonClick" />
+
+    <!-- View to intercept clicks -->
+    <View
+        android:id="@+id/click_interceptor"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:visibility="gone" />
+
+</FrameLayout>

@@ -3,14 +3,25 @@ package com.releasetech.multidevice;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.releasetech.multidevice.Manager.PasswordManager;
+import com.releasetech.multidevice.Tool.Utils;
+
 public class MainActivity extends AppCompatActivity {
 
     public static final String DEVTAG = "DEV";
+    private static final String TAG = "[MENU]";
+
+    /* Password Related */
+    private int settingsCount = 0;
+    private PasswordManager passwordManager;
+
+    private void initializeHiddenButton() {
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,13 +29,33 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Button triggerButton = findViewById(R.id.trigger_button);
-        triggerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 클릭 시 실행할 코드 작성
+        View clickInterceptor = findViewById(R.id.click_interceptor);
+
+        triggerButton.setOnClickListener(v -> {
+            if (clickInterceptor.getVisibility() == View.VISIBLE) {
+            } else {
                 Intent intent = new Intent(MainActivity.this, OrderActivity.class);
                 startActivity(intent);
             }
         });
+
+        Button hiddenButton = findViewById(R.id.setting_button);
+        hiddenButton.setOnClickListener(view -> {
+            settingsCount++;
+            clickInterceptor.setVisibility(View.VISIBLE);
+            Utils.logD(TAG, "설정 진입 버튼 : " + settingsCount);
+            if (settingsCount == 10) {
+                //if (passwordManager.wrongPasswordCount >= 10) return;
+                passwordManager.passwordDialog(this);
+                settingsCount = 0;
+            } else if (settingsCount == 100) {
+                passwordManager.resetPasswords();
+                settingsCount = 0;
+            } else if (settingsCount > 90) {
+                Utils.showToast(this, "패스워드 초기화까지 남은 횟수 : " + (100 - settingsCount));
+            }
+        });
+
+        passwordManager = new PasswordManager(this);
     }
 }
