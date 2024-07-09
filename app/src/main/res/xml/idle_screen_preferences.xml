@@ -9,25 +9,13 @@
         app:useSimpleSummaryProvider="true" />
 
     <EditTextPreference
-        android:inputType="number"
-        app:defaultValue="@integer/idle_screen_image_duration"
-        app:key="idle_screen_image_duration"
-        app:title="대기화면 이미지 전환 시간 초"
+        app:defaultValue="화면을 터치 해주세요!!"
+        app:key="message_idle"
+        app:title="대기화면 문구"
         app:useSimpleSummaryProvider="true" />
 
-    <SwitchPreference
-        app:defaultValue="@bool/use_idle_screen"
-        app:key="use_idle_screen"
-        app:summaryOff="대기화면을 사용하지 않습니다."
-        app:summaryOn="대기화면을 사용합니다."
-        app:title="대기화면 사용" />
-
-    <!--
-    <SwitchPreference
-        app:defaultValue="@bool/use_auto_clear_cart"
-        app:key="use_auto_clear_cart"
-        app:summaryOff="일정시간 사용자 입력이 없어도 장바구니를 자동으로 초기화하지 않습니다."
-        app:summaryOn="일정시간 사용자 입력 없을시 장바구니를 자동으로 초기화합니다."
-        app:title="장바구니 초기화 사용" />-->
+    <Preference
+        app:key="ad_idle"
+        app:title="대기화면 광고 교체" />
 
 </PreferenceScreen>

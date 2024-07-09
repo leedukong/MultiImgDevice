@@ -19,12 +19,11 @@
     <!-- setting_button -->
     <Button
         android:id="@+id/setting_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="열 번 클릭"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:textSize="24sp"
         android:textColor="@android:color/black"
-        android:background="@android:color/holo_blue_light"
+        android:background="@android:color/transparent"
         android:layout_gravity="top|end"
         android:onClick="onSettingButtonClick" />
 

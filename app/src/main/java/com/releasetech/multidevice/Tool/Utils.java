@@ -37,6 +37,7 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
+import com.releasetech.multidevice.Database.DBManager;
 import com.releasetech.multidevice.MainActivity;
 
 //import com.releasetech.multidevice.Database.DBManager;
@@ -134,6 +135,16 @@ public class Utils {
             e.printStackTrace();
         }
         return "";
+    }
+
+    public static void deleteAllData(Context context) {
+        DBManager dbManager = new DBManager(context);
+        if (!DBManager.mDB.isOpen()) {
+            dbManager.open();
+            dbManager.create();
+        }
+        dbManager.deleteAllColumns(DBManager.SALES);
+        dbManager.deleteAllColumns(DBManager.CHECKOUT);
     }
 
     public static boolean isImage(String filePath) {

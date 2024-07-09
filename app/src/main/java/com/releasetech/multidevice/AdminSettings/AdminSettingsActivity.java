@@ -2,15 +2,19 @@ package com.releasetech.multidevice.AdminSettings;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.text.InputFilter;
 import android.view.MenuItem;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -18,11 +22,23 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 
+import com.releasetech.multidevice.AdminSettings.ProductManage.ProductManageFragment;
+import com.releasetech.multidevice.Manager.CheckoutManager;
 import com.releasetech.multidevice.R;
 import com.releasetech.multidevice.Tool.MediaReplacer;
 import com.releasetech.multidevice.Tool.Utils;
 import com.takisoft.preferencex.EditTextPreference;
 import com.takisoft.preferencex.PreferenceFragmentCompat;
+
+import java.io.IOException;
+import java.math.BigInteger;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.nio.ByteOrder;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import android_serialport_api.SerialPortFinder;
@@ -196,6 +212,20 @@ public class AdminSettingsActivity extends AppCompatActivity implements
         }
     }
 
+    public static class CartFragment extends PreferenceFragmentCompat {
+        @Override
+        public void onCreatePreferencesFix(Bundle savedInstanceState, String rootKey) {
+            setPreferencesFromResource(R.xml.cart_preferences, rootKey);
+            Utils.setRangeFilter(this, "cart_quantity", 1, 5);
+
+            Preference btnCheckoutSettings = findPreference("checkout_settings");
+            btnCheckoutSettings.setOnPreferenceClickListener(preference -> {
+                CheckoutManager.openSettings(getActivity());
+                return true;
+            });
+        }
+    }
+
     @Override
     public void onBackPressed() {
         if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
@@ -215,12 +245,11 @@ public class AdminSettingsActivity extends AppCompatActivity implements
             comPort.setEntries(ports);
             comPort.setEntryValues(ports);
 
-            //todo 수정
-            //setupSpecialPreferences();
+            setupSpecialPreferences();
         }
 
-//        private void setupSpecialPreferences() {
-//
+        private void setupSpecialPreferences() {
+
 //            EditTextPreference deviceName = findPreference("device_name");
 //            if (deviceName != null) {
 //                deviceName.setOnPreferenceChangeListener((preference, newValue) -> {
@@ -246,99 +275,33 @@ public class AdminSettingsActivity extends AppCompatActivity implements
 //                    return true;
 //                });
 //            }
-//
-//            Preference btnRustDesk = findPreference("rustdesk_settings");
-//            btnRustDesk.setOnPreferenceClickListener(preference -> {
-//                if (rustDeskIntent != null) {
-//                    startActivity(rustDeskIntent);
-//                } else {
-//                    Utils.alert(getContext(), "RustDesk 설치가 필요합니다");
-//                }
-//                return true;
-//            });
-//
-//            Preference btnRemoteView = findPreference("remoteview_settings");
-//            btnRemoteView.setOnPreferenceClickListener(preference -> {
-//                if (remoteViewIntent != null) {
-//                    startActivity(remoteViewIntent);
-//                } else {
-//                    Utils.alert(getContext(), "RemoteView 설치가 필요합니다");
-//                }
-//                return true;
-//            });
-//
-//            Preference btnAndroidSettings = findPreference("android_settings");
-//            btnAndroidSettings.setOnPreferenceClickListener(preference -> {
-//                startActivity(new Intent(Settings.ACTION_SETTINGS));
-//                return true;
-//            });
-//
-//            Preference btnRestartApp = findPreference("restart_app");
-//            btnRestartApp.setOnPreferenceClickListener(preference -> {
-//                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-//                Dialog tempDialog = builder.setMessage("8PRESSO를 재시작하시겠습니까?").setPositiveButton("Yes", (dialog, which) -> Utils.restart(getContext()))
-//                        .setNegativeButton("No", null).show();
-//                TextView messageView = tempDialog.findViewById(android.R.id.message);
-//                messageView.setTextSize(26);
-//                return true;
-//            });
-//            Preference btnAndroidReboot = findPreference("android_reboot");
-//            btnAndroidReboot.setOnPreferenceClickListener(preference -> {
-//                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-//                Dialog tempDialog = builder.setMessage("기기를 재시작하시겠습니까?")
-//                        .setPositiveButton("Yes", (dialog, which) -> {
-//                            String cmd = "su -c reboot";
-//                            try {
-//                                Runtime.getRuntime().exec(cmd);
-//                            } catch (IOException e) {
-//                                e.printStackTrace();
-//                            }
-//                        })
-//                        .setNegativeButton("No", null).show();
-//                TextView messageView = tempDialog.findViewById(android.R.id.message);
-//                messageView.setTextSize(26);
-//                return true;
-//            });
-//        }
-    }
 
-    public static class AdFragment extends PreferenceFragmentCompat {
+            Preference btnAndroidSettings = findPreference("android_settings");
+            btnAndroidSettings.setOnPreferenceClickListener(preference -> {
+                startActivity(new Intent(Settings.ACTION_SETTINGS));
+                return true;
+            });
 
-        @Override
-        public void onCreatePreferencesFix(Bundle savedInstanceState, String rootKey) {
-            setPreferencesFromResource(R.xml.ad_preferences, rootKey);
-
-            Preference btnReplaceIdleAd = findPreference("ad_idle");
-            btnReplaceIdleAd.setOnPreferenceClickListener(preference -> {
+            Preference btnRestartApp = findPreference("restart_app");
+            btnRestartApp.setOnPreferenceClickListener(preference -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                Dialog tempDialog = builder.setMessage("[대기]화면 광고를 교체하시겠습니까?\n\n*주의* 기존 파일은 복구되지 않습니다")
-                        .setPositiveButton("Yes", (dialog, which) -> Utils.alert(getContext(), MediaReplacer.replaceIdleAd(getContext())))
+                Dialog tempDialog = builder.setMessage("MULTIDEVICE를 재시작하시겠습니까?").setPositiveButton("Yes", (dialog, which) -> Utils.restart(getContext()))
                         .setNegativeButton("No", null).show();
                 TextView messageView = tempDialog.findViewById(android.R.id.message);
                 messageView.setTextSize(26);
                 return true;
             });
-
-            Preference btnReplaceMenuAd = findPreference("ad_menu");
-            btnReplaceMenuAd.setOnPreferenceClickListener(preference -> {
+            Preference btnAndroidReboot = findPreference("android_reboot");
+            btnAndroidReboot.setOnPreferenceClickListener(preference -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                Dialog tempDialog = builder.setMessage("[메뉴]화면 광고를 교체하시겠습니까?\n\n*주의* 기존 파일은 복구되지 않습니다")
-                        .setPositiveButton("Yes", (dialog, which) -> Utils.alert(getContext(), MediaReplacer.replaceMenuAd(getContext())))
-                        .setNegativeButton("No", null).show();
-                TextView messageView = tempDialog.findViewById(android.R.id.message);
-                messageView.setTextSize(26);
-                return true;
-            });
-
-            Preference btnReplaceMakingAd = findPreference("ad_making");
-            btnReplaceMakingAd.setOnPreferenceClickListener(preference -> {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                Dialog tempDialog = builder.setMessage("[제조]화면 광고를 교체하시겠습니까?\n\n*주의* 기존 파일은 복구되지 않습니다")
+                Dialog tempDialog = builder.setMessage("기기를 재시작하시겠습니까?")
                         .setPositiveButton("Yes", (dialog, which) -> {
-                            getActivity().runOnUiThread(() -> {
-                                String result = MediaReplacer.replaceMakingAd(getContext());
-                                Utils.alert(getContext(), result);
-                            });
+                            String cmd = "su -c reboot";
+                            try {
+                                Runtime.getRuntime().exec(cmd);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         })
                         .setNegativeButton("No", null).show();
                 TextView messageView = tempDialog.findViewById(android.R.id.message);
@@ -346,32 +309,31 @@ public class AdminSettingsActivity extends AppCompatActivity implements
                 return true;
             });
         }
-
     }
 
     private static boolean isEntering = false;
     private static boolean shiftPressed = false;
     private static String queueString ="";
-    public static class DesignFragment extends PreferenceFragmentCompat{
-        @Override
-        public void onCreatePreferencesFix(Bundle savedInstanceState, String rootKey) {
-            setPreferencesFromResource(R.xml.design_screen_preferences, rootKey);
-
-            Preference btnReplaceDesign = findPreference("replace_design");
-            btnReplaceDesign.setOnPreferenceClickListener(preference -> {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                Dialog tempDialog = builder.setMessage("디자인을 교체하시겠습니까?\n\n*주의* 기존 파일은 복구되지 않습니다")
-                        .setPositiveButton("Yes", (dialog, which) ->
-                                Utils.alert(getContext(),
-                                        MediaReplacer.replaceDesign(getContext())
-                                )
-                        )
-                        .setNegativeButton("No", null).show();
-                TextView messageView = tempDialog.findViewById(android.R.id.message);
-                messageView.setTextSize(26);
-                return true;
-            });
-
+//    public static class DesignFragment extends PreferenceFragmentCompat{
+//        @Override
+//        public void onCreatePreferencesFix(Bundle savedInstanceState, String rootKey) {
+//            setPreferencesFromResource(R.xml.design_screen_preferences, rootKey);
+//
+//            Preference btnReplaceDesign = findPreference("replace_design");
+//            btnReplaceDesign.setOnPreferenceClickListener(preference -> {
+//                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+//                Dialog tempDialog = builder.setMessage("디자인을 교체하시겠습니까?\n\n*주의* 기존 파일은 복구되지 않습니다")
+//                        .setPositiveButton("Yes", (dialog, which) ->
+//                                Utils.alert(getContext(),
+//                                        MediaReplacer.replaceDesign(getContext())
+//                                )
+//                        )
+//                        .setNegativeButton("No", null).show();
+//                TextView messageView = tempDialog.findViewById(android.R.id.message);
+//                messageView.setTextSize(26);
+//                return true;
+//            });
+//
 //            Preference btnReplaceDesignFromServer = findPreference("replace_design_from_server");
 //            btnReplaceDesignFromServer.setOnPreferenceClickListener(preference -> {
 //                StringBuilder stringBuilder = new StringBuilder();
@@ -428,8 +390,8 @@ public class AdminSettingsActivity extends AppCompatActivity implements
 //                });
 //                return false;
 //            });
-        }
-    }
+//        }
+//    }
 
 //    public static class AppInfoFragment extends PreferenceFragmentCompat {
 //        int autoResetCount = 0;
@@ -449,58 +411,50 @@ public class AdminSettingsActivity extends AppCompatActivity implements
 //    }
 
 
-//    public static class DeviceInfoFragment extends PreferenceFragmentCompat {
-//        @Override
-//        public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
-//            setPreferencesFromResource(R.xml.device_info_preferences, rootKey);
-//
-//            EditTextPreference ipAddress = findPreference("ip_address");
-//            ipAddress.setText(getWifiIpAddress(getActivity()));
-//            Preference serialNumber = findPreference("serial_no");
-//            //serialNumber.setText(Utils.getSerialNumber());
-//
-//            serialNumber.setOnPreferenceClickListener(preference -> {
-//                Bitmap bitmap = Utils.textToQR(Utils.getSerialNumber(getContext()));
-//                Utils.alertBitmap(getContext(), bitmap);
-//                return true;
-//            });
-//        }
-//
-//        protected String getWifiIpAddress(Context context) {
-//            try {
-//                List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
-//                for (NetworkInterface intf : interfaces) {
-//                    List<InetAddress> addrs = Collections.list(intf.getInetAddresses());
-//                    for (InetAddress addr : addrs) {
-//                        if (!addr.isLoopbackAddress()) {
-//                            String sAddr = addr.getHostAddress();
-//                            boolean isIPv4 = sAddr.indexOf(':') < 0;
-//                            if (isIPv4) return sAddr;
-//                        }
-//                    }
-//                }
-//            } catch (SocketException ignore) {
-//            }
-//
-//            WifiManager wifiManager = (WifiManager) context.getSystemService(WIFI_SERVICE);
-//            int ipAddress = wifiManager.getConnectionInfo().getIpAddress();
-//
-//            if (ByteOrder.nativeOrder().equals(ByteOrder.LITTLE_ENDIAN)) {
-//                ipAddress = Integer.reverseBytes(ipAddress);
-//            }
-//
-//            byte[] ipByteArray = BigInteger.valueOf(ipAddress).toByteArray();
-//
-//            String ipAddressString;
-//            try {
-//                ipAddressString = InetAddress.getByAddress(ipByteArray).getHostAddress();
-//                return ipAddressString;
-//            } catch (UnknownHostException ex) {
-//                Utils.logE(TAG, "IP 주소 불러오기 실패");
-//                return "IP를 불러올 수 없습니다";
-//            }
-//        }
-//    }
+    public static class DeviceInfoFragment extends PreferenceFragmentCompat {
+        @Override
+        public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
+            setPreferencesFromResource(R.xml.device_info_preferences, rootKey);
+
+            EditTextPreference ipAddress = findPreference("ip_address");
+            ipAddress.setText(getWifiIpAddress(getActivity()));
+        }
+
+        protected String getWifiIpAddress(Context context) {
+            try {
+                List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
+                for (NetworkInterface intf : interfaces) {
+                    List<InetAddress> addrs = Collections.list(intf.getInetAddresses());
+                    for (InetAddress addr : addrs) {
+                        if (!addr.isLoopbackAddress()) {
+                            String sAddr = addr.getHostAddress();
+                            boolean isIPv4 = sAddr.indexOf(':') < 0;
+                            if (isIPv4) return sAddr;
+                        }
+                    }
+                }
+            } catch (SocketException ignore) {
+            }
+
+            WifiManager wifiManager = (WifiManager) context.getSystemService(WIFI_SERVICE);
+            int ipAddress = wifiManager.getConnectionInfo().getIpAddress();
+
+            if (ByteOrder.nativeOrder().equals(ByteOrder.LITTLE_ENDIAN)) {
+                ipAddress = Integer.reverseBytes(ipAddress);
+            }
+
+            byte[] ipByteArray = BigInteger.valueOf(ipAddress).toByteArray();
+
+            String ipAddressString;
+            try {
+                ipAddressString = InetAddress.getByAddress(ipByteArray).getHostAddress();
+                return ipAddressString;
+            } catch (UnknownHostException ex) {
+                Utils.logE(TAG, "IP 주소 불러오기 실패");
+                return "IP를 불러올 수 없습니다";
+            }
+        }
+    }
 
     public static class IdleScreenFragment extends PreferenceFragmentCompat {
 
@@ -517,6 +471,17 @@ public class AdminSettingsActivity extends AppCompatActivity implements
                     Utils.timedAlert(requireContext(), "30초 이상 설정해주세요.", 2);
                     return false;
                 }
+                return true;
+            });
+
+            Preference btnReplaceIdleAd = findPreference("ad_idle");
+            btnReplaceIdleAd.setOnPreferenceClickListener(preference -> {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                Dialog tempDialog = builder.setMessage("[대기]화면 광고를 교체하시겠습니까?\n\n*주의* 기존 파일은 복구되지 않습니다")
+                        .setPositiveButton("Yes", (dialog, which) -> Utils.alert(getContext(), MediaReplacer.replaceIdleAd(getContext())))
+                        .setNegativeButton("No", null).show();
+                TextView messageView = tempDialog.findViewById(android.R.id.message);
+                messageView.setTextSize(26);
                 return true;
             });
         }
@@ -545,30 +510,27 @@ public class AdminSettingsActivity extends AppCompatActivity implements
         }
     }
 
-//    public static class ProductSettingsFragment extends PreferenceFragmentCompat {
-//        @Override
-//        public void onCreatePreferencesFix(Bundle savedInstanceState, String rootKey) {
-//            setPreferencesFromResource(R.xml.product_settings_preferences, rootKey);
-//
-//            Preference dessertSettings = findPreference("dessert_settings");
-//            ListPreference dessertPort = findPreference("dessert_port");
-//
-//            dessertSettings.setOnPreferenceClickListener(preference -> {
-//                Fragment productFragment = new DessertProductManageFragment();
-//                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-//                String title = dessertSettings.getTitle().toString();
-//                getActivity().setTitle(title);
-//                transaction.replace(R.id.settings, productFragment, title); // give your fragment container id in first parameter
-//                transaction.addToBackStack(title);  // if written, this transaction will be added to backstack
-//                transaction.commit();
-//                return true;
-//            });
-//
-//            String[] ports = SerialPortFinder.getAllDevicesPath();
-//            dessertPort.setEntries(ports);
-//            dessertPort.setEntryValues(ports);
-//        }
-//    }
+    public static class ProductSettingsFragment extends PreferenceFragmentCompat {
+        @Override
+        public void onCreatePreferencesFix(Bundle savedInstanceState, String rootKey) {
+            setPreferencesFromResource(R.xml.product_settings_preferences, rootKey);
+
+            Preference dessertSettings = findPreference("dessert_settings");
+
+            dessertSettings.setOnPreferenceClickListener(preference -> {
+                Fragment productFragment = new ProductManageFragment();
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                String title = dessertSettings.getTitle().toString();
+                getActivity().setTitle(title);
+                transaction.replace(R.id.settings, productFragment, title); // give your fragment container id in first parameter
+                transaction.addToBackStack(title);  // if written, this transaction will be added to backstack
+                transaction.commit();
+                return true;
+            });
+
+            String[] ports = SerialPortFinder.getAllDevicesPath();
+        }
+    }
 
 //    public static class DataFragment extends PreferenceFragmentCompat {
 //

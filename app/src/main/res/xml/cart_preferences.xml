@@ -35,11 +35,6 @@
         <Preference
             app:key="checkout_settings"
             app:title="카드 가맹점 설정 (관리자 비밀번호 12345)" />
-
-        <Preference
-            app:fragment="com.releasetech.multidevice.AdminSettings.AdminSettingsActivity$PaycoSettingsFragment"
-            app:key="payco_settings"
-            app:title="페이코 설정" />
     </PreferenceCategory>
 
 </PreferenceScreen>

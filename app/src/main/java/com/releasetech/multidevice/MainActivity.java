@@ -8,6 +8,7 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.releasetech.multidevice.Manager.PasswordManager;
+import com.releasetech.multidevice.Manager.PreferenceManager;
 import com.releasetech.multidevice.Tool.Utils;
 
 public class MainActivity extends AppCompatActivity {
@@ -19,10 +20,6 @@ public class MainActivity extends AppCompatActivity {
     private int settingsCount = 0;
     private PasswordManager passwordManager;
 
-    private void initializeHiddenButton() {
-
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
         Button triggerButton = findViewById(R.id.trigger_button);
         View clickInterceptor = findViewById(R.id.click_interceptor);
+        triggerButton.setText(PreferenceManager.getString(getApplicationContext(), "message_idle"));
 
         triggerButton.setOnClickListener(v -> {
             if (clickInterceptor.getVisibility() == View.VISIBLE) {
