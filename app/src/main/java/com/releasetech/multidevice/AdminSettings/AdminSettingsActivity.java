@@ -24,6 +24,7 @@ import androidx.preference.Preference;
 
 import com.releasetech.multidevice.AdminSettings.ProductManage.ProductManageFragment;
 import com.releasetech.multidevice.Manager.CheckoutManager;
+import com.releasetech.multidevice.Manager.PreferenceManager;
 import com.releasetech.multidevice.R;
 import com.releasetech.multidevice.Tool.MediaReplacer;
 import com.releasetech.multidevice.Tool.Utils;
@@ -482,6 +483,13 @@ public class AdminSettingsActivity extends AppCompatActivity implements
                         .setNegativeButton("No", null).show();
                 TextView messageView = tempDialog.findViewById(android.R.id.message);
                 messageView.setTextSize(26);
+                return true;
+            });
+
+            EditTextPreference idleScreenText = findPreference("message_idle");
+            idleScreenText.setOnPreferenceChangeListener((preference, newValue) -> {
+                PreferenceManager.setString(getContext(), "message_idle", newValue.toString());
+                idleScreenText.setText(newValue.toString());
                 return true;
             });
         }

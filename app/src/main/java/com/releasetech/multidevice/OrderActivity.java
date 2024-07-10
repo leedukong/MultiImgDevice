@@ -2,13 +2,19 @@ package com.releasetech.multidevice;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.collection.ArraySet;
 
 import com.releasetech.multidevice.Manager.PasswordManager;
 import com.releasetech.multidevice.Tool.Utils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class OrderActivity extends AppCompatActivity {
 
@@ -40,5 +46,46 @@ public class OrderActivity extends AppCompatActivity {
         });
 
         passwordManager = new PasswordManager(this);
+
+        numberClick();
+    }
+
+    public void numberClick() {
+        Button buttonNumber[] = new Button[10];
+        buttonNumber[0] = findViewById(R.id.button0);
+        buttonNumber[1] = findViewById(R.id.button1);
+        buttonNumber[2] = findViewById(R.id.button2);
+        buttonNumber[3] = findViewById(R.id.button3);
+        buttonNumber[4] = findViewById(R.id.button4);
+        buttonNumber[5] = findViewById(R.id.button5);
+        buttonNumber[6] = findViewById(R.id.button6);
+        buttonNumber[7] = findViewById(R.id.button7);
+        buttonNumber[8] = findViewById(R.id.button8);
+        buttonNumber[9] = findViewById(R.id.button9);
+        Button buttonBack = findViewById(R.id.buttonBack);
+        Button buttonAdd = findViewById(R.id.buttonAdd);
+
+        StringBuilder number = new StringBuilder();
+        EditText numberText = findViewById(R.id.numberText);
+
+        for (int i = 0; i < 10; i++) {
+            buttonNumber[i].setOnClickListener(view -> {
+                Button btn1 = (Button) view;
+                if (number.length() == 0 && btn1.getText().toString().equals("0")) {
+                    return;
+                } else if (number.length() >= 2) {
+                    return;
+                }
+                number.append(btn1.getText().toString());
+            });
+        }
+        buttonBack.setOnClickListener(view -> {
+            String text = number.toString();
+            if (text.length() > 0) number.deleteCharAt(text.length() - 1);
+        });
+        buttonAdd.setOnClickListener(view -> {
+            numberText.setText(number);
+            number.setLength(0);
+        });
     }
 }
