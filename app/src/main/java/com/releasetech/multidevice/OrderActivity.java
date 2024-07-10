@@ -48,6 +48,12 @@ public class OrderActivity extends AppCompatActivity {
         passwordManager = new PasswordManager(this);
 
         numberClick();
+
+        Button button = findViewById(R.id.button);
+        button.setOnClickListener(view -> {
+            Intent intent = new Intent(OrderActivity.this, DischargeActivity.class);
+            startActivity(intent);
+        });
     }
 
     public void numberClick() {
