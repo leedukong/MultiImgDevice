@@ -1,5 +1,7 @@
 package com.releasetech.multidevice;
 
+import static com.releasetech.multidevice.Database.DataLoader.loadProductByNumber;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +12,7 @@ import android.widget.EditText;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.collection.ArraySet;
 
+import com.releasetech.multidevice.Database.DBManager;
 import com.releasetech.multidevice.Manager.PasswordManager;
 import com.releasetech.multidevice.Tool.Utils;
 
@@ -23,11 +26,15 @@ public class OrderActivity extends AppCompatActivity {
     /* Password Related */
     private int settingsCount = 0;
     private PasswordManager passwordManager;
-
+    DBManager dbManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order);
+
+        dbManager = new DBManager(this);
+        dbManager.open();
+        dbManager.create();
 
         Button hiddenButton = findViewById(R.id.setting_button);
         hiddenButton.setOnClickListener(view -> {
@@ -83,15 +90,16 @@ public class OrderActivity extends AppCompatActivity {
                     return;
                 }
                 number.append(btn1.getText().toString());
+                numberText.setText(number);
             });
         }
         buttonBack.setOnClickListener(view -> {
-            String text = number.toString();
-            if (text.length() > 0) number.deleteCharAt(text.length() - 1);
-        });
-        buttonAdd.setOnClickListener(view -> {
+            number.delete(number.length()-1, number.length());
             numberText.setText(number);
-            number.setLength(0);
+        });
+
+        buttonAdd.setOnClickListener(view -> {
+            Log.i("테스트", ""+loadProductByNumber(dbManager, Integer.parseInt(number.toString())).name);
         });
     }
 }

@@ -1,5 +1,6 @@
 package com.releasetech.multidevice.AdminSettings;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -8,9 +9,11 @@ import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.provider.Settings;
 import android.text.InputFilter;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -53,11 +56,20 @@ public class AdminSettingsActivity extends AppCompatActivity implements
     protected static Intent rustDeskIntent;
     protected static Intent remoteViewIntent;
 
+    @SuppressLint("HandlerLeak")
+    final Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
+            try {
+                //ImageView img = findViewById(R.id.product_serial_state);
 
-    //todo 핸들러
-//    public Handler getHandler() {
-//        return handler;
-//    }
+            } catch (NullPointerException e) {
+            }
+        }
+    };
+
+    public Handler getHandler() {
+        return handler;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

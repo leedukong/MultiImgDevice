@@ -72,7 +72,6 @@ public class Backup {
                 dbManager.create();
                 if(previousVersion) {
 
-                    //todo 여기 수
                     dbManager.replaceSubText(DBManager.CATEGORY, "com.releasetech.multidevice", "com.releasetech.multidevice");
                     dbManager.replaceSubText(DBManager.PRODUCT_IMAGE, "com.releasetech.multidevice", "com.releasetech.multidevice");
                 }

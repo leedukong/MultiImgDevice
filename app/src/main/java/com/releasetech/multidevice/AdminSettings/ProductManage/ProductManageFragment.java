@@ -66,25 +66,25 @@ public class ProductManageFragment extends Fragment {
     private final ArrayList<String> productCategoryNames = new ArrayList<>();
     private final ArrayList<Category> productCategories = new ArrayList<>();
     //todo 핸들러 수정
-//    TimerTask timerTask = new TimerTask() {
-////        @Override
-////        public void run() {
-////            try {
-////                if (isAdded()) {
-////                    Handler handler = ((AdminSettingsActivity) requireActivity()).getHandler();
-////                    Message msg = handler.obtainMessage();
-////                    handler.sendMessage(msg);
-////                }
-////            } catch (NullPointerException e) {
-////                e.printStackTrace();
-////            }
-////        }
-//
-//        @Override
-//        public boolean cancel() {
-//            return super.cancel();
-//        }
-//    };
+    TimerTask timerTask = new TimerTask() {
+        @Override
+        public void run() {
+            try {
+                if (isAdded()) {
+                    Handler handler = ((AdminSettingsActivity) requireActivity()).getHandler();
+                    Message msg = handler.obtainMessage();
+                    handler.sendMessage(msg);
+                }
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public boolean cancel() {
+            return super.cancel();
+        }
+    };
     private ListView categoryListView;
     private final ArrayList<String> productNames = new ArrayList<>();
     private final ArrayList<Product> products = new ArrayList<>();
@@ -166,8 +166,7 @@ public class ProductManageFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        //todo 핸들러 수정
-        //timer.schedule(timerTask, 0, 33);
+        timer.schedule(timerTask, 0, 33);
 
 
         productLayout = requireView().findViewById(R.id.productLayout);
