@@ -4,24 +4,31 @@ import static com.releasetech.multidevice.Database.DataLoader.loadProductByNumbe
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.collection.ArraySet;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.releasetech.multidevice.Database.DBManager;
+import com.releasetech.multidevice.Database.Data.CartItem;
 import com.releasetech.multidevice.Manager.PasswordManager;
 import com.releasetech.multidevice.Tool.Utils;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class OrderActivity extends AppCompatActivity {
 
     private static final String TAG = "[ORDER]";
+
+    private ArrayList<CartItem> arrayList = new ArrayList<>();
+    CartViewAdapter adapter = new CartViewAdapter();
 
     /* Password Related */
     private int settingsCount = 0;
@@ -61,9 +68,15 @@ public class OrderActivity extends AppCompatActivity {
             Intent intent = new Intent(OrderActivity.this, DischargeActivity.class);
             startActivity(intent);
         });
+
+        RecyclerView recyclerView = findViewById(R.id.cart_recyclerView);
+
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
     }
 
     public void numberClick() {
+
         Button buttonNumber[] = new Button[10];
         buttonNumber[0] = findViewById(R.id.button0);
         buttonNumber[1] = findViewById(R.id.button1);
@@ -76,7 +89,7 @@ public class OrderActivity extends AppCompatActivity {
         buttonNumber[8] = findViewById(R.id.button8);
         buttonNumber[9] = findViewById(R.id.button9);
         Button buttonBack = findViewById(R.id.buttonBack);
-        Button buttonAdd = findViewById(R.id.buttonAdd);
+        Button buttonAdd = findViewById(R.id.buttonOk);
 
         StringBuilder number = new StringBuilder();
         EditText numberText = findViewById(R.id.numberText);
@@ -99,7 +112,120 @@ public class OrderActivity extends AppCompatActivity {
         });
 
         buttonAdd.setOnClickListener(view -> {
-            Log.i("테스트", ""+loadProductByNumber(dbManager, Integer.parseInt(number.toString())).name);
+
+            if (adapter.getItemCount() < 5) {
+                CartView(number);
+            } else {
+                try {
+                    Utils.showToast(this, "한 번에 5개까지 주문 가능합니다");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            number.setLength(0);
+            numberText.setText(number);
         });
+    }
+
+    public void CartView(StringBuilder number) {
+
+        Long CartItemCategory = loadProductByNumber(dbManager, Integer.parseInt(number.toString())).category;
+        String CartItemName = loadProductByNumber(dbManager, Integer.parseInt(number.toString())).name;
+        Integer CartItemPrice = loadProductByNumber(dbManager, Integer.parseInt(number.toString())).price;
+
+        CartItem cartItem = new CartItem(CartItemCategory.toString(), CartItemName, CartItemPrice, 1);
+        arrayList.add(cartItem);
+
+        TextView textPrice = findViewById(R.id.total_price);
+        textPrice.setText("합계 : " + arrayList.stream().mapToInt(CartItem::getPrice).sum() + "원");
+
+        adapter.setItems(arrayList);
+    }
+
+    private class CartViewAdapter extends RecyclerView.Adapter<CartViewAdapter.ViewHolder> {
+
+        ArrayList<CartItem> CartItem = new ArrayList<>();
+
+        @NonNull
+        @Override
+        public CartViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cart_layout, parent, false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
+            CartItem item = CartItem.get(position);
+            viewHolder.setItem(item);
+        }
+
+        public void setItems(ArrayList<CartItem> items) {
+            this.CartItem = items;
+            notifyDataSetChanged();
+        }
+
+        @Override
+        public int getItemCount() {
+            return CartItem.size();
+        }
+
+        public class ViewHolder extends RecyclerView.ViewHolder {
+
+            TextView itemName;
+            TextView itemPrice;
+            Button itemIncr;
+            Button itemDecr;
+            TextView itemCount;
+            Button itemRemove;
+            TextView textPrice;
+
+            public ViewHolder(@NonNull View itemView) {
+                super(itemView);
+                itemName = itemView.findViewById(R.id.product_cart_name);
+                itemPrice = itemView.findViewById(R.id.product_cart_price);
+                itemIncr = itemView.findViewById(R.id.cart_incr);
+                itemDecr = itemView.findViewById(R.id.cart_decr);
+                itemCount = itemView.findViewById(R.id.product_cart_count);
+                itemRemove = itemView.findViewById(R.id.cart_remove);
+
+                textPrice = findViewById(R.id.total_price);
+
+                itemIncr.setOnClickListener(view -> {
+                    int position = getAdapterPosition();
+                    int count = Integer.parseInt(itemCount.getText().toString());
+                    CartItem.set(position, new CartItem(CartItem.get(position).categoryName, CartItem.get(position).productName, CartItem.get(position).price / count * (count+1), (count + 1)));
+                    int totalPrice= Integer.parseInt(textPrice.getText().toString().replaceAll("[^0-9]", ""));
+                    textPrice.setText("합계 : " + (totalPrice + (CartItem.get(position).price / (count+1))) + "원");
+                    adapter.notifyDataSetChanged();
+                });
+
+                itemDecr.setOnClickListener(view -> {
+                    int position = getAdapterPosition();
+                    int count = Integer.parseInt(itemCount.getText().toString());
+                    if (Integer.parseInt(itemCount.getText().toString()) > 1) {
+                        CartItem.set(position, new CartItem(CartItem.get(position).categoryName, CartItem.get(position).productName, CartItem.get(position).price / count * (count-1), (count - 1)));
+                        int totalPrice= Integer.parseInt(textPrice.getText().toString().replaceAll("[^0-9]", ""));
+                        textPrice.setText("합계 : " + (totalPrice - (CartItem.get(position).price / (count-1))) + "원");
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+
+                itemRemove.setOnClickListener(view -> {
+                    int position = getAdapterPosition();
+                    int totalPrice= Integer.parseInt(textPrice.getText().toString().replaceAll("[^0-9]", ""));
+                    textPrice.setText("합계 : " + Integer.parseInt(String.valueOf(totalPrice - CartItem.get(position).price)) + "원");
+                    CartItem.remove(position);
+                    adapter.notifyItemRemoved(position);
+                    adapter.notifyItemRangeChanged(position, CartItem.size());
+                });
+            }
+
+            public void setItem(CartItem item) {
+                itemName.setText(item.getProductName());
+                itemPrice.setText(item.getPriceText());
+                itemCount.setText(item.count + "");
+            }
+        }
     }
 }

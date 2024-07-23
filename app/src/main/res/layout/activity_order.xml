@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -147,13 +148,13 @@
         android:background="@drawable/button_background"
         android:text="0"
         android:textSize="24sp"
-        app:layout_constraintEnd_toStartOf="@id/buttonAdd"
+        app:layout_constraintEnd_toStartOf="@id/buttonOk"
         app:layout_constraintStart_toEndOf="@id/buttonBack"
         app:layout_constraintTop_toBottomOf="@id/button8" />
 
     <!-- 담기 -->
     <android.widget.Button
-        android:id="@+id/buttonAdd"
+        android:id="@+id/buttonOk"
         android:layout_width="110dp"
         android:layout_height="110dp"
         android:layout_marginTop="16dp"
@@ -175,12 +176,66 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/button0" />
 
+    <TextView
+        android:id="@+id/cart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:text="장바구니"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/numberText" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/cart_recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="25dp"
+        android:layout_marginVertical="10dp"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toTopOf="@+id/menu_checkout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cart"
+        tools:listitem="@layout/cart_layout" />
+
+    <LinearLayout
+        android:id="@+id/menu_checkout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="50dp"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/total_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="40dp"
+            android:text="합계 : 0원"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/menu_checkout"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/button_checkout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="결제"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </LinearLayout>
+
     <Button
         android:id="@+id/button"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="다음화면"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_height="wrap_content"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
