@@ -4,6 +4,7 @@ import static com.releasetech.multidevice.Database.DataLoader.loadProductByNumbe
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -134,7 +135,19 @@ public class OrderActivity extends AppCompatActivity {
         String CartItemName = loadProductByNumber(dbManager, Integer.parseInt(number.toString())).name;
         Integer CartItemPrice = loadProductByNumber(dbManager, Integer.parseInt(number.toString())).price;
 
-        CartItem cartItem = new CartItem(CartItemCategory.toString(), CartItemName, CartItemPrice, 1);
+        CartItem cartItem = new CartItem(CartItemCategory.toString(), CartItemName, CartItemPrice, 1, Integer.parseInt(number.toString()));
+
+        for (CartItem item : arrayList){
+            if (item.number == cartItem.number) {
+                item.count++;
+                item.price = item.price / (item.count - 1) * item.count;
+                adapter.notifyDataSetChanged();
+
+                TextView textPrice = findViewById(R.id.total_price);
+                textPrice.setText("합계 : " + arrayList.stream().mapToInt(CartItem::getPrice).sum() + "원");
+                return;
+            }
+        }
         arrayList.add(cartItem);
 
         TextView textPrice = findViewById(R.id.total_price);
@@ -194,7 +207,7 @@ public class OrderActivity extends AppCompatActivity {
                 itemIncr.setOnClickListener(view -> {
                     int position = getAdapterPosition();
                     int count = Integer.parseInt(itemCount.getText().toString());
-                    CartItem.set(position, new CartItem(CartItem.get(position).categoryName, CartItem.get(position).productName, CartItem.get(position).price / count * (count+1), (count + 1)));
+                    CartItem.set(position, new CartItem(CartItem.get(position).categoryName, CartItem.get(position).productName, CartItem.get(position).price / count * (count+1), (count + 1), CartItem.get(position).number));
                     int totalPrice= Integer.parseInt(textPrice.getText().toString().replaceAll("[^0-9]", ""));
                     textPrice.setText("합계 : " + (totalPrice + (CartItem.get(position).price / (count+1))) + "원");
                     adapter.notifyDataSetChanged();
@@ -204,7 +217,7 @@ public class OrderActivity extends AppCompatActivity {
                     int position = getAdapterPosition();
                     int count = Integer.parseInt(itemCount.getText().toString());
                     if (Integer.parseInt(itemCount.getText().toString()) > 1) {
-                        CartItem.set(position, new CartItem(CartItem.get(position).categoryName, CartItem.get(position).productName, CartItem.get(position).price / count * (count-1), (count - 1)));
+                        CartItem.set(position, new CartItem(CartItem.get(position).categoryName, CartItem.get(position).productName, CartItem.get(position).price / count * (count-1), (count - 1), CartItem.get(position).number));
                         int totalPrice= Integer.parseInt(textPrice.getText().toString().replaceAll("[^0-9]", ""));
                         textPrice.setText("합계 : " + (totalPrice - (CartItem.get(position).price / (count-1))) + "원");
                         adapter.notifyDataSetChanged();

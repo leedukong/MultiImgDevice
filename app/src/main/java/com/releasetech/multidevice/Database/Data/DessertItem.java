@@ -11,7 +11,7 @@ public class DessertItem extends CartItem implements Serializable, Cloneable {
     }
 
     public DessertItem(String CategoryName, String productName, int price, int number, int count) {
-        super(CategoryName, productName, price, count);
+        super(CategoryName, productName, price, count, number);
         this.number = number;
     }
 

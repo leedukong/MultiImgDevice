@@ -15,15 +15,17 @@ public class CartItem implements Serializable, Cloneable {
     public boolean makingDone = false;
 
     public int count = 1;
+    public int number = 0;
 
     public CartItem() {
     }
 
-    public CartItem(String CategoryName, String productName, int price, int count) {
+    public CartItem(String CategoryName, String productName, int price, int count, int number) {
         this.categoryName = CategoryName;
         this.productName = productName;
         this.price = price;
         this.count = count;
+        this.number = number;
     }
 
     @SuppressLint("DefaultLocale")
