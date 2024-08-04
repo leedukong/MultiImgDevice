@@ -101,6 +101,7 @@ public class MultiDevice implements DevicesStateListener, View.OnClickListener, 
             }
         });
     }
+
     private static class TestHandler extends Handler {
         private final WeakReference<MainActivity> mActivity;
 

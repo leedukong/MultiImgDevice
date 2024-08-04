@@ -589,6 +589,7 @@ public class ProductManageFragment extends Fragment {
         }
     }
 
+
     private void loadProducts() {
         productNames.clear();
         productNames.add("카테고리 설정");

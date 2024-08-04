@@ -1,10 +1,13 @@
 package com.releasetech.multidevice.AdminSettings;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -55,6 +58,7 @@ public class AdminSettingsActivity extends AppCompatActivity implements
 
     protected static Intent rustDeskIntent;
     protected static Intent remoteViewIntent;
+    protected static Intent niceIntent;
 
     @SuppressLint("HandlerLeak")
     final Handler handler = new Handler() {
@@ -104,6 +108,7 @@ public class AdminSettingsActivity extends AppCompatActivity implements
         checkSettingsWritable();
         rustDeskIntent = getPackageManager().getLaunchIntentForPackage("com.carriez.flutter_hbb");
         remoteViewIntent = getPackageManager().getLaunchIntentForPackage("com.rsupport.mobile.agent");
+        niceIntent = getPackageManager().getLaunchIntentForPackage("kr.co.nicevan.androidnvcat");
     }
 
     private void checkSettingsWritable() {
@@ -233,7 +238,8 @@ public class AdminSettingsActivity extends AppCompatActivity implements
 
             Preference btnCheckoutSettings = findPreference("checkout_settings");
             btnCheckoutSettings.setOnPreferenceClickListener(preference -> {
-                CheckoutManager.openSettings(getActivity());
+                startActivity(niceIntent);
+                //CheckoutManager.openSettings(getActivity());
                 return true;
             });
         }

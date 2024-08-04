@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.releasetech.multidevice.AdminSettings.AdminSettingsActivity;
+import com.releasetech.multidevice.ProductSetting.DessertSettingsActivity;
 import com.releasetech.multidevice.R;
 import com.releasetech.multidevice.Tool.Utils;
 
@@ -65,6 +66,10 @@ public class PasswordManager {
                 Intent intent = new Intent(context, AdminSettingsActivity.class);
                 context.startActivity(intent);
                 Utils.logD(TAG, "설정 페이지 진입");
+            } else if(userEnteredPassword.equals(dessertPassword)){
+                Intent intent = new Intent(context, DessertSettingsActivity.class);
+                context.startActivity(intent);
+                Utils.logD(TAG, "디저트 관리 페이지 진입");
             }
             else {
                 wrongPasswordCount++;

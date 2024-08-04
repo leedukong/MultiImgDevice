@@ -72,6 +72,12 @@
             android:launchMode="singleInstance"
             android:theme="@style/Theme.MultiDevice.NoActionBar">\
         </activity>
+        <activity
+            android:name=".ProductSetting.DessertSettingsActivity"
+            android:exported="true"
+            android:launchMode="singleInstance"
+            android:theme="@style/Theme.MultiDevice.NoActionBar">\
+        </activity>
 
         <activity
             android:name=".AdminSettings.AdminSettingsActivity"

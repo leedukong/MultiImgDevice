@@ -34,7 +34,7 @@
     <PreferenceCategory app:title="">
         <Preference
             app:key="checkout_settings"
-            app:title="카드 가맹점 설정 (관리자 비밀번호 12345)" />
+            app:title="카드 가맹점 설정" />
     </PreferenceCategory>
 
 </PreferenceScreen>

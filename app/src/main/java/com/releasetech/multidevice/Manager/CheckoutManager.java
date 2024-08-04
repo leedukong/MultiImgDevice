@@ -1,9 +1,12 @@
 package com.releasetech.multidevice.Manager;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 
 import com.releasetech.multidevice.Tool.Cache;
 import com.releasetech.multidevice.Tool.Utils;
@@ -103,9 +106,7 @@ public class CheckoutManager {
     }
 
     public static void openSettings(Activity activity) {
-        Intent intent = new Intent();
-        intent.setComponent(new ComponentName("kr.co.kicc.easycarda", "kr.co.kicc.easycarda.MainActivity"));
-        activity.startActivity(intent);
+
     }
 
     public static void saveCheckoutCache(Context context, Intent data) {

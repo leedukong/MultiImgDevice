@@ -20,6 +20,13 @@ public class CartItem implements Serializable, Cloneable {
     public CartItem() {
     }
 
+    public CartItem(String CategoryName, String productName, int price, int count) {
+        this.categoryName = CategoryName;
+        this.productName = productName;
+        this.price = price;
+        this.count = count;
+    }
+
     public CartItem(String CategoryName, String productName, int price, int count, int number) {
         this.categoryName = CategoryName;
         this.productName = productName;
