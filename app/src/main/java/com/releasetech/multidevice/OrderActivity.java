@@ -305,7 +305,6 @@ public class OrderActivity extends AppCompatActivity {
                         int count = Integer.parseInt(itemCount.getText().toString());
                         CartItem.set(position, new CartItem(CartItem.get(position).categoryName, CartItem.get(position).productName, CartItem.get(position).price, (count + 1), CartItem.get(position).number));
                         cartManager.add(CartItem.get(position));
-                        itemPrice.setText(String.format("%,d₩", CartItem.get(position).getPrice()*count));
                         adapter.notifyDataSetChanged();
                     }
                     textPrice.setText("합계 : " + cartManager.getTotalPrice() + "원");
@@ -318,7 +317,6 @@ public class OrderActivity extends AppCompatActivity {
                         if (Integer.parseInt(itemCount.getText().toString()) > 1) {
                             CartItem.set(position, new CartItem(CartItem.get(position).categoryName, CartItem.get(position).productName, CartItem.get(position).price, (count - 1), CartItem.get(position).number));
                             cartManager.remove(CartItem.get(position));
-                            itemPrice.setText(String.format("%,d₩", CartItem.get(position).getPrice()*count));
                             adapter.notifyDataSetChanged();
                         }
                     }
