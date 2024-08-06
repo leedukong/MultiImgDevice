@@ -19,8 +19,8 @@ import com.releasetech.multidevice.Tool.Utils;
 public class DessertSettingsActivity extends AppCompatActivity {
 
     private GridLayout gridLayout;
-    private int numRows = 6;
-    private int numCols = 6;
+    private int numRows = 9;
+    private int numCols = 4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

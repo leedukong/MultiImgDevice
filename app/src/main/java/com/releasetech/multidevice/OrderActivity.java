@@ -3,9 +3,7 @@ package com.releasetech.multidevice;
 import static com.releasetech.multidevice.Database.DataLoader.loadProductByNumber;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,9 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.releasetech.multidevice.Database.DBManager;
 import com.releasetech.multidevice.Database.Data.CartItem;
-import com.releasetech.multidevice.Database.Data.Category;
 import com.releasetech.multidevice.Database.Data.DessertItem;
-import com.releasetech.multidevice.Database.Data.Product;
 import com.releasetech.multidevice.Database.DataLoader;
 import com.releasetech.multidevice.Manager.CartManager;
 import com.releasetech.multidevice.Manager.CheckoutManager;
@@ -34,7 +30,7 @@ import com.releasetech.multidevice.Tool.Cache;
 import com.releasetech.multidevice.Tool.Utils;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.stream.Collectors;
+import java.util.Stack;
 
 public class OrderActivity extends AppCompatActivity {
 
@@ -80,6 +76,8 @@ public class OrderActivity extends AppCompatActivity {
             }
         });
 
+        passwordManager = new PasswordManager(this);
+
         numberClick();
 
         Button button = findViewById(R.id.button);
@@ -96,10 +94,33 @@ public class OrderActivity extends AppCompatActivity {
         Button checkoutButton = findViewById(R.id.button_checkout);
         checkoutButton.setOnClickListener(view ->{
             Log.i("테스트", "-------------------");
+
+            Stack stack = new Stack();
+
             for(int i=0; i< cartManager.getCount(); i++){
                 Log.i("테스트", "상품이름"+cartManager.getItem(i).productName);
                 Log.i("테스트", "전체금액 "+cartManager.getTotalPrice()+"");
+
+                stack.push(DataLoader.loadProductByNumber(dbManager, cartManager.getItem(i).number));
             }
+
+//            MultiDevice.throwOutNext(this, stack, new MultiDevice.OnThrowOutListener() {
+//                @Override
+//                public void onThrowOut(String productName) {
+//
+//                }
+//
+//                @Override
+//                public void onThrowOutDone() {
+//                    clearCart();
+//                    arrayList.clear();
+//                    stack.clear();
+//                    adapter.notifyDataSetChanged();
+//                    TextView textPrice = findViewById(R.id.total_price);
+//                    textPrice.setText("합계 : " + cartManager.getTotalPrice() + "원");
+//                }
+//            });
+
             if (cartManager.getCount() > 0 && cartManager.getTotalPrice() > 0) {
                 try {
                     Cache.write(this, "cart_cache", cartManager);
@@ -210,13 +231,14 @@ public class OrderActivity extends AppCompatActivity {
 
         CartItem cartItem = new CartItem(itemCategory.toString(), itemName, itemPrice, 1, number);
 
+        TextView textPrice = findViewById(R.id.total_price);
+
         for (CartItem item : arrayList){
             if (item.number == cartItem.number) {
+                cartManager.add(cartItem);
                 item.count++;
-                item.price = item.price / (item.count - 1) * item.count;
                 adapter.notifyDataSetChanged();
-                TextView textPrice = findViewById(R.id.total_price);
-                textPrice.setText("합계 : " + arrayList.stream().mapToInt(CartItem::getPrice).sum() + "원");
+                textPrice.setText("합계 : " + cartManager.getTotalPrice() + "원");
                 return;
             }
         }
@@ -224,9 +246,7 @@ public class OrderActivity extends AppCompatActivity {
         Log.i("임시 테스트", cartManager.getCount()+"");
 
         arrayList.add(cartItem);
-
-        TextView textPrice = findViewById(R.id.total_price);
-        textPrice.setText("합계 : " + arrayList.stream().mapToInt(CartItem::getPrice).sum() + "원");
+        textPrice.setText("합계 : " + cartManager.getTotalPrice() + "원");
 
         adapter.setItems(arrayList);
     }
@@ -283,8 +303,9 @@ public class OrderActivity extends AppCompatActivity {
                     if(cartManager.getCount()<5) {
                         int position = getAdapterPosition();
                         int count = Integer.parseInt(itemCount.getText().toString());
-                        CartItem.set(position, new CartItem(CartItem.get(position).categoryName, CartItem.get(position).productName, CartItem.get(position).price, (count + 1)));
+                        CartItem.set(position, new CartItem(CartItem.get(position).categoryName, CartItem.get(position).productName, CartItem.get(position).price, (count + 1), CartItem.get(position).number));
                         cartManager.add(CartItem.get(position));
+                        itemPrice.setText(String.format("%,d₩", CartItem.get(position).getPrice()*count));
                         adapter.notifyDataSetChanged();
                     }
                     textPrice.setText("합계 : " + cartManager.getTotalPrice() + "원");
@@ -295,8 +316,9 @@ public class OrderActivity extends AppCompatActivity {
                         int position = getAdapterPosition();
                         int count = Integer.parseInt(itemCount.getText().toString());
                         if (Integer.parseInt(itemCount.getText().toString()) > 1) {
-                            CartItem.set(position, new CartItem(CartItem.get(position).categoryName, CartItem.get(position).productName, CartItem.get(position).price, (count - 1)));
-                            cartManager.remove(position);
+                            CartItem.set(position, new CartItem(CartItem.get(position).categoryName, CartItem.get(position).productName, CartItem.get(position).price, (count - 1), CartItem.get(position).number));
+                            cartManager.remove(CartItem.get(position));
+                            itemPrice.setText(String.format("%,d₩", CartItem.get(position).getPrice()*count));
                             adapter.notifyDataSetChanged();
                         }
                     }
@@ -305,8 +327,8 @@ public class OrderActivity extends AppCompatActivity {
 
                 itemRemove.setOnClickListener(view -> {
                     int position = getAdapterPosition();
+                    cartManager.removeSameIndex(CartItem.get(position));
                     CartItem.remove(position);
-                    cartManager.remove(position);
                     adapter.notifyItemRemoved(position);
                     adapter.notifyItemRangeChanged(position, CartItem.size());
                     textPrice.setText("합계 : " + cartManager.getTotalPrice() + "원");
@@ -315,7 +337,7 @@ public class OrderActivity extends AppCompatActivity {
 
             public void setItem(CartItem item) {
                 itemName.setText(item.getProductName());
-                itemPrice.setText(item.getPriceText());
+                itemPrice.setText(String.format("%,d₩",item.getPrice() * item.count));
                 itemCount.setText(item.count + "");
             }
         }

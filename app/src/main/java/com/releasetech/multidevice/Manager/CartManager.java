@@ -48,29 +48,54 @@ public class CartManager extends DataManager implements Serializable, Cloneable 
         update();
     }
 
-    public void remove(int index) {
+    public void remove(CartItem item) {
         if (locked) {
             return;
         }
-        for (int i = index; i < size - 1; i++) {
-            items[i] = items[i + 1];
-            image[i] = image[i + 1];
-        }
-        items[size - 1] = null;
-        image[size - 1] = null;
-        occupied--;
-        update();
-    }
-
-    public void removeSameIndex(int index){
-        if (locked) {
-            return;
-        }
-        for (int i = 0; i < size -1; i++){
-            if (getItem(index) == getItem(i)){
-                remove(i);
+        for (int i = 0; items[i] != null; i++) {
+            if (item.number == items[i].number) {
+                for (int j = i+1; j < size; j++) {
+                    CartItem k1 = items[j];
+                    String k2 = image[j];
+                    items[j-1] = items[j];
+                    image[j-1] = image[j];
+                    items[j] = k1;
+                    image[j] = k2;
+                }
+                if (occupied == 5) {
+                    items[4] = null;
+                }
+                occupied--;
+                return;
             }
         }
+//        for (int i = index; i < size - 1; i++) {
+//            items[i] = items[i + 1];
+//            image[i] = image[i + 1];
+//        }
+//        items[size - 1] = null;
+//        image[size - 1] = null;
+//        occupied--;
+//        update();
+    }
+
+    public void removeSameIndex(CartItem item) {
+        if (locked) {
+            return;
+        }
+        for (int i = 0; i < size -1; i++) {
+            remove(item);
+        }
+        if (occupied == 1 && item.number == items[0].number) {
+            items[0] = null;
+            image[0] = null;
+            occupied = 0;
+        }
+//        for (int i = 0; i < size -1; i++){
+//            if (getItem(index) == getItem(i)){
+//                remove(getItem(i));
+//            }
+//        }
     }
 
     public void clear() {
