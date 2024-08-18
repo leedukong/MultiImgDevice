@@ -23,6 +23,7 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
@@ -80,6 +81,18 @@ public class Utils {
 //            e.printStackTrace();
             return -1;
         }
+    }
+
+    public static void hideNavBar(Window window){
+        window.getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // 네비게이션 바 숨김
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN // 상태 바 숨김
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY // 사용자가 스와이프해도 잠깐만 나타나게
+        );
+
     }
 
     public static void showToast(Context context, String message) {

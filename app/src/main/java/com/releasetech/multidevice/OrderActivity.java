@@ -3,6 +3,7 @@ package com.releasetech.multidevice;
 import static com.releasetech.multidevice.Database.DataLoader.loadProductByNumber;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,9 +12,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Lifecycle;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,6 +29,7 @@ import com.releasetech.multidevice.Manager.CartManager;
 import com.releasetech.multidevice.Manager.CheckoutManager;
 import com.releasetech.multidevice.Manager.PasswordManager;
 import com.releasetech.multidevice.Manager.PreferenceManager;
+import com.releasetech.multidevice.MultiDevice.MultiDevice;
 import com.releasetech.multidevice.Stock.Stock;
 import com.releasetech.multidevice.Tool.Cache;
 import com.releasetech.multidevice.Tool.Utils;
@@ -36,6 +41,14 @@ public class OrderActivity extends AppCompatActivity {
 
     private static final String TAG = "[ORDER]";
     private ArrayList<CartItem> arrayList = new ArrayList<>();
+
+    int SEND_REQUEST_CODE = 1;
+    int SEND_REQUEST_CHKVALID = 2;
+    int SEND_REQUEST_CHKCARDBIN = 3;
+    int SEND_REQUEST_CHKCASHIC = 4;
+    int SEND_REQUEST_CHKMEMBERSHIP = 5;
+    int SEND_REQUEST_NORMAL = 6;
+    char fs = 0x1C;
 
     /* Order */
     CartManager cartManager;
@@ -59,6 +72,8 @@ public class OrderActivity extends AppCompatActivity {
         dbManager = new DBManager(this);
         dbManager.open();
         dbManager.create();
+
+        Utils.hideNavBar(getWindow());
 
         Button hiddenButton = findViewById(R.id.setting_button);
         hiddenButton.setOnClickListener(view -> {
@@ -94,41 +109,7 @@ public class OrderActivity extends AppCompatActivity {
         Button checkoutButton = findViewById(R.id.button_checkout);
         checkoutButton.setOnClickListener(view ->{
             Log.i("테스트", "-------------------");
-
-            Stack stack = new Stack();
-
-            for(int i=0; i< cartManager.getCount(); i++){
-                Log.i("테스트", "상품이름"+cartManager.getItem(i).productName);
-                Log.i("테스트", "전체금액 "+cartManager.getTotalPrice()+"");
-
-                stack.push(DataLoader.loadProductByNumber(dbManager, cartManager.getItem(i).number));
-            }
-
-//            MultiDevice.throwOutNext(this, stack, new MultiDevice.OnThrowOutListener() {
-//                @Override
-//                public void onThrowOut(String productName) {
-//
-//                }
-//
-//                @Override
-//                public void onThrowOutDone() {
-//                    clearCart();
-//                    arrayList.clear();
-//                    stack.clear();
-//                    adapter.notifyDataSetChanged();
-//                    TextView textPrice = findViewById(R.id.total_price);
-//                    textPrice.setText("합계 : " + cartManager.getTotalPrice() + "원");
-//                }
-//            });
-
-            if (cartManager.getCount() > 0 && cartManager.getTotalPrice() > 0) {
-                try {
-                    Cache.write(this, "cart_cache", cartManager);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                //checkout();
-            }
+            checkout();
         });
     }
 
@@ -213,6 +194,9 @@ public class OrderActivity extends AppCompatActivity {
 
     private void checkout(){
         Utils.logD(TAG, "카드 결제 시도: " + cartManager.getTotalPrice() + "원");
+        for(int i=0; i<cartManager.getCount(); i++) {
+            Log.i("카트 매니저", cartManager.getItem(i).number+"");
+        }
         CheckoutManager.checkout(this, cartManager.getTotalPrice());
         loadCartCache = true;
     }
@@ -340,4 +324,46 @@ public class OrderActivity extends AppCompatActivity {
             }
         }
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == SEND_REQUEST_CODE) { //SEND_REQUEST_CODE에 대한 응답
+            if (resultCode == RESULT_OK) {
+                Toast.makeText(getApplicationContext(), "결제 완료", Toast.LENGTH_SHORT).show();
+
+                Stack stack = new Stack();
+                for(int i=0; i< cartManager.getCount(); i++){
+                    Log.i("테스트", "상품이름"+cartManager.getItem(i).productName);
+                    Log.i("테스트", "전체금액 "+cartManager.getTotalPrice()+"");
+                    stack.push(DataLoader.loadProductByNumber(dbManager, cartManager.getItem(i).number));
+                }
+                MultiDevice.throwOutNext(this, stack, new MultiDevice.OnThrowOutListener() {
+                    @Override
+                    public void onThrowOut(String productName) {
+                        String is = "를";
+                        char lastName = productName.charAt(productName.length() - 1);
+                        if (lastName >= 0xAC00 && lastName <= 0xD7A3) {
+                            if ((lastName - 0xAC00) % 28 > 0) {
+                                is = "을";
+                            }
+                        }
+                        Utils.showToast(getApplicationContext(), productName + is + " 출하합니다.");
+                    }
+
+                    @Override
+                    public void onThrowOutDone() {
+                        if (OrderActivity.this.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) {
+                            runOnUiThread(OrderActivity.this::onResume);
+                        }
+                    }
+                });
+
+            } else if (resultCode == RESULT_CANCELED) {
+                Toast.makeText(getApplicationContext(), "결제 실패", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+
 }
