@@ -85,7 +85,7 @@
             android:label="관리자 설정"
             android:launchMode="singleInstance" />
         <activity
-            android:name=".DischargeActivity"
+            android:name=".ThrowOutActivity"
             android:exported="true"
             android:launchMode="singleInstance"
             android:theme="@style/Theme.MultiDevice.NoActionBar" />

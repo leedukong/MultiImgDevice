@@ -3,7 +3,6 @@ package com.releasetech.multidevice;
 import static com.releasetech.multidevice.Database.DataLoader.loadProductByNumber;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -97,7 +96,15 @@ public class OrderActivity extends AppCompatActivity {
 
         Button button = findViewById(R.id.button);
         button.setOnClickListener(view -> {
-            Intent intent = new Intent(OrderActivity.this, DischargeActivity.class);
+
+            ArrayList throwOutProduct = new ArrayList();
+            for(int i=0; i< cartManager.getCount(); i++){
+                throwOutProduct.add(cartManager.getItem(i).productName);
+            }
+            Log.i("테스트", throwOutProduct.toString());
+
+            Intent intent = new Intent(OrderActivity.this, ThrowOutActivity.class);
+            intent.putExtra("ThrowOutProduct", throwOutProduct);
             startActivity(intent);
         });
 
@@ -131,6 +138,10 @@ public class OrderActivity extends AppCompatActivity {
             cartManager = new CartManager(Integer.parseInt(PreferenceManager.getString(this, "cart_quantity")));
             //cartManager.setOnUpdateListner(dataManager -> stock.applyCart(cartManager));
             clearCart();
+            adapter.CartItem.clear();
+            adapter.notifyDataSetChanged();
+            TextView textPrice = findViewById(R.id.total_price);
+            textPrice.setText("합계 : 0원");
         }
     }
 

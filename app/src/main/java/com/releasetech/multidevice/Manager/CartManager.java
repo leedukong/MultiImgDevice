@@ -1,6 +1,7 @@
 package com.releasetech.multidevice.Manager;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -55,16 +56,11 @@ public class CartManager extends DataManager implements Serializable, Cloneable 
         for (int i = 0; items[i] != null; i++) {
             if (item.number == items[i].number) {
                 for (int j = i+1; j < size; j++) {
-                    CartItem k1 = items[j];
-                    String k2 = image[j];
                     items[j-1] = items[j];
                     image[j-1] = image[j];
-                    items[j] = k1;
-                    image[j] = k2;
                 }
-                if (occupied == 5) {
-                    items[4] = null;
-                }
+                items[size-1] = null;
+                image[size-1] = null;
                 occupied--;
                 return;
             }

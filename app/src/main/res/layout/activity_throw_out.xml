@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ThrowOutActivity">
+
+    <TextView
+        android:id="@+id/discharge_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="150dp"
+        android:text="상품이 투출 중입니다."
+        android:textColor="@color/black"
+        android:textSize="36sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/throw_layout_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/discharge_text">
+
+        <TextView
+            android:id="@+id/throw_product_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="투출준비중"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/throw_state_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:text="(투출전)"
+            android:textSize="24sp" />
+
+        <ImageButton
+            android:id="@+id/throw_button_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:background="@color/white"
+            android:src="@drawable/baseline_circle_24"
+            app:tint="#FE0000" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/throw_layout_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/throw_layout_1">
+
+        <TextView
+            android:id="@+id/throw_product_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="투출준비중"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/throw_state_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:text="(투출전)"
+            android:textSize="24sp" />
+
+        <ImageButton
+            android:id="@+id/throw_button_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:background="@color/white"
+            android:src="@drawable/baseline_circle_24"
+            app:tint="#FE0000" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/throw_layout_3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/throw_layout_2">
+
+        <TextView
+            android:id="@+id/throw_product_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="투출준비중"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/throw_state_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:text="(투출전)"
+            android:textSize="24sp" />
+
+        <ImageButton
+            android:id="@+id/throw_button_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:background="@color/white"
+            android:src="@drawable/baseline_circle_24"
+            app:tint="#FE0000" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/throw_layout_4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/throw_layout_3">
+
+        <TextView
+            android:id="@+id/throw_product_4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="투출준비중"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/throw_state_4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:text="(투출전)"
+            android:textSize="24sp" />
+
+        <ImageButton
+            android:id="@+id/throw_button_4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:background="@color/white"
+            android:src="@drawable/baseline_circle_24"
+            app:tint="#FE0000" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/throw_layout_5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/throw_layout_4">
+
+        <TextView
+            android:id="@+id/throw_product_5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="투출준비중"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/throw_state_5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:text="(투출전)"
+            android:textSize="24sp" />
+
+        <ImageButton
+            android:id="@+id/throw_button_5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:background="@color/white"
+            android:src="@drawable/baseline_circle_24"
+            app:tint="#FE0000" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
