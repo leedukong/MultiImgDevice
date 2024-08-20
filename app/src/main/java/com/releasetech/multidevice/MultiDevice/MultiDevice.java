@@ -46,13 +46,13 @@ public class MultiDevice implements DevicesStateListener, View.OnClickListener, 
         int b = (number - 1) % 6;
         int coordinate = a + b;
         onThrowOutDoneListener.onThrowOut(product.name);
-        DBManager dbManager = new DBManager(context);
+        //DBManager dbManager = new DBManager(context);
         openConnect(context);
         PortController.outGoods(coordinate, new ResultCallBack() {
             @Override
             public void onSuccess(int i, int i1) {
                 Log.i("출하", "성공");
-                dbManager.updateColumnTodecreaseCount(product.id);
+                //dbManager.updateColumnTodecreaseCount(product.id);
                 if (onThrowOutDoneListener != null) onThrowOutDoneListener.onThrowOutDone();
                 locked = false;
             }
