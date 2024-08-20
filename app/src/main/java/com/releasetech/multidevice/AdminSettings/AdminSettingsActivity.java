@@ -1,13 +1,12 @@
 package com.releasetech.multidevice.AdminSettings;
 
-import static androidx.core.content.ContextCompat.startActivity;
-
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbManager;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -16,7 +15,6 @@ import android.os.Message;
 import android.provider.Settings;
 import android.text.InputFilter;
 import android.view.MenuItem;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -29,7 +27,6 @@ import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 
 import com.releasetech.multidevice.AdminSettings.ProductManage.ProductManageFragment;
-import com.releasetech.multidevice.Manager.CheckoutManager;
 import com.releasetech.multidevice.Manager.PreferenceManager;
 import com.releasetech.multidevice.R;
 import com.releasetech.multidevice.Tool.MediaReplacer;
@@ -44,7 +41,9 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -259,12 +258,33 @@ public class AdminSettingsActivity extends AppCompatActivity implements
         @Override
         public void onCreatePreferencesFix(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.admin_preferences, rootKey);
-            ListPreference comPort = findPreference("com_port");
-            String[] ports = SerialPortFinder.getAllDevicesPath();
-            comPort.setEntries(ports);
-            comPort.setEntryValues(ports);
 
-            setupSpecialPreferences();
+            ListPreference comPort = findPreference("com_port");
+            if (comPort != null) {
+                String[] ports = getUsbSerialPorts(getContext());
+                comPort.setEntries(ports);
+                comPort.setEntryValues(ports);
+            }
+        }
+
+        private String[] getUsbSerialPorts(Context context) {
+            UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
+            HashMap<String, UsbDevice> deviceList = usbManager.getDeviceList();
+            List<String> portList = new ArrayList<>();
+
+            if (deviceList.isEmpty()) {
+                portList.add("No USB devices connected");
+            } else {
+                for (UsbDevice device : deviceList.values()) {
+                    // 장치의 이름과 ID를 결합하여 포트 정보로 사용
+                    String portInfo = "Device: " + device.getDeviceName() +
+                            " (Vendor ID: " + device.getVendorId() +
+                            ", Product ID: " + device.getProductId() + ")";
+                    portList.add(portInfo);
+                }
+            }
+
+            return portList.toArray(new String[0]);
         }
 
         private void setupSpecialPreferences() {
