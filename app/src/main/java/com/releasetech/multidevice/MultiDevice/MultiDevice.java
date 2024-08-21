@@ -19,6 +19,7 @@ import com.releasetech.multidevice.Database.Data.DessertItem;
 import com.releasetech.multidevice.Database.Data.Product;
 import com.releasetech.multidevice.Database.DataLoader;
 import com.releasetech.multidevice.MainActivity;
+import com.releasetech.multidevice.Manager.PreferenceManager;
 import com.releasetech.multidevice.Sound.SoundService;
 
 import java.lang.ref.WeakReference;
@@ -28,11 +29,11 @@ public class MultiDevice implements DevicesStateListener, View.OnClickListener, 
     private static TestHandler handler;
 
     private static void openConnect(Context context){
-//        if(PreferenceManager.getString(context, "port") == null) return;
-//        String portName = PreferenceManager.getString(context, "port");
-//        String portType = PreferenceManager.getString(context, "port").substring(0, portName.length()-1);
-//        int portNum = Integer.parseInt(portName.substring(portName.length()-1));
-//        PortController.init(context, portType, portNum, 38400);
+        if(PreferenceManager.getString(context, "port") == null) return;
+        String portName = PreferenceManager.getString(context, "port");
+        String portType = PreferenceManager.getString(context, "port").substring(0, portName.length()-1);
+        int portNum = Integer.parseInt(portName.substring(portName.length()-1));
+        PortController.init(context, portType, portNum, 38400);
     }
 
     public static boolean locked = false;

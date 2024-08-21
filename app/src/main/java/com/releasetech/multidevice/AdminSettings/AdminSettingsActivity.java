@@ -34,6 +34,7 @@ import com.releasetech.multidevice.Tool.Utils;
 import com.takisoft.preferencex.EditTextPreference;
 import com.takisoft.preferencex.PreferenceFragmentCompat;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.InetAddress;
@@ -260,11 +261,9 @@ public class AdminSettingsActivity extends AppCompatActivity implements
             setPreferencesFromResource(R.xml.admin_preferences, rootKey);
 
             ListPreference comPort = findPreference("com_port");
-            if (comPort != null) {
-                String[] ports = getUsbSerialPorts(getContext());
-                comPort.setEntries(ports);
-                comPort.setEntryValues(ports);
-            }
+            String[] ports = getUsbSerialPorts(getContext());
+            comPort.setEntries(ports);
+            comPort.setEntryValues(ports);
         }
 
         private String[] getUsbSerialPorts(Context context) {
@@ -272,19 +271,24 @@ public class AdminSettingsActivity extends AppCompatActivity implements
             HashMap<String, UsbDevice> deviceList = usbManager.getDeviceList();
             List<String> portList = new ArrayList<>();
 
-            if (deviceList.isEmpty()) {
-                portList.add("No USB devices connected");
-            } else {
-                for (UsbDevice device : deviceList.values()) {
-                    // 장치의 이름과 ID를 결합하여 포트 정보로 사용
-                    String portInfo = "Device: " + device.getDeviceName() +
-                            " (Vendor ID: " + device.getVendorId() +
-                            ", Product ID: " + device.getProductId() + ")";
-                    portList.add(portInfo);
+            for (UsbDevice device : deviceList.values()) {
+                // 장치가 시리얼 포트를 지원하는지 확인 (예시로 Vendor ID와 Product ID 사용)
+                int vendorId = device.getVendorId();
+                int productId = device.getProductId();
+
+                // 특정 Vendor ID 및 Product ID 조합을 통해 시리얼 장치를 식별
+                if (isSerialDevice(vendorId, productId)) {
+                    portList.add(device.getDeviceName());
                 }
             }
 
             return portList.toArray(new String[0]);
+        }
+
+        private boolean isSerialDevice(int vendorId, int productId) {
+            // 여기에 특정 Vendor ID 및 Product ID의 조합으로 시리얼 장치를 식별하는 논리를 구현
+            // 예시: USB-to-Serial 어댑터의 Vendor ID 및 Product ID
+            return (vendorId == 0x1234 && productId == 0x5678);
         }
 
         private void setupSpecialPreferences() {
