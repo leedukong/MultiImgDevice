@@ -77,18 +77,14 @@ public class MultiDevice implements DevicesStateListener, View.OnClickListener, 
         int a = 10 * ((int) (number - 1) / 6);
         int b = (number - 1) % 6;
         int coordinate = a + b;
-
-
         onThrowOutDoneListener.onThrowOut(item.productName);
-
-        DBManager dbManager = new DBManager(context);
-        long productId = DataLoader.loadProductByNumber(dbManager, number).id;
         openConnect(context);
+
         PortController.outGoods(coordinate, new ResultCallBack() {
             @Override
             public void onSuccess(int i, int i1) {
                 Log.i("출하", "성공");
-                dbManager.updateColumnTodecreaseCount(productId);
+
                 SoundService.play(context, SoundService.DESSERT_OK);
                 throwOutNext(context, stack, onThrowOutDoneListener);
             }

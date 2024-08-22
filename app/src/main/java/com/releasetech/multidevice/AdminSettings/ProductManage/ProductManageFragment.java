@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -559,26 +560,38 @@ public class ProductManageFragment extends Fragment {
     }
 
     private void saveProduct() {
-        dbManager.updateColumn(DBManager.PRODUCT_DESSERT, productCache.product);
-        //productCache.sizeRecipePackCache.shotRecipePackCache[currentSize].recipe[currentShot].setFromArrayList(currentRecipe);
-        loadProducts();
+        TextView categoryName = requireActivity().findViewById(R.id.category_name);
+        TextView name = requireActivity().findViewById(R.id.product_name);
+        TextView price = requireActivity().findViewById(R.id.dessert_price);
         TextView totalCount = requireActivity().findViewById(R.id.dessert_total_count);
         TextView number = requireActivity().findViewById(R.id.dessert_number);
 
-        while (true) {
-            try {
-                loadProductSettings(currentProduct);
-                break;
-            } catch (NullPointerException e) {
-                currentProduct--;
-                if (currentProduct == 0) {
-                    loadCategorySettings(currentCategory);
-                    productLayout.setVisibility(View.GONE);
-                    categorySettingLayout.setVisibility(View.GONE);
-                    productSettingLayout.setVisibility(View.VISIBLE);
-                }
-            }
-        }
+        Log.i("세이브 테스트", "이름"+name.getText().toString());
+        Log.i("세이브 테스트", "가격"+price.getText().toString());
+        Log.i("세이브 테스트", "번호"+number.getText().toString());
+        Log.i("세이브 테스트", "총개수"+totalCount.getText().toString());
+
+        PreferenceManager.setString(getContext(), "product_"+number.getText()+"_category", categoryName.getText().toString());
+        PreferenceManager.setString(getContext(), "product_"+number.getText()+"_name", name.getText().toString());
+        PreferenceManager.setString(getContext(), "product_"+number.getText()+"_price", price.getText().toString());
+        PreferenceManager.setString(getContext(), "product_"+number.getText()+"_number", number.getText().toString());
+        PreferenceManager.setString(getContext(), "product_"+number.getText()+"_current_count", totalCount.getText().toString());
+        PreferenceManager.setString(getContext(), "product_"+number.getText()+"_total_count", totalCount.getText().toString());
+
+//        while (true) {
+//            try {
+//                loadProductSettings(currentProduct);
+//                break;
+//            } catch (NullPointerException e) {
+//                currentProduct--;
+//                if (currentProduct == 0) {
+//                    loadCategorySettings(currentCategory);
+//                    productLayout.setVisibility(View.GONE);
+//                    categorySettingLayout.setVisibility(View.GONE);
+//                    productSettingLayout.setVisibility(View.VISIBLE);
+//                }
+//            }
+//        }
     }
 
     private void loadProducts() {

@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.releasetech.multidevice.Tool.Utils;
+
 import java.util.ArrayList;
 
 
@@ -20,6 +22,8 @@ public class ThrowOutActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_throw_out);
+
+        Utils.hideNavBar(getWindow());
 
         throwOutProductView();
     }

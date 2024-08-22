@@ -68,6 +68,7 @@ public class OrderActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order);
 
+        passwordManager = new PasswordManager(this);
         dbManager = new DBManager(this);
         dbManager.open();
         dbManager.create();
@@ -89,27 +90,21 @@ public class OrderActivity extends AppCompatActivity {
                 Utils.showToast(this, "패스워드 초기화까지 남은 횟수 : " + (100 - settingsCount));
             }
         });
-
-        passwordManager = new PasswordManager(this);
-
         numberClick();
 
         Button button = findViewById(R.id.button);
         button.setOnClickListener(view -> {
-
             ArrayList throwOutProduct = new ArrayList();
             for(int i=0; i< cartManager.getCount(); i++){
                 throwOutProduct.add(cartManager.getItem(i).productName);
             }
             Log.i("테스트", throwOutProduct.toString());
-
             Intent intent = new Intent(OrderActivity.this, ThrowOutActivity.class);
             intent.putExtra("ThrowOutProduct", throwOutProduct);
             startActivity(intent);
         });
 
         RecyclerView recyclerView = findViewById(R.id.cart_recyclerView);
-
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
@@ -138,7 +133,6 @@ public class OrderActivity extends AppCompatActivity {
             cartManager = new CartManager(Integer.parseInt(PreferenceManager.getString(this, "cart_quantity")));
             //cartManager.setOnUpdateListner(dataManager -> stock.applyCart(cartManager));
             clearCart();
-            adapter.CartItem.clear();
             adapter.notifyDataSetChanged();
             TextView textPrice = findViewById(R.id.total_price);
             textPrice.setText("합계 : 0원");
@@ -219,10 +213,12 @@ public class OrderActivity extends AppCompatActivity {
     }
 
     public void cartView(StringBuilder sb) {
-        Long itemCategory = loadProductByNumber(dbManager, Integer.parseInt(sb.toString())).category;
-        String itemName = loadProductByNumber(dbManager, Integer.parseInt(sb.toString())).name;
-        int itemPrice = loadProductByNumber(dbManager, Integer.parseInt(sb.toString())).price;
-        int number = Integer.parseInt(sb.toString());
+
+        String productNumber = sb.toString();
+        Long itemCategory = Long.parseLong(PreferenceManager.getString(this, "product_"+productNumber+"_category"));
+        String itemName = PreferenceManager.getString(this, "product_"+productNumber+"_name");
+        int itemPrice = Integer.parseInt(PreferenceManager.getString(this, "product_"+productNumber+"_price"));
+        int number = Integer.parseInt(PreferenceManager.getString(this, "product_"+productNumber+"_number"));
 
         CartItem cartItem = new CartItem(itemCategory.toString(), itemName, itemPrice, 1, number);
 
