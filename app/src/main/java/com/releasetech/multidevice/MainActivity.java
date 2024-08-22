@@ -1,6 +1,7 @@
 package com.releasetech.multidevice;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.releasetech.multidevice.Database.DBManager;
 import com.releasetech.multidevice.Manager.PasswordManager;
 import com.releasetech.multidevice.Manager.PreferenceManager;
 import com.releasetech.multidevice.Tool.Utils;
@@ -31,6 +33,18 @@ public class MainActivity extends AppCompatActivity {
         Button triggerButton = findViewById(R.id.trigger_button);
         View clickInterceptor = findViewById(R.id.click_interceptor);
         triggerButton.setText(PreferenceManager.getString(getApplicationContext(), "message_idle"));
+        String idleColorString = PreferenceManager.getString(getApplicationContext(), "message_color");
+
+        try {
+            if (idleColorString != null && !idleColorString.trim().isEmpty()) {
+                triggerButton.setTextColor(Color.parseColor(idleColorString));
+            } else {
+                triggerButton.setTextColor(Color.parseColor("#000000")); // 기본 검정색
+            }
+        } catch (IllegalArgumentException e) {
+            // 색상 파싱 에러가 발생한 경우 기본 색상 설정
+            triggerButton.setTextColor(Color.parseColor("#000000"));
+        }
 
         triggerButton.setOnClickListener(v -> {
             if (clickInterceptor.getVisibility() == View.VISIBLE) {

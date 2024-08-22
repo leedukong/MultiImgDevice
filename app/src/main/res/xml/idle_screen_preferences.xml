@@ -14,6 +14,12 @@
         app:title="대기화면 문구"
         app:useSimpleSummaryProvider="true" />
 
+    <EditTextPreference
+        app:defaultValue="#000000"
+        app:key="message_color"
+        app:title="대기화면 문구 색상"
+        app:useSimpleSummaryProvider="true" />
+
     <Preference
         app:key="ad_idle"
         app:title="대기화면 광고 교체" />

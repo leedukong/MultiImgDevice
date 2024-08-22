@@ -22,6 +22,7 @@ public class DessertSettingsActivity extends AppCompatActivity {
     private int numRows = 9;
     private int numCols = 4;
 
+    private DBManager dbManager = new DBManager(this);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,7 +46,7 @@ public class DessertSettingsActivity extends AppCompatActivity {
                 int coordinate = finalRow * 10 + finalCol;
                 int productNumber = finalRow * numCols + finalCol + 1;
 
-                DBManager dbManager = new DBManager(this);
+
                 try {
                     Product product = DataLoader.loadProductByNumber(dbManager, productNumber);
                     dessertProduct.setText(product.name);
@@ -69,37 +70,40 @@ public class DessertSettingsActivity extends AppCompatActivity {
                     });
 
                     testButton.setOnClickListener(v -> {
-                        if (MultiDevice.locked) return;
-                        //int currentCount = DataLoader.loadCurrentStockById(dbManager, product.id);
-                        //if (currentCount > 0) {
-                        MultiDevice.throwOut(this, product, new MultiDevice.OnThrowOutListener() {
-                            @Override
-                            public void onThrowOut(String productName) {
-                                String is = "를";
-                                char lastName = productName.charAt(productName.length() - 1);
-                                if (lastName >= 0xAC00 && lastName <= 0xD7A3) {
-                                    if ((lastName - 0xAC00) % 28 > 0) {
-                                        is = "을";
+                        try {
+                            if (MultiDevice.locked) return;
+                            int currentCount = DataLoader.loadCurrentStockById(dbManager, product.id);
+                            if (currentCount > 0) {
+                                MultiDevice.throwOut(this, product, new MultiDevice.OnThrowOutListener() {
+                                    @Override
+                                    public void onThrowOut(String productName) {
+                                        String is = "를";
+                                        char lastName = productName.charAt(productName.length() - 1);
+                                        if (lastName >= 0xAC00 && lastName <= 0xD7A3) {
+                                            if ((lastName - 0xAC00) % 28 > 0) {
+                                                is = "을";
+                                            }
+                                        }
+                                        //Utils.showToast(getApplicationContext(), productName + is + " 출하합니다.");
                                     }
-                                }
-                                Utils.showToast(getApplicationContext(), productName + is + " 출하합니다.");
-                            }
 
-                            @Override
-                            public void onThrowOutDone() {
-                                int currentCount = DataLoader.loadCurrentStockById(dbManager, product.id);
-                                dessertCurrent.setText(currentCount + " / " + product.total_count);
-                                if (currentCount == product.total_count)
-                                    childLayout.setBackgroundColor(0xFFA2C1A6);
-                                else if (currentCount == 0)
-                                    childLayout.setBackgroundColor(0xFFC1A2A2);
-                                else
-                                    childLayout.setBackgroundColor(getResources().getColor(R.color.silver_sand));
+                                    @Override
+                                    public void onThrowOutDone() {
+                                        int currentCount = DataLoader.loadCurrentStockById(dbManager, product.id);
+                                        dessertCurrent.setText(currentCount + " / " + product.total_count);
+                                        if (currentCount == product.total_count)
+                                            childLayout.setBackgroundColor(0xFFA2C1A6);
+                                        else if (currentCount == 0)
+                                            childLayout.setBackgroundColor(0xFFC1A2A2);
+                                        else
+                                            childLayout.setBackgroundColor(getResources().getColor(R.color.silver_sand));
+                                    }
+                                });
+                            } else {
+                                Utils.showToast(this, product.name + " 상품의 재고가 부족합니다.");
                             }
-                        });
-                         //else {
-                            //Utils.showToast(this, product.name + " 상품의 재고가 부족합니다.");
-                        //}
+                        }catch (Exception e) {
+                        }
                     });
                 } catch (Exception e) {
                 }
@@ -117,5 +121,12 @@ public class DessertSettingsActivity extends AppCompatActivity {
                 gridLayout.addView(childLayout);
             }
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        dbManager.open();
+        dbManager.create();
     }
 }

@@ -190,7 +190,6 @@ public class Utils {
         return removableStoragePath;
     }
 
-
     public static int getSelectedRadioButtonIndex(View view, int radioGroupId) {
         RadioGroup radioGroup = view.findViewById(radioGroupId);
         int radioButtonID = radioGroup.getCheckedRadioButtonId();

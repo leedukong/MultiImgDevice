@@ -44,6 +44,7 @@ import com.releasetech.multidevice.Database.Data.ImageSet;
 import com.releasetech.multidevice.Database.Data.Product;
 import com.releasetech.multidevice.Database.DataLoader;
 //import com.releasetech.multidevice.ManagerSettings.IOViewMaster;
+import com.releasetech.multidevice.Manager.PreferenceManager;
 import com.releasetech.multidevice.R;
 import com.releasetech.multidevice.Tool.Utils;
 
@@ -253,15 +254,6 @@ public class ProductManageFragment extends Fragment {
         });
 
 
-        Button categoryImageButton = requireView().findViewById(R.id.btn_category_image);
-        categoryImageButton.setOnClickListener(v -> {
-
-            Intent intent = new Intent();
-            intent.setType("image/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(Intent.createChooser(intent, "이미지를 선택하세요"), CATEGORY_IMAGE);
-
-        });
         EditText nameEditText = requireView().findViewById(R.id.product_name);
         nameEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -393,8 +385,8 @@ public class ProductManageFragment extends Fragment {
         availableSwitch.setOnCheckedChangeListener((compoundButton, b) -> productCache.product.available = b ? 1 : 0);
 
 
-        Button imageSetButton = requireView().findViewById(R.id.btn_image_set);
-        imageSetButton.setOnClickListener(v -> imageSetDialog());
+        //Button imageSetButton = requireView().findViewById(R.id.btn_image_set);
+        //imageSetButton.setOnClickListener(v -> imageSetDialog());
 
 
         ScrollView scrollView = requireActivity().findViewById(R.id.product_setting_scrollview);
@@ -588,7 +580,6 @@ public class ProductManageFragment extends Fragment {
             }
         }
     }
-
 
     private void loadProducts() {
         productNames.clear();

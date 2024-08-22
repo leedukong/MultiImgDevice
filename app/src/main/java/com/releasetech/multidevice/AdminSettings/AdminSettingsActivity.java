@@ -16,6 +16,7 @@ import android.provider.Settings;
 import android.text.InputFilter;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -259,11 +260,12 @@ public class AdminSettingsActivity extends AppCompatActivity implements
         @Override
         public void onCreatePreferencesFix(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.admin_preferences, rootKey);
-
             ListPreference comPort = findPreference("com_port");
+            //String[] ports = SerialPortFinder.getAllDevicesPath();
             String[] ports = getUsbSerialPorts(getContext());
             comPort.setEntries(ports);
             comPort.setEntryValues(ports);
+            setupSpecialPreferences();
         }
 
         private String[] getUsbSerialPorts(Context context) {
@@ -334,23 +336,24 @@ public class AdminSettingsActivity extends AppCompatActivity implements
                 messageView.setTextSize(26);
                 return true;
             });
-            Preference btnAndroidReboot = findPreference("android_reboot");
-            btnAndroidReboot.setOnPreferenceClickListener(preference -> {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                Dialog tempDialog = builder.setMessage("기기를 재시작하시겠습니까?")
-                        .setPositiveButton("Yes", (dialog, which) -> {
-                            String cmd = "su -c reboot";
-                            try {
-                                Runtime.getRuntime().exec(cmd);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        })
-                        .setNegativeButton("No", null).show();
-                TextView messageView = tempDialog.findViewById(android.R.id.message);
-                messageView.setTextSize(26);
-                return true;
-            });
+
+            //Preference btnAndroidReboot = findPreference("android_reboot");
+//            btnAndroidReboot.setOnPreferenceClickListener(preference -> {
+//                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+//                Dialog tempDialog = builder.setMessage("기기를 재시작하시겠습니까?")
+//                        .setPositiveButton("Yes", (dialog, which) -> {
+//                            String cmd = "su -c reboot";
+//                            try {
+//                                Runtime.getRuntime().exec(cmd);
+//                            } catch (IOException e) {
+//                                e.printStackTrace();
+//                            }
+//                        })
+//                        .setNegativeButton("No", null).show();
+//                TextView messageView = tempDialog.findViewById(android.R.id.message);
+//                messageView.setTextSize(26);
+//                return true;
+//            });
         }
     }
 
@@ -521,7 +524,7 @@ public class AdminSettingsActivity extends AppCompatActivity implements
             btnReplaceIdleAd.setOnPreferenceClickListener(preference -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 Dialog tempDialog = builder.setMessage("[대기]화면 광고를 교체하시겠습니까?\n\n*주의* 기존 파일은 복구되지 않습니다")
-                        .setPositiveButton("Yes", (dialog, which) -> Utils.alert(getContext(), MediaReplacer.replaceIdleAd(getContext())))
+                        .setPositiveButton("Yes", (dialog, which) -> Toast.makeText(getContext(), MediaReplacer.replaceIdleAd(getContext()), Toast.LENGTH_SHORT))
                         .setNegativeButton("No", null).show();
                 TextView messageView = tempDialog.findViewById(android.R.id.message);
                 messageView.setTextSize(26);
@@ -532,6 +535,13 @@ public class AdminSettingsActivity extends AppCompatActivity implements
             idleScreenText.setOnPreferenceChangeListener((preference, newValue) -> {
                 PreferenceManager.setString(getContext(), "message_idle", newValue.toString());
                 idleScreenText.setText(newValue.toString());
+                return true;
+            });
+
+            EditTextPreference idleScreenTextColor = findPreference("message_color");
+            idleScreenTextColor.setOnPreferenceChangeListener((preference, newValue) -> {
+                PreferenceManager.setString(getContext(), "message_color", newValue.toString());
+                idleScreenTextColor.setText(newValue+"");
                 return true;
             });
         }
