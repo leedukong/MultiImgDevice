@@ -92,27 +92,15 @@ public class OrderActivity extends AppCompatActivity {
         });
         numberClick();
 
-        Button button = findViewById(R.id.button);
+        Button button = findViewById(R.id.button_checkout);
         button.setOnClickListener(view -> {
-            ArrayList throwOutProduct = new ArrayList();
-            for(int i=0; i< cartManager.getCount(); i++){
-                throwOutProduct.add(cartManager.getItem(i).productName);
-            }
-            Log.i("테스트", throwOutProduct.toString());
-            Intent intent = new Intent(OrderActivity.this, ThrowOutActivity.class);
-            intent.putExtra("ThrowOutProduct", throwOutProduct);
-            startActivity(intent);
+            Log.i("테스트", "-------------------");
+            checkout();
         });
 
         RecyclerView recyclerView = findViewById(R.id.cart_recyclerView);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-
-        Button checkoutButton = findViewById(R.id.button_checkout);
-        checkoutButton.setOnClickListener(view ->{
-            Log.i("테스트", "-------------------");
-            checkout();
-        });
     }
 
     @Override
@@ -133,6 +121,7 @@ public class OrderActivity extends AppCompatActivity {
             cartManager = new CartManager(Integer.parseInt(PreferenceManager.getString(this, "cart_quantity")));
             //cartManager.setOnUpdateListner(dataManager -> stock.applyCart(cartManager));
             clearCart();
+            adapter.CartItem.clear();
             adapter.notifyDataSetChanged();
             TextView textPrice = findViewById(R.id.total_price);
             textPrice.setText("합계 : 0원");
@@ -202,7 +191,8 @@ public class OrderActivity extends AppCompatActivity {
         for(int i=0; i<cartManager.getCount(); i++) {
             Log.i("카트 매니저", cartManager.getItem(i).number+"");
         }
-        CheckoutManager.checkout(this, cartManager.getTotalPrice());
+        //CheckoutManager.checkout(this, cartManager.getTotalPrice());
+        CheckoutManager.checkout(this, 1004);
         loadCartCache = true;
     }
 
@@ -215,7 +205,7 @@ public class OrderActivity extends AppCompatActivity {
     public void cartView(StringBuilder sb) {
 
         String productNumber = sb.toString();
-        Long itemCategory = Long.parseLong(PreferenceManager.getString(this, "product_"+productNumber+"_category"));
+        String itemCategory = PreferenceManager.getString(this, "product_"+productNumber+"_category");
         String itemName = PreferenceManager.getString(this, "product_"+productNumber+"_name");
         int itemPrice = Integer.parseInt(PreferenceManager.getString(this, "product_"+productNumber+"_price"));
         int number = Integer.parseInt(PreferenceManager.getString(this, "product_"+productNumber+"_number"));
@@ -335,37 +325,56 @@ public class OrderActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.i("테스트", "결제 완료1");
         if (requestCode == SEND_REQUEST_CODE) { //SEND_REQUEST_CODE에 대한 응답
+            Log.i("테스트", "결제 완료2");
             if (resultCode == RESULT_OK) {
+                Log.i("테스트", "결제 완료3");
                 Toast.makeText(getApplicationContext(), "결제 완료", Toast.LENGTH_SHORT).show();
 
                 Stack stack = new Stack();
+                ArrayList throwOutProduct = new ArrayList();
                 for(int i=0; i< cartManager.getCount(); i++){
                     Log.i("테스트", "상품이름"+cartManager.getItem(i).productName);
                     Log.i("테스트", "전체금액 "+cartManager.getTotalPrice()+"");
-                    stack.push(DataLoader.loadProductByNumber(dbManager, cartManager.getItem(i).number));
+//                    stack.push(DataLoader.loadProductByNumber(dbManager, cartManager.getItem(i).number));
+                    stack.push(cartManager.getItem(i).number);
+                    throwOutProduct.add(cartManager.getItem(i).productName);
                 }
-                MultiDevice.throwOutNext(this, stack, new MultiDevice.OnThrowOutListener() {
-                    @Override
-                    public void onThrowOut(String productName) {
-                        String is = "를";
-                        char lastName = productName.charAt(productName.length() - 1);
-                        if (lastName >= 0xAC00 && lastName <= 0xD7A3) {
-                            if ((lastName - 0xAC00) % 28 > 0) {
-                                is = "을";
-                            }
-                        }
-                        Utils.showToast(getApplicationContext(), productName + is + " 출하합니다.");
-                    }
+                Log.i("테스트", throwOutProduct.toString());
 
-                    @Override
-                    public void onThrowOutDone() {
-                        if (OrderActivity.this.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) {
-                            runOnUiThread(OrderActivity.this::onResume);
-                        }
-                    }
-                });
+                Intent intent = new Intent(OrderActivity.this, ThrowOutActivity.class);
+                intent.putExtra("stack", stack);
+                intent.putExtra("throwOutProduct", throwOutProduct);
+                startActivity(intent);
 
+                //MultiDevice.testThrow(this, 1);
+//                Stack stack = new Stack();
+//                for(int i=0; i< cartManager.getCount(); i++){
+//                    Log.i("테스트", "상품이름"+cartManager.getItem(i).productName);
+//                    Log.i("테스트", "전체금액 "+cartManager.getTotalPrice()+"");
+//                    stack.push(DataLoader.loadProductByNumber(dbManager, cartManager.getItem(i).number));
+//                }
+//                MultiDevice.throwOutNext(this, stack, new MultiDevice.OnThrowOutListener() {
+//                    @Override
+//                    public void onThrowOut(String productName) {
+//                        String is = "를";
+//                        char lastName = productName.charAt(productName.length() - 1);
+//                        if (lastName >= 0xAC00 && lastName <= 0xD7A3) {
+//                            if ((lastName - 0xAC00) % 28 > 0) {
+//                                is = "을";
+//                            }
+//                        }
+//                        Utils.showToast(getApplicationContext(), productName + is + " 출하합니다.");
+//                    }
+//
+//                    @Override
+//                    public void onThrowOutDone() {
+//                        if (OrderActivity.this.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) {
+//                            runOnUiThread(OrderActivity.this::onResume);
+//                        }
+//                    }
+//                });
             } else if (resultCode == RESULT_CANCELED) {
                 Toast.makeText(getApplicationContext(), "결제 실패", Toast.LENGTH_SHORT).show();
             }

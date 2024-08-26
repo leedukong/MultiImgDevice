@@ -22,8 +22,8 @@ import java.util.concurrent.atomic.AtomicReference;
 public class DessertSettingsActivity extends AppCompatActivity {
 
     private GridLayout gridLayout;
-    private int numRows = 9;
-    private int numCols = 4;
+    private int numRows = 6;
+    private int numCols = 6;
 
     private DBManager dbManager = new DBManager(this);
     @Override
@@ -82,13 +82,10 @@ public class DessertSettingsActivity extends AppCompatActivity {
                     });
 
                     testButton.setOnClickListener(v -> {
-                        try {
-                            if (MultiDevice.locked) return;
-                            if (Integer.parseInt(currentCount.get()) > 0) {
-                                //todo 멀티디바이스 투출
-//                            MultiDevice.throwOut(this, product, new MultiDevice.OnThrowOutListener() {
-//                                @Override
-//                                public void onThrowOut(String productName) {
+                        try{
+                            MultiDevice.throwOut(this, productNumber, new MultiDevice.OnThrowOutListener() {
+                                @Override
+                                public void onThrowOut(String productName) {
 //                                    String is = "를";
 //                                    char lastName = productName.charAt(productName.length() - 1);
 //                                    if (lastName >= 0xAC00 && lastName <= 0xD7A3) {
@@ -96,6 +93,30 @@ public class DessertSettingsActivity extends AppCompatActivity {
 //                                            is = "을";
 //                                        }
 //                                    }
+//                                    Utils.showToast(getApplicationContext(), productName + is + " 출하합니다.");
+                                }
+
+                                @Override
+                                public void onThrowOutDone() {
+//                                    dessertCurrent.setText(currentCount + " / " + totalCount);
+//                                    if (currentCount.equals(totalCount))
+//                                        childLayout.setBackgroundColor(0xFFA2C1A6);
+//                                    else if (currentCount.get().equals("0"))
+//                                        childLayout.setBackgroundColor(0xFFC1A2A2);
+//                                    else
+//                                        childLayout.setBackgroundColor(getResources().getColor(R.color.silver_sand));
+                                }
+                            });
+                        }catch(Exception e){
+                        }
+//                        try {
+//                            if (MultiDevice.locked) return;
+//                            if (Integer.parseInt(currentCount.get()) > 0) {
+//                                //todo 멀티디바이스 투출
+//                            MultiDevice.throwOut(this, product, new MultiDevice.OnThrowOutListener() {
+//                                @Override
+//                                public void onThrowOut(String productName) {
+//
 //                                    //Utils.showToast(getApplicationContext(), productName + is + " 출하합니다.");
 //                                }
 //
@@ -111,10 +132,10 @@ public class DessertSettingsActivity extends AppCompatActivity {
 //
 //                                }
 //                            });
-                            } else {
-                            }
-                        } catch (Exception e) {
-                        }
+//                            } else {
+//                            }
+//                        } catch (Exception e) {
+//                        }
                     });
                 }catch (Exception e){
 

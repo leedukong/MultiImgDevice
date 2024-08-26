@@ -1,22 +1,27 @@
 package com.releasetech.multidevice;
 
-import android.annotation.SuppressLint;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Lifecycle;
 
 import com.releasetech.multidevice.Tool.Utils;
 
+import com.releasetech.multidevice.MultiDevice.MultiDevice;
+
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Stack;
 
 
 public class ThrowOutActivity extends AppCompatActivity {
-
+    int i = -2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,12 +30,13 @@ public class ThrowOutActivity extends AppCompatActivity {
 
         Utils.hideNavBar(getWindow());
 
-        throwOutProductView();
+        throwOutView();
+        throwOutProduct();
     }
 
-    @SuppressLint("WrongViewCast")
-    public void throwOutProductView() {
-        ArrayList throwOutProduct = (ArrayList) getIntent().getSerializableExtra("ThrowOutProduct");
+    public void throwOutView() {
+        ArrayList throwOutProduct = getIntent().getStringArrayListExtra("throwOutProduct");
+        Log.i("출하", "출하할 상품: " + throwOutProduct);
 
         View throwOutLayout[] = new View[5];
         throwOutLayout[0] = findViewById(R.id.throw_layout_1);
@@ -52,13 +58,20 @@ public class ThrowOutActivity extends AppCompatActivity {
         for (int j = 4; j >= throwOutProduct.size(); j--) {
             throwOutLayout[j].setVisibility(View.GONE);
         }
+    }
 
-        ImageButton throwOutButton[] = new ImageButton[5];
-        throwOutButton[0] = findViewById(R.id.throw_button_1);
-        throwOutButton[1] = findViewById(R.id.throw_button_2);
-        throwOutButton[2] = findViewById(R.id.throw_button_3);
-        throwOutButton[3] = findViewById(R.id.throw_button_4);
-        throwOutButton[4] = findViewById(R.id.throw_button_5);
+    public void throwOutProduct() {
+        ArrayList arrayList = getIntent().getStringArrayListExtra("stack");
+        Collections.reverse(arrayList);
+        Stack<String> stack = new Stack<>();
+        stack.addAll(arrayList);
+
+        ImageView throwOutImage[] = new ImageView[5];
+        throwOutImage[0] = findViewById(R.id.throw_button_1);
+        throwOutImage[1] = findViewById(R.id.throw_button_2);
+        throwOutImage[2] = findViewById(R.id.throw_button_3);
+        throwOutImage[3] = findViewById(R.id.throw_button_4);
+        throwOutImage[4] = findViewById(R.id.throw_button_5);
         TextView throwOutState[] = new TextView[5];
         throwOutState[0] = findViewById(R.id.throw_state_1);
         throwOutState[1] = findViewById(R.id.throw_state_2);
@@ -66,19 +79,37 @@ public class ThrowOutActivity extends AppCompatActivity {
         throwOutState[3] = findViewById(R.id.throw_state_4);
         throwOutState[4] = findViewById(R.id.throw_state_5);
 
-        for (int i = 0; i < throwOutProduct.size(); i++) {
-            int index = i;
-            throwOutButton[i].setOnClickListener(v -> {
-                if (throwOutState[index].isSelected()) {
-                    throwOutState[index].setText("(투출전)");
-                    throwOutButton[index].setColorFilter(Color.parseColor("#FE0000"));
-                } else {
-                    throwOutState[index].setText("(투출완료)");
-                    throwOutButton[index].setColorFilter(Color.parseColor("#00AF50"));
+        MultiDevice.throwOutNext(this, stack, new MultiDevice.OnThrowOutListener() {
+            @Override
+            public void onThrowOut(String productName) {
+                i++;
+                if (i > -1) {
+                    runOnUiThread(() -> {
+                        throwOutState[i].setText("(투출완료)");
+                        throwOutImage[i].setColorFilter(Color.parseColor("#00AF50"));
+                    });
                 }
-                throwOutState[index].setSelected(!throwOutState[index].isSelected());
-            });
-        }
-    }
+//                String is = "를";
+//                char lastName = productName.charAt(productName.length() - 1);
+//                if (lastName >= 0xAC00 && lastName <= 0xD7A3) {
+//                    if ((lastName - 0xAC00) % 28 > 0) {
+//                        is = "을";
+//                    }
+//                }
+//                Utils.showToast(getApplicationContext(), productName + is + " 출하합니다.");
+            }
 
+            @Override
+            public void onThrowOutDone() {
+//                if (OrderActivity.this.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) {
+//                    runOnUiThread(OrderActivity.this::onResume);
+//                }
+                runOnUiThread(() -> {
+                    throwOutState[arrayList.size()-1].setText("(투출완료)");
+                    throwOutImage[arrayList.size()-1].setColorFilter(Color.parseColor("#00AF50"));
+                });
+                finish();
+            }
+        });
+    }
 }

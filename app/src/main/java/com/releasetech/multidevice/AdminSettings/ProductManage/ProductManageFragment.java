@@ -566,11 +566,6 @@ public class ProductManageFragment extends Fragment {
         TextView totalCount = requireActivity().findViewById(R.id.dessert_total_count);
         TextView number = requireActivity().findViewById(R.id.dessert_number);
 
-        Log.i("세이브 테스트", "이름"+name.getText().toString());
-        Log.i("세이브 테스트", "가격"+price.getText().toString());
-        Log.i("세이브 테스트", "번호"+number.getText().toString());
-        Log.i("세이브 테스트", "총개수"+totalCount.getText().toString());
-
         PreferenceManager.setString(getContext(), "product_"+number.getText()+"_category", categoryName.getText().toString());
         PreferenceManager.setString(getContext(), "product_"+number.getText()+"_name", name.getText().toString());
         PreferenceManager.setString(getContext(), "product_"+number.getText()+"_price", price.getText().toString());

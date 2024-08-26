@@ -29,28 +29,45 @@ public class MultiDevice implements DevicesStateListener, View.OnClickListener, 
     private static TestHandler handler;
 
     private static void openConnect(Context context){
-        if(PreferenceManager.getString(context, "port") == null) return;
-        String portName = PreferenceManager.getString(context, "port");
-        String portType = PreferenceManager.getString(context, "port").substring(0, portName.length()-1);
-        int portNum = Integer.parseInt(portName.substring(portName.length()-1));
-        PortController.init(context, portType, portNum, 38400);
+//        if(PreferenceManager.getString(context, "port") == null) return;
+//        String portName = PreferenceManager.getString(context, "port");
+//        String portType = PreferenceManager.getString(context, "port").substring(0, portName.length()-1);
+//        int portNum = Integer.parseInt(portName.substring(portName.length()-1));
+//        PortController.init(context, portType, portNum, 38400);
+        PortController.init(context, "/dev/ttyUSB", 6, 38400);
     }
 
     public static boolean locked = false;
 
-    public static void throwOut(Context context, Product product, OnThrowOutListener onThrowOutDoneListener) {
+    public static void testThrow(Context context, int number){
+        openConnect(context);
+        PortController.outGoods(00, new ResultCallBack() {
+            @Override
+            public void onSuccess(int i, int i1) {
+                Log.i("출하", "성공");
+            }
+
+            @Override
+            public void onFailure(int i, String s, String s1) {
+                Log.i("출하", "실패");
+            }
+        });
+    }
+
+    public static void throwOut(Context context, int number, OnThrowOutListener onThrowOutDoneListener) {
         if (locked) return;
         locked = true;
-        int number = product.number;
         int a = 10 * ((int) (number - 1) / 6);
         int b = (number - 1) % 6;
         int coordinate = a + b;
-        onThrowOutDoneListener.onThrowOut(product.name);
+        onThrowOutDoneListener.onThrowOut(PreferenceManager.getString(context, "product_"+number+"_name"));
         //DBManager dbManager = new DBManager(context);
         openConnect(context);
+        Log.i("작동 테스트", coordinate+"");
         PortController.outGoods(coordinate, new ResultCallBack() {
             @Override
             public void onSuccess(int i, int i1) {
+                Log.i("작동 테스트", "8");
                 Log.i("출하", "성공");
                 //dbManager.updateColumnTodecreaseCount(product.id);
                 if (onThrowOutDoneListener != null) onThrowOutDoneListener.onThrowOutDone();
@@ -65,19 +82,20 @@ public class MultiDevice implements DevicesStateListener, View.OnClickListener, 
         });
     }
 
-
     public static void throwOutNext(Context context, Stack stack, OnThrowOutListener onThrowOutDoneListener) {
         if (stack.isEmpty()) {
             locked = false;
             if (onThrowOutDoneListener != null) onThrowOutDoneListener.onThrowOutDone();
             return;
         }
-        DessertItem item = (DessertItem) stack.pop();
-        int number = item.number;
+//        DessertItem item = (DessertItem) stack.pop();
+//        int number = item.number;
+        int number = (int) stack.pop();
         int a = 10 * ((int) (number - 1) / 6);
         int b = (number - 1) % 6;
         int coordinate = a + b;
-        onThrowOutDoneListener.onThrowOut(item.productName);
+//        onThrowOutDoneListener.onThrowOut(item.productName);
+        onThrowOutDoneListener.onThrowOut(PreferenceManager.getString(context, "product_"+number+"_name"));
         openConnect(context);
 
         PortController.outGoods(coordinate, new ResultCallBack() {
