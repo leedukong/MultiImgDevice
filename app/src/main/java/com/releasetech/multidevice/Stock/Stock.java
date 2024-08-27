@@ -8,6 +8,7 @@ import com.releasetech.multidevice.Database.Data.DessertItem;
 import com.releasetech.multidevice.Database.Data.Product;
 import com.releasetech.multidevice.Database.DataLoader;
 import com.releasetech.multidevice.Manager.CartManager;
+import com.releasetech.multidevice.Manager.PreferenceManager;
 
 import java.util.HashMap;
 
@@ -30,30 +31,15 @@ public class Stock {
         }
     }
 
-    public void loadStock() {
-        for (long id : dessertCurrent.keySet()) {
-            dessertCurrent.put(id, DataLoader.loadCurrentStockById(dbManager, id));
-            dessertInCart.put(id, 0);
-        }
+    public void increaseStockCount(int num){
+        String currentCount = PreferenceManager.getString(context, "product_"+num+"_current_count");
+        int tempCount = Integer.parseInt(currentCount)-1;
+        PreferenceManager.setString(context, "product_"+num+"_current_count", String.valueOf(tempCount));
     }
 
-    public void applyCart(CartManager cartManager) {
-        for (long id : dessertInCart.keySet()) {
-            dessertInCart.put(id, 0);
-        }
-        for (int i = 0; i < cartManager.getCount(); i++) {
-            DessertItem item = (DessertItem) cartManager.getItem(i);
-            long id = DataLoader.loadProductByNumber(dbManager, item.number).id;
-            dessertInCart.put(id, dessertInCart.get(id) + 1);
-        }
-    }
-
-    public boolean dessertInStock(Product product) {
-        boolean result;
-        if (dessertCurrent.containsKey(product.id) && dessertInCart.containsKey(product.id))
-            result = dessertCurrent.get(product.id) - dessertInCart.get(product.id) > 0;
-        else
-            result = false;
-        return result;
+    public void decreaseStockCount(int num){
+        String currentCount = PreferenceManager.getString(context, "product_"+num+"_current_count");
+        int tempCount = Integer.parseInt(currentCount)+1;
+        PreferenceManager.setString(context, "product_"+num+"_current_count", String.valueOf(tempCount));
     }
 }
