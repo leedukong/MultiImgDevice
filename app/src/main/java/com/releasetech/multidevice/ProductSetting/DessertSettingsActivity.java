@@ -1,5 +1,6 @@
 package com.releasetech.multidevice.ProductSetting;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import com.releasetech.multidevice.Database.DBManager;
 import com.releasetech.multidevice.Manager.PreferenceManager;
 import com.releasetech.multidevice.MultiDevice.MultiDevice;
 import com.releasetech.multidevice.R;
+import com.releasetech.multidevice.Stock.Stock;
 import com.releasetech.multidevice.Tool.Utils;
 
 import java.util.Objects;
@@ -64,8 +66,10 @@ public class DessertSettingsActivity extends AppCompatActivity {
                     dessertCurrent.setText(currentCount + " / " + totalCount);
                     if (Objects.equals(currentCount.get(), totalCount))
                         childLayout.setBackgroundColor(0xFFA2C1A6);
-                    else if (Integer.parseInt(currentCount.get()) == 0)
+                    else if (Integer.parseInt(currentCount.get()) == 0) {
                         childLayout.setBackgroundColor(0xFFC1A2A2);
+                        testButton.setEnabled(false);
+                    }
                     else
                         childLayout.setBackgroundColor(getResources().getColor(R.color.silver_sand));
 
@@ -79,6 +83,7 @@ public class DessertSettingsActivity extends AppCompatActivity {
                             childLayout.setBackgroundColor(0xFFC1A2A2);
                         else
                             childLayout.setBackgroundColor(getResources().getColor(R.color.silver_sand));
+                        testButton.setEnabled(true);
                     });
 
                     testButton.setOnClickListener(v -> {
@@ -98,13 +103,20 @@ public class DessertSettingsActivity extends AppCompatActivity {
 
                                 @Override
                                 public void onThrowOutDone() {
-//                                    dessertCurrent.setText(currentCount + " / " + totalCount);
-//                                    if (currentCount.equals(totalCount))
-//                                        childLayout.setBackgroundColor(0xFFA2C1A6);
-//                                    else if (currentCount.get().equals("0"))
-//                                        childLayout.setBackgroundColor(0xFFC1A2A2);
-//                                    else
-//                                        childLayout.setBackgroundColor(getResources().getColor(R.color.silver_sand));
+                                    Stock stock = new Stock(getApplicationContext(), dbManager);
+                                    stock.decreaseStockCount(productNumber);
+                                    currentCount.set(PreferenceManager.getString(getApplicationContext(), "product_" + productNumber + "_current_count"));
+                                    dessertCurrent.setText(currentCount + " / " + totalCount);
+                                    if (currentCount.equals(totalCount))
+                                        childLayout.setBackgroundColor(0xFFA2C1A6);
+                                    else if (currentCount.get().equals("0")) {
+                                        childLayout.setBackgroundColor(0xFFC1A2A2);
+                                        runOnUiThread(() -> {
+                                            testButton.setEnabled(false);
+                                        });
+                                    }
+                                    else
+                                        childLayout.setBackgroundColor(getResources().getColor(R.color.silver_sand));
                                 }
                             });
                         }catch(Exception e){

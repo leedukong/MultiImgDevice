@@ -11,6 +11,9 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Lifecycle;
 
+import com.releasetech.multidevice.Database.DBManager;
+import com.releasetech.multidevice.Manager.PreferenceManager;
+import com.releasetech.multidevice.Stock.Stock;
 import com.releasetech.multidevice.Tool.Utils;
 
 import com.releasetech.multidevice.MultiDevice.MultiDevice;
@@ -21,7 +24,9 @@ import java.util.Stack;
 
 
 public class ThrowOutActivity extends AppCompatActivity {
+
     int i = -2;
+    private DBManager dbManager = new DBManager(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,9 +67,10 @@ public class ThrowOutActivity extends AppCompatActivity {
 
     public void throwOutProduct() {
         ArrayList arrayList = getIntent().getStringArrayListExtra("stack");
-        Collections.reverse(arrayList);
+        ArrayList arrayList1 = new ArrayList<>(arrayList);
+        Collections.reverse(arrayList1);
         Stack<String> stack = new Stack<>();
-        stack.addAll(arrayList);
+        stack.addAll(arrayList1);
 
         ImageView throwOutImage[] = new ImageView[5];
         throwOutImage[0] = findViewById(R.id.throw_button_1);
@@ -80,13 +86,20 @@ public class ThrowOutActivity extends AppCompatActivity {
         throwOutState[4] = findViewById(R.id.throw_state_5);
 
         MultiDevice.throwOutNext(this, stack, new MultiDevice.OnThrowOutListener() {
+            Stock stock = new Stock(getApplicationContext(), dbManager);
             @Override
             public void onThrowOut(String productName) {
                 i++;
                 if (i > -1) {
                     runOnUiThread(() -> {
+                        if (PreferenceManager.getString(getApplicationContext(), "product_" + arrayList.get(i) + "_current_count").equals("0")) {
+                            throwOutState[i].setText("(재고부족)");
+                            throwOutImage[i].setColorFilter(Color.parseColor("#FEBF00"));
+                            return;
+                        }
                         throwOutState[i].setText("(투출완료)");
                         throwOutImage[i].setColorFilter(Color.parseColor("#00AF50"));
+                        stock.decreaseStockCount((Integer) arrayList.get(i));
                     });
                 }
 //                String is = "를";
@@ -101,12 +114,19 @@ public class ThrowOutActivity extends AppCompatActivity {
 
             @Override
             public void onThrowOutDone() {
+                i++;
 //                if (OrderActivity.this.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) {
 //                    runOnUiThread(OrderActivity.this::onResume);
 //                }
                 runOnUiThread(() -> {
+                    if (PreferenceManager.getString(getApplicationContext(), "product_" + arrayList.get(i) + "_current_count").equals("0")) {
+                        throwOutState[i].setText("(재고부족)");
+                        throwOutImage[i].setColorFilter(Color.parseColor("#FEBF00"));
+                        return;
+                    }
                     throwOutState[arrayList.size()-1].setText("(투출완료)");
                     throwOutImage[arrayList.size()-1].setColorFilter(Color.parseColor("#00AF50"));
+                    stock.decreaseStockCount((Integer) arrayList.get(i));
                 });
                 finish();
             }

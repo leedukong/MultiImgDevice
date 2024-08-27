@@ -33,13 +33,13 @@ public class Stock {
 
     public void increaseStockCount(int num){
         String currentCount = PreferenceManager.getString(context, "product_"+num+"_current_count");
-        int tempCount = Integer.parseInt(currentCount)-1;
+        int tempCount = Integer.parseInt(currentCount)+1;
         PreferenceManager.setString(context, "product_"+num+"_current_count", String.valueOf(tempCount));
     }
 
     public void decreaseStockCount(int num){
         String currentCount = PreferenceManager.getString(context, "product_"+num+"_current_count");
-        int tempCount = Integer.parseInt(currentCount)+1;
+        int tempCount = Integer.parseInt(currentCount)-1;
         PreferenceManager.setString(context, "product_"+num+"_current_count", String.valueOf(tempCount));
     }
 }
