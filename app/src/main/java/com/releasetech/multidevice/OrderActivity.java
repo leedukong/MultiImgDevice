@@ -73,7 +73,7 @@ public class OrderActivity extends AppCompatActivity {
         dbManager.open();
         dbManager.create();
 
-        Utils.hideNavBar(getWindow());
+        MultiDevice.tryConnect(this);
 
         Button hiddenButton = findViewById(R.id.setting_button);
         hiddenButton.setOnClickListener(view -> {
