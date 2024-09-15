@@ -5,22 +5,31 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.hardware.usb.UsbDevice;
-import android.hardware.usb.UsbManager;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.InputFilter;
+import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -28,6 +37,7 @@ import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 
 import com.releasetech.multidevice.AdminSettings.ProductManage.ProductManageFragment;
+import com.releasetech.multidevice.Manager.PasswordManager;
 import com.releasetech.multidevice.Manager.PreferenceManager;
 import com.releasetech.multidevice.R;
 import com.releasetech.multidevice.Tool.MediaReplacer;
@@ -60,6 +70,7 @@ public class AdminSettingsActivity extends AppCompatActivity implements
     protected static Intent rustDeskIntent;
     protected static Intent remoteViewIntent;
     protected static Intent niceIntent;
+    public static final int PICK_IMAGE_REQUEST = 1;
 
     @SuppressLint("HandlerLeak")
     final Handler handler = new Handler() {
@@ -260,31 +271,7 @@ public class AdminSettingsActivity extends AppCompatActivity implements
         @Override
         public void onCreatePreferencesFix(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.admin_preferences, rootKey);
-            ListPreference comPort = findPreference("com_port");
-            //String[] ports = SerialPortFinder.getAllDevicesPath();
-            String[] ports = getUsbSerialPorts(getContext());
-            comPort.setEntries(ports);
-            comPort.setEntryValues(ports);
             setupSpecialPreferences();
-        }
-
-        private String[] getUsbSerialPorts(Context context) {
-            UsbManager usbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
-            HashMap<String, UsbDevice> deviceList = usbManager.getDeviceList();
-            List<String> portList = new ArrayList<>();
-
-            for (UsbDevice device : deviceList.values()) {
-                // 장치가 시리얼 포트를 지원하는지 확인 (예시로 Vendor ID와 Product ID 사용)
-                int vendorId = device.getVendorId();
-                int productId = device.getProductId();
-
-                // 특정 Vendor ID 및 Product ID 조합을 통해 시리얼 장치를 식별
-                if (isSerialDevice(vendorId, productId)) {
-                    portList.add(device.getDeviceName());
-                }
-            }
-
-            return portList.toArray(new String[0]);
         }
 
         private boolean isSerialDevice(int vendorId, int productId) {
@@ -337,126 +324,8 @@ public class AdminSettingsActivity extends AppCompatActivity implements
                 return true;
             });
 
-            //Preference btnAndroidReboot = findPreference("android_reboot");
-//            btnAndroidReboot.setOnPreferenceClickListener(preference -> {
-//                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-//                Dialog tempDialog = builder.setMessage("기기를 재시작하시겠습니까?")
-//                        .setPositiveButton("Yes", (dialog, which) -> {
-//                            String cmd = "su -c reboot";
-//                            try {
-//                                Runtime.getRuntime().exec(cmd);
-//                            } catch (IOException e) {
-//                                e.printStackTrace();
-//                            }
-//                        })
-//                        .setNegativeButton("No", null).show();
-//                TextView messageView = tempDialog.findViewById(android.R.id.message);
-//                messageView.setTextSize(26);
-//                return true;
-//            });
         }
     }
-
-    private static boolean isEntering = false;
-    private static boolean shiftPressed = false;
-    private static String queueString ="";
-//    public static class DesignFragment extends PreferenceFragmentCompat{
-//        @Override
-//        public void onCreatePreferencesFix(Bundle savedInstanceState, String rootKey) {
-//            setPreferencesFromResource(R.xml.design_screen_preferences, rootKey);
-//
-//            Preference btnReplaceDesign = findPreference("replace_design");
-//            btnReplaceDesign.setOnPreferenceClickListener(preference -> {
-//                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-//                Dialog tempDialog = builder.setMessage("디자인을 교체하시겠습니까?\n\n*주의* 기존 파일은 복구되지 않습니다")
-//                        .setPositiveButton("Yes", (dialog, which) ->
-//                                Utils.alert(getContext(),
-//                                        MediaReplacer.replaceDesign(getContext())
-//                                )
-//                        )
-//                        .setNegativeButton("No", null).show();
-//                TextView messageView = tempDialog.findViewById(android.R.id.message);
-//                messageView.setTextSize(26);
-//                return true;
-//            });
-//
-//            Preference btnReplaceDesignFromServer = findPreference("replace_design_from_server");
-//            btnReplaceDesignFromServer.setOnPreferenceClickListener(preference -> {
-//                StringBuilder stringBuilder = new StringBuilder();
-//                UpdateDesign updateDesign = new UpdateDesign(getContext());
-//
-//                LayoutInflater vi = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//                ConstraintLayout scanQrDesignDialogLayout = (ConstraintLayout) vi.inflate(R.layout.dialog_scan_qr_design, null);
-//
-//                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-//                TextView scanQrDesignDialogTitle = new TextView(getContext());
-//                scanQrDesignDialogTitle.setText("디자인 QR코드를 리더기에 스캔하세요");
-//                scanQrDesignDialogTitle.setPadding(0, 32, 0, 32);
-//                scanQrDesignDialogTitle.setGravity(Gravity.CENTER_HORIZONTAL);
-//                scanQrDesignDialogTitle.setTextSize(32);
-//                AlertDialog scanQrDesignDialog = builder.setCustomTitle(scanQrDesignDialogTitle)
-//                        .setView(scanQrDesignDialogLayout)
-//                        .setPositiveButton("닫기", (dialog, which) -> dialog.dismiss()).show();
-//                scanQrDesignDialog.setOnKeyListener((view, i, keyEvent) -> {
-//                    if (keyEvent.getAction() == KeyEvent.ACTION_UP) {
-//                        if(!isEntering) {
-//                            isEntering = true;
-//                            final Handler handler = new Handler(Looper.getMainLooper());
-//                            handler.postDelayed(() -> {
-//                                UpdateDesign.serverUrl = queueString;
-//                                updateDesign.execute(UpdateDesign.SERVER);
-//                                queueString = "";
-//                                isEntering = false;
-//                                handler.postDelayed(() ->{
-//                                    if(UpdateDesign.failedItems.size() ==0){
-//                                        Utils.alert(getContext(), "디자인 업데이트가 완료되었습니다.");
-//                                        scanQrDesignDialog.dismiss();
-//                                    }else{
-//                                        Utils.alert(getContext(), "디자인 : " +UpdateDesign.failedItems.toString() + " 업데이트에 실패하였습니다.");
-//                                        scanQrDesignDialog.dismiss();
-//                                    }
-//                                }, 5000);
-//                            }, 2000);
-//                        }
-//                        char pressedKey = (char) keyEvent.getUnicodeChar();
-//                        if(pressedKey == 0){
-//                            shiftPressed = true;
-//                            return false;
-//                        }
-//                        if(shiftPressed){
-//                            queueString += Utils.shift(pressedKey);
-//                            shiftPressed = false;
-//                        }
-//                        else {
-//                            queueString += pressedKey;
-//                        }
-//                        return false;
-//                    }
-//                    return true;
-//                });
-//                return false;
-//            });
-//        }
-//    }
-
-//    public static class AppInfoFragment extends PreferenceFragmentCompat {
-//        int autoResetCount = 0;
-//
-//        @Override
-//        public void onCreatePreferencesFix(Bundle savedInstanceState, String rootKey) {
-//            setPreferencesFromResource(R.xml.app_info_preferences, rootKey);
-//            Preference versionName = findPreference("version_name");
-//            Preference launchUpdate = findPreference("launch_update");
-//            launchUpdate.setOnPreferenceClickListener(preference -> {
-//                UpdateApp updateApp = new UpdateApp();
-//                updateApp.setContext(requireContext());
-//                updateApp.execute();
-//                return false;
-//            });
-//        }
-//    }
-
-
     public static class DeviceInfoFragment extends PreferenceFragmentCompat {
         @Override
         public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
@@ -524,7 +393,19 @@ public class AdminSettingsActivity extends AppCompatActivity implements
             btnReplaceIdleAd.setOnPreferenceClickListener(preference -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 Dialog tempDialog = builder.setMessage("[대기]화면 광고를 교체하시겠습니까?\n\n*주의* 기존 파일은 복구되지 않습니다")
-                        .setPositiveButton("Yes", (dialog, which) -> Toast.makeText(getContext(), MediaReplacer.replaceIdleAd(getContext()), Toast.LENGTH_SHORT))
+                        .setPositiveButton("Yes", (dialog, which) -> {
+                            //Toast.makeText(getContext(), MediaReplacer.replaceIdleAd(getContext()), Toast.LENGTH_SHORT);
+
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                // Photo Picker Intent 생성
+                                Intent intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
+                                startActivityForResult(intent, PICK_IMAGE_REQUEST);
+                            } else {
+                                // 이전 버전에서는 기존 방식 사용
+                                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                                startActivityForResult(intent, PICK_IMAGE_REQUEST);
+                            }
+                        })
                         .setNegativeButton("No", null).show();
                 TextView messageView = tempDialog.findViewById(android.R.id.message);
                 messageView.setTextSize(26);
@@ -592,195 +473,16 @@ public class AdminSettingsActivity extends AppCompatActivity implements
         }
     }
 
-//    public static class DataFragment extends PreferenceFragmentCompat {
-//
-//        @Override
-//        public void onCreatePreferencesFix(Bundle savedInstanceState, String rootKey) {
-//            setPreferencesFromResource(R.xml.data_preferences, rootKey);
-//
-//            Preference btnDataBackup = findPreference("data_backup_header");
-//            btnDataBackup.setOnPreferenceClickListener(preference -> {
-//                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-//                Dialog tempDialog = builder.setMessage("데이터를 백업하시겠습니까?").setPositiveButton("Yes", (dialogInterface, i) -> {
-//                            try {
-//                                String msg = "";
-//                                switch (Backup.exportData(getContext(), 0)) {
-//                                    case Backup.RESULT_SUCCESS:
-//                                        msg = "백업을 완료했습니다.";
-//                                        break;
-//                                    case Backup.RESULT_NO_DISK:
-//                                        msg = "USB 또는 마이크로 SD 카드가 없습니다.";
-//                                        break;
-//                                    case Backup.RESULT_UNKNOWN:
-//                                        msg = "백업을 실패했습니다.";
-//                                        break;
-//                                    default:
-//                                }
-//                                Utils.alert(getContext(), msg);
-//                            } catch (Exception e) {
-//                                e.printStackTrace();
-//                            }
-//                        })
-//                        .setNegativeButton("No", null).show();
-//                TextView messageView = tempDialog.findViewById(android.R.id.message);
-//                messageView.setTextSize(26);
-//                return true;
-//            });
-//
-//            Preference btnDataLoad = findPreference("data_load_header");
-//            btnDataLoad.setOnPreferenceClickListener(preference -> {
-//                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-//                Dialog tempDialog = builder.setMessage("데이터를 불러오시겠습니까?\n\n*주의* 기존 데이터는 삭제됩니다.").setPositiveButton("Yes", (dialogInterface, i) -> {
-//                            try {
-//                                String msg = "";
-//                                switch (Backup.importData(getContext(), 0)) {
-//                                    case Backup.RESULT_SUCCESS:
-//                                        msg = "로드를 완료했습니다.\n앱을 재시작합니다.";
-//                                        final Handler handler = new Handler(Looper.getMainLooper());
-//                                        handler.postDelayed(() -> Utils.restart(getContext()), 3000);
-//                                        break;
-//                                    case Backup.RESULT_NO_DISK:
-//                                        msg = "USB 또는 마이크로 SD 카드가 없습니다.";
-//                                        break;
-//                                    case Backup.RESULT_NO_FILE:
-//                                        msg = "불러올 백업 파일이 없습니다.";
-//                                        break;
-//                                    case Backup.RESULT_UNKNOWN:
-//                                        msg = "로드를 실패했습니다.";
-//                                        break;
-//                                    default:
-//                                }
-//                                Utils.alert(getContext(), msg);
-//                            } catch (Exception e) {
-//                                e.printStackTrace();
-//                            }
-//                        })
-//                        .setNegativeButton("No", null).show();
-//                TextView messageView = tempDialog.findViewById(android.R.id.message);
-//                messageView.setTextSize(26);
-//                return true;
-//            });
-//
-//        }
-//    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-//    public static class PaycoSettingsFragment extends PreferenceFragmentCompat {
-//        @Override
-//        public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
-//            setPreferencesFromResource(R.xml.payco_settings_preferences, rootKey);
-//            SwitchPreference usePayco = findPreference("use_payco");
-//
-//            usePayco.setOnPreferenceChangeListener((preference, newValue) -> {
-//                PreferenceManager.setBoolean(getContext(), "use_payco", (boolean) newValue);
-//                return true;
-//            });
-//
-//            EditTextPreference registrationNumber = findPreference("registration_number");
-//            registrationNumber.setOnPreferenceChangeListener((preference, newValue) -> {
-//                PreferenceManager.setString(getContext(), "registration_number", newValue.toString());
-//                registrationNumber.setText(newValue.toString());
-//                return false;
-//            });
-//
-//            EditTextPreference vanPosTid = findPreference("van_pos_tid");
-//            vanPosTid.setOnPreferenceChangeListener((preference, newValue) -> {
-//                PreferenceManager.setString(getContext(), "van_pos_tid", newValue.toString());
-//                vanPosTid.setText(newValue.toString());
-//                return false;
-//            });
-//
-//            Preference registPayco = findPreference("regist_payco");
-//            registPayco.setOnPreferenceClickListener(preference -> {
-//                Payco payco = new Payco(getContext());
-//                payco.setOnRegisterCallback(new Payco.OnRegisterCallback(){
-//                    Handler handler = new Handler();
-//                    @Override
-//                    public void onRegisterResult(String result) {
-//                        if (result.equals("OK")) {
-//                            handler.post(() -> Toast.makeText(getContext(), "가맹점 등록이 완료되었습니다.", Toast.LENGTH_SHORT).show());
-//                        }
-//                    }
-//                    @Override
-//                    public void onRegisterException(Exception e) {
-//                        handler.post(() -> Toast.makeText(getContext(), "가맹점 등록에 실패했습니다.", Toast.LENGTH_SHORT).show());
-//                    }
-//                });
-//
-//
-//                payco.execute(Payco.REGISTER);
-//                return false;
-//            });
-//
-//            EditTextPreference paycoCountdown = findPreference("payco_countdown");
-//            paycoCountdown.setOnPreferenceChangeListener((preference, newValue) -> {
-//                PreferenceManager.setString(getContext(), "payco_countdown", newValue.toString());
-//                paycoCountdown.setText(newValue.toString());
-//                return false;
-//            });
-//        }
-//    }
+        Log.i("ActivityResult", "RequestCode: " + requestCode + ", ResultCode: " + resultCode);
 
-//    public static class VanCorpCodeSettingFragment extends PreferenceFragmentCompat {
-//        @Override
-//        public void onCreatePreferencesFix(@Nullable Bundle savedInstanceState, String rootKey) {
-//            setPreferencesFromResource(R.xml.van_corp_code_setting, rootKey);
-//
-//            CheckBoxPreference vanCorpCode1 = findPreference("van_corp_code_1");
-//            CheckBoxPreference vanCorpCode2 = findPreference("van_corp_code_2");
-//            CheckBoxPreference vanCorpCode3 = findPreference("van_corp_code_3");
-//            CheckBoxPreference vanCorpCode4 = findPreference("van_corp_code_4");
-//
-//            vanCorpCode1.setOnPreferenceChangeListener((preference, newValue) -> {
-//                if(newValue.toString().equals("true")){
-//                    PreferenceManager.setString(getContext(), "van_corp_code", "KCP");
-//                    vanCorpCode1.setChecked(true);
-//                    vanCorpCode2.setChecked(false);
-//                    vanCorpCode3.setChecked(false);
-//                    vanCorpCode4.setChecked(false);
-//                }else{
-//                    PreferenceManager.setString(getContext(), "van_corp_code", "");
-//                }
-//                return false;
-//            });
-//
-//            vanCorpCode2.setOnPreferenceChangeListener((preference, newValue) -> {
-//                if (newValue.toString().equals("true")) {
-//                    PreferenceManager.setString(getContext(), "van_corp_code", "KICC");
-//                    vanCorpCode1.setChecked(false);
-//                    vanCorpCode2.setChecked(true);
-//                    vanCorpCode3.setChecked(false);
-//                    vanCorpCode4.setChecked(false);
-//                }else{
-//                    PreferenceManager.setString(getContext(), "van_corp_code", "");
-//                }
-//                return false;
-//            });
-//
-//            vanCorpCode3.setOnPreferenceChangeListener((preference, newValue) -> {
-//                if (newValue.toString().equals("true")) {
-//                    PreferenceManager.setString(getContext(), "van_corp_code", "NICE");
-//                    vanCorpCode1.setChecked(false);
-//                    vanCorpCode2.setChecked(false);
-//                    vanCorpCode3.setChecked(true);
-//                    vanCorpCode4.setChecked(false);
-//                }else{
-//                    PreferenceManager.setString(getContext(), "van_corp_code", "");
-//                }
-//                return false;
-//            });
-//
-//            vanCorpCode4.setOnPreferenceChangeListener((preference, newValue) -> {
-//                if (newValue.toString().equals("true")) {
-//                    PreferenceManager.setString(getContext(), "van_corp_code", "KIS");
-//                    vanCorpCode1.setChecked(false);
-//                    vanCorpCode2.setChecked(false);
-//                    vanCorpCode3.setChecked(false);
-//                    vanCorpCode4.setChecked(true);
-//                }else{
-//                    PreferenceManager.setString(getContext(), "van_corp_code", "");
-//                }
-//                return false;
-//            });
-//        }
-//    }
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
+            // Your code here
+        } else {
+            Log.i("Error", "RequestCode or ResultCode is incorrect");
+        }
+    }
 }

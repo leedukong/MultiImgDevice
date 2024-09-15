@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.Preference;
 
 import com.releasetech.multidevice.AdminSettings.AdminSettingsActivity;
 import com.releasetech.multidevice.ProductSetting.DessertSettingsActivity;
@@ -79,6 +80,31 @@ public class PasswordManager {
                     Utils.showToast(context, "패스워드 오류 : " + wrongPasswordCount);
                 }
             }
+        });
+
+        AlertDialog passwordDialog = passwordDialogBuilder.create();
+        InputMethodManager mImm = (InputMethodManager)
+                activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        mImm.showSoftInput(pw, InputMethodManager.SHOW_IMPLICIT);
+
+        passwordDialog.getWindow().
+                setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+
+        passwordDialog.show();
+
+        passwordDialog.getWindow().
+                clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+        passwordDialog.setCanceledOnTouchOutside(false);
+    }
+
+    public void portDialog(AppCompatActivity activity) {
+        LayoutInflater vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LinearLayout passwordLayout = (LinearLayout) vi.inflate(R.layout.dialog_password, null);
+        final EditText pw = (EditText) passwordLayout.findViewById(R.id.pw);
+        AlertDialog.Builder passwordDialogBuilder = new AlertDialog.Builder(context).setTitle("포트번호를 입력하세요.").setView(passwordLayout).setPositiveButton("OK", (dialog,which) -> {
+            String userEnteredPassword = pw.getText().toString();
+            PreferenceManager.setString(context, "connected_port", userEnteredPassword);
         });
 
         AlertDialog passwordDialog = passwordDialogBuilder.create();

@@ -3,8 +3,6 @@
     <bool name="auto_update">true</bool>
     <bool name="free_of_charge">false</bool>
     <bool name="free_of_charge_text">true</bool>
-
-    <string name="com_port">/dev/ttyS1</string>
     <bool name="use_idle_screen">true</bool>
     <!--<bool name="use_auto_clear_cart">false</bool>-->
     <integer name="back_to_idle_time">30</integer>

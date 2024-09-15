@@ -1,7 +1,4 @@
 package com.releasetech.multidevice;
-
-import static com.releasetech.multidevice.Database.DataLoader.loadProductByNumber;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -72,8 +69,6 @@ public class OrderActivity extends AppCompatActivity {
         dbManager = new DBManager(this);
         dbManager.open();
         dbManager.create();
-
-        MultiDevice.tryConnect(this);
 
         Button hiddenButton = findViewById(R.id.setting_button);
         hiddenButton.setOnClickListener(view -> {

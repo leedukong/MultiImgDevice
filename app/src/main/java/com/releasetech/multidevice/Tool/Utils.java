@@ -99,9 +99,9 @@ public class Utils {
         if (sToast == null) {
             sToast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
             sToast.setGravity(Gravity.CENTER, 0, 0);
-            ViewGroup group = (ViewGroup) sToast.getView();
-            TextView messageTextView = (TextView) group.getChildAt(0);
-            messageTextView.setTextSize(30);
+//            ViewGroup group = (ViewGroup) sToast.getView();
+//            TextView messageTextView = (TextView) group.getChildAt(0);
+//            messageTextView.setTextSize(30);
         } else {
             sToast.setText(message);
         }

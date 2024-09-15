@@ -29,43 +29,10 @@ public class MultiDevice implements DevicesStateListener, View.OnClickListener, 
     private static TestHandler handler;
 
     private static void openConnect(Context context){
-//        if(PreferenceManager.getString(context, "port") == null) return;
-//        String portName = PreferenceManager.getString(context, "port");
-//        String portType = PreferenceManager.getString(context, "port").substring(0, portName.length()-1);
-//        int portNum = Integer.parseInt(portName.substring(portName.length()-1));
-//        PortController.init(context, portType, portNum, 38400);
         PortController.init(context, "/dev/ttyUSB", Integer.parseInt(PreferenceManager.getString(context, "connected_port")), 38400);
     }
 
-    public static void tryConnect(Context context){
-        if(PreferenceManager.getString(context, "connected_port") == null){
-            for (int i = 0; i < 30; i++) {
-                PortController.init(context, "/dev/ttyUSB", i, 38400);
-                if (PortController.get815State(0) == 1) {
-                    PreferenceManager.setString(context, "connected_port", String.valueOf(i));
-                    break;
-                }
-            }
-        }
-    }
-
     public static boolean locked = false;
-
-    public static void testThrow(Context context, int number){
-        openConnect(context);
-        PortController.outGoods(00, new ResultCallBack() {
-            @Override
-            public void onSuccess(int i, int i1) {
-                Log.i("출하", "성공");
-            }
-
-            @Override
-            public void onFailure(int i, String s, String s1) {
-                PreferenceManager.setString(context, "connected_port", null);
-                Log.i("출하", "실패");
-            }
-        });
-    }
 
     public static void throwOut(Context context, int number, OnThrowOutListener onThrowOutDoneListener) {
         if (locked) return;
