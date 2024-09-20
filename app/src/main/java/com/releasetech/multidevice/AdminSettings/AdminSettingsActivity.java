@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.InputFilter;
@@ -25,6 +26,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -86,6 +89,17 @@ public class AdminSettingsActivity extends AppCompatActivity implements
     public Handler getHandler() {
         return handler;
     }
+
+    private final ActivityResultLauncher<Intent> filePickerLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                    // 선택된 파일의 URI 처리
+                    Uri selectedFileUri = result.getData().getData();
+                    // 선택한 파일 URI를 처리하는 로직 작성
+                    // 예: 파일의 경로를 얻어오거나, Uri를 사용하여 파일 열기
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -391,24 +405,16 @@ public class AdminSettingsActivity extends AppCompatActivity implements
 
             Preference btnReplaceIdleAd = findPreference("ad_idle");
             btnReplaceIdleAd.setOnPreferenceClickListener(preference -> {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                Dialog tempDialog = builder.setMessage("[대기]화면 광고를 교체하시겠습니까?\n\n*주의* 기존 파일은 복구되지 않습니다")
-                        .setPositiveButton("Yes", (dialog, which) -> {
-                            //Toast.makeText(getContext(), MediaReplacer.replaceIdleAd(getContext()), Toast.LENGTH_SHORT);
+                Uri folderUri = Uri.parse("content://com.android.externalstorage.documents/document/primary:Android/media");
 
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                // Photo Picker Intent 생성
-                                Intent intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
-                                startActivityForResult(intent, PICK_IMAGE_REQUEST);
-                            } else {
-                                // 이전 버전에서는 기존 방식 사용
-                                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                                startActivityForResult(intent, PICK_IMAGE_REQUEST);
-                            }
-                        })
-                        .setNegativeButton("No", null).show();
-                TextView messageView = tempDialog.findViewById(android.R.id.message);
-                messageView.setTextSize(26);
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, folderUri);
+                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                intent.setType("*/*");
+
+                // 파일 선택기 실행
+                this.startActivity(Intent.createChooser(intent, "폴더 열기"));
                 return true;
             });
 
@@ -485,4 +491,5 @@ public class AdminSettingsActivity extends AppCompatActivity implements
             Log.i("Error", "RequestCode or ResultCode is incorrect");
         }
     }
+
 }

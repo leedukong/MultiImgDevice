@@ -33,6 +33,7 @@ public class DessertSettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dessert_setting);
         gridLayout = findViewById(R.id.gridLayout);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         for (int row = 0; row < numRows; row++) {
             for (int col = 0; col < numCols; col++) {

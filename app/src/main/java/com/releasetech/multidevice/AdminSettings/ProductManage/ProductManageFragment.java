@@ -560,6 +560,25 @@ public class ProductManageFragment extends Fragment {
     }
 
     private void saveProduct() {
+
+        dbManager.updateColumn(DBManager.PRODUCT_DESSERT, productCache.product);
+        loadProducts();
+
+        while (true) {
+            try {
+                loadProductSettings(currentProduct);
+                break;
+            } catch (NullPointerException e) {
+                currentProduct--;
+                if (currentProduct == 0) {
+                    loadCategorySettings(currentCategory);
+                    productLayout.setVisibility(View.GONE);
+                    categorySettingLayout.setVisibility(View.GONE);
+                    productSettingLayout.setVisibility(View.VISIBLE);
+                }
+            }
+        }
+
         TextView categoryName = requireActivity().findViewById(R.id.category_name);
         TextView name = requireActivity().findViewById(R.id.product_name);
         TextView price = requireActivity().findViewById(R.id.dessert_price);

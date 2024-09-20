@@ -73,15 +73,18 @@
             android:name=".OrderActivity"
             android:exported="true"
             android:launchMode="singleInstance"
-            android:theme="@style/Theme.MultiDevice.NoActionBar">\
+            android:theme="@style/Theme.MultiDevice.NoActionBar">
         </activity>
         <activity
             android:name=".ProductSetting.DessertSettingsActivity"
-            android:exported="true"
+            android:exported="false"
             android:launchMode="singleInstance"
-            android:theme="@style/Theme.MultiDevice.NoActionBar">\
+            android:label="제품 관리"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
         </activity>
-
         <activity
             android:name=".AdminSettings.AdminSettingsActivity"
             android:exported="false"
