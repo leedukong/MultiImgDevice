@@ -405,16 +405,11 @@ public class AdminSettingsActivity extends AppCompatActivity implements
 
             Preference btnReplaceIdleAd = findPreference("ad_idle");
             btnReplaceIdleAd.setOnPreferenceClickListener(preference -> {
-                Uri folderUri = Uri.parse("content://com.android.externalstorage.documents/document/primary:Android/media");
-
-                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                intent.addCategory(Intent.CATEGORY_OPENABLE);
-                intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, folderUri);
-                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                intent.setType("*/*");
-
-                // 파일 선택기 실행
-                this.startActivity(Intent.createChooser(intent, "폴더 열기"));
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType("*/*");  // 모든 미디어 타입 허용
+                String[] mimeTypes = {"image/*", "video/*"};
+                intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+                startActivityForResult(intent, 1);
                 return true;
             });
 
@@ -482,13 +477,29 @@ public class AdminSettingsActivity extends AppCompatActivity implements
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && data != null) {
+            Uri selectedUri = data.getData();
+            String mimeType = getContentResolver().getType(selectedUri);
 
-        Log.i("ActivityResult", "RequestCode: " + requestCode + ", ResultCode: " + resultCode);
-
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
-            // Your code here
-        } else {
-            Log.i("Error", "RequestCode or ResultCode is incorrect");
+//            try{
+//                PreferenceManager.setString(this, "ad_uri", data.getData().toString());
+//                Log.i("URI", PreferenceManager.getString(this, "ad_uri"));
+//            }catch (Exception e){
+//                e.printStackTrace();
+//            }
+            if (mimeType != null) {
+                if (mimeType.startsWith("image/")) {
+                    Log.i("URI 테스트", "이미지");
+                    PreferenceManager.setString(this, "ad_uri", data.getData().toString());
+                    PreferenceManager.setString(this, "ad_type", "image");
+                    Toast.makeText(this, "대기화면 광고 이미지가 교체되었습니다", Toast.LENGTH_SHORT).show();
+                } else if (mimeType.startsWith("video/")) {
+                    Log.i("URI 테스트", "비디오");
+                    PreferenceManager.setString(this, "ad_uri", data.getData().toString());
+                    PreferenceManager.setString(this, "ad_type", "video");
+                    Toast.makeText(this, "대기화면 광고 영상이 교체되었습니다", Toast.LENGTH_SHORT).show();
+                }
+            }
         }
     }
 
