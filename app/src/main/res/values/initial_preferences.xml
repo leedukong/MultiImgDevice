@@ -5,7 +5,7 @@
     <bool name="free_of_charge_text">true</bool>
     <bool name="use_idle_screen">true</bool>
     <!--<bool name="use_auto_clear_cart">false</bool>-->
-    <integer name="back_to_idle_time">30</integer>
+<!--    <integer name="back_to_idle_time">30</integer>-->
     <integer name="idle_screen_image_duration">20</integer>
     <integer name="cart_quantity">5</integer>
 
@@ -14,6 +14,10 @@
     <string name="manager_password">1111</string>
     <string name="dessert_password">2002</string>
     <string name="admin_password">1001</string>
+    <string name="ad_type">text</string>
+    <string name="ad_type_preference">text</string>
+    <integer name="ad_image_count">1</integer>
+    <integer name="ad_video_count">1</integer>
 
     <integer name="align_index">0</integer>
     <integer name="opacity">0</integer>

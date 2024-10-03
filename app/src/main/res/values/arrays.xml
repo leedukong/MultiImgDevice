@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 사용자에게 보여지는 옵션 목록 -->
+    <string-array name="media_type_entries">
+        <item>문구</item>
+        <item>이미지</item>
+        <item>영상</item>
+    </string-array>
+
+    <!-- 실제로 저장되는 값 -->
+    <string-array name="media_type_values">
+        <item>text</item>
+        <item>image</item>
+        <item>video</item>
+    </string-array>
+</resources>

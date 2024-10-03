@@ -23,6 +23,7 @@
             app:fragment="com.releasetech.multidevice.AdminSettings.AdminSettingsActivity$IdleScreenFragment"
             app:key="idle_screen_header"
             app:title="대기화면" />
+
         <Preference
             app:fragment="com.releasetech.multidevice.AdminSettings.AdminSettingsActivity$AdminInfoFragment"
             app:key="manager_header"

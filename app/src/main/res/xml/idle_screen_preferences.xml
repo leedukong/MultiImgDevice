@@ -1,12 +1,21 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <EditTextPreference
-        android:inputType="number"
-        app:defaultValue="@integer/back_to_idle_time"
-        app:key="back_to_idle_time"
-        app:title="사용자 입력 없을 시 대기화면 전환 시간 초"
-        app:useSimpleSummaryProvider="true" />
+<!--    <EditTextPreference-->
+<!--        android:inputType="number"-->
+<!--        app:defaultValue="@integer/back_to_idle_time"-->
+<!--        app:key="back_to_idle_time"-->
+<!--        app:title="사용자 입력 없을 시 대기화면 전환 시간 초"-->
+<!--        app:useSimpleSummaryProvider="true" />-->
+
+    <ListPreference
+        android:key="ad_type_preference"
+        android:title="미디어 유형 선택"
+        android:summary="문구, 이미지 또는 영상을 선택하세요"
+        android:entries="@array/media_type_entries"
+        android:entryValues="@array/media_type_values"
+        android:defaultValue="text"
+        android:dialogTitle="미디어 유형 선택" />
 
     <EditTextPreference
         app:defaultValue="화면을 터치 해주세요!!"
@@ -20,8 +29,50 @@
         app:title="대기화면 문구 색상"
         app:useSimpleSummaryProvider="true" />
 
-    <Preference
-        app:key="ad_idle"
-        app:title="대기화면 광고 교체" />
+    <EditTextPreference
+        app:defaultValue="10"
+        app:key="ad_image_time"
+        app:title="이미지 전환 시간"
+        app:useSimpleSummaryProvider="true" />
 
+    <EditTextPreference
+        app:key="ad_image"
+        app:title="이미지 개수"
+        app:useSimpleSummaryProvider="true" />
+
+    <Preference
+        app:key="ad_image1"
+        app:title="대기화면1 이미지 교체" />
+    <Preference
+        app:key="ad_image2"
+        app:title="대기화면2 이미지 교체" />
+    <Preference
+        app:key="ad_image3"
+        app:title="대기화면3 이미지 교체" />
+    <Preference
+        app:key="ad_image4"
+        app:title="대기화면4 이미지 교체" />
+    <Preference
+        app:key="ad_image5"
+        app:title="대기화면5 이미지 교체" />
+
+    <EditTextPreference
+        app:key="ad_video"
+        app:title="동영상 개수"
+        app:useSimpleSummaryProvider="true" />
+    <Preference
+        app:key="ad_video1"
+        app:title="대기화면1 영상 교체" />
+    <Preference
+        app:key="ad_video2"
+        app:title="대기화면2 영상 교체" />
+    <Preference
+        app:key="ad_video3"
+        app:title="대기화면3 영상 교체" />
+    <Preference
+        app:key="ad_video4"
+        app:title="대기화면4 영상 교체" />
+    <Preference
+        app:key="ad_video5"
+        app:title="대기화면5 영상 교체" />
 </PreferenceScreen>

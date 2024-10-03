@@ -20,6 +20,7 @@ import android.provider.Settings;
 import android.text.InputFilter;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -390,40 +391,274 @@ public class AdminSettingsActivity extends AppCompatActivity implements
         @Override
         public void onCreatePreferencesFix(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.idle_screen_preferences, rootKey);
-
-            Utils.setRangeFilter(this, "back_to_idle_time", 0, 600);
-            Utils.setRangeFilter(this, "idle_screen_image_duration", 0, 300);
-            EditTextPreference backToIdleTimePreference = findPreference("back_to_idle_time");
-            backToIdleTimePreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                int value = Integer.parseInt(newValue.toString());
-                if (value < 30) {
-                    Utils.timedAlert(requireContext(), "30초 이상 설정해주세요.", 2);
-                    return false;
-                }
-                return true;
-            });
-
-            Preference btnReplaceIdleAd = findPreference("ad_idle");
-            btnReplaceIdleAd.setOnPreferenceClickListener(preference -> {
-                Intent intent = new Intent(Intent.ACTION_PICK);
-                intent.setType("*/*");  // 모든 미디어 타입 허용
-                String[] mimeTypes = {"image/*", "video/*"};
-                intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
-                startActivityForResult(intent, 1);
-                return true;
-            });
-
+            ListPreference adType = findPreference("ad_type_preference");
             EditTextPreference idleScreenText = findPreference("message_idle");
+            EditTextPreference idleScreenTextColor = findPreference("message_color");
+            EditTextPreference imageTime = findPreference("ad_image_time");
+            EditTextPreference imageCount = findPreference("ad_image");
+            Preference adImage1 = findPreference("ad_image1");
+            Preference adImage2 = findPreference("ad_image2");
+            Preference adImage3 = findPreference("ad_image3");
+            Preference adImage4 = findPreference("ad_image4");
+            Preference adImage5 = findPreference("ad_image5");
+            EditTextPreference videoCount = findPreference("ad_video");
+            Preference adVideo1 = findPreference("ad_video1");
+            Preference adVideo2 = findPreference("ad_video2");
+            Preference adVideo3 = findPreference("ad_video3");
+            Preference adVideo4 = findPreference("ad_video4");
+            Preference adVideo5 = findPreference("ad_video5");
+
+            if (adType != null) {
+                adType.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                    @Override
+                    public boolean onPreferenceChange(Preference preference, Object newValue) {
+
+                        int index = adType.findIndexOfValue(newValue.toString());
+                        if (index >= 0) {
+                            // Entry 값을 Summary로 설정
+                            adType.setSummary(adType.getEntries()[index]);
+                        }
+                        String value = newValue.toString();
+                        // 선택한 값에 따라 처리
+                        if (value.equals("text")) {
+                            Log.i("test", "text");
+                            PreferenceManager.setString(getContext(), "ad_type", "text");
+                            idleScreenText.setVisible(true); idleScreenTextColor.setVisible(true);
+                            imageCount.setVisible(false); imageTime.setVisible(false); adImage1.setVisible(false); adImage2.setVisible(false); adImage3.setVisible(false); adImage4.setVisible(false); adImage5.setVisible(false);
+                            videoCount.setVisible(false); adVideo1.setVisible(false); adVideo2.setVisible(false); adVideo3.setVisible(false); adVideo4.setVisible(false); adVideo5.setVisible(false);
+                        } else if (value.equals("image")) {
+                            Log.i("test", "image");
+                            PreferenceManager.setString(getContext(), "ad_type", "image");
+                            idleScreenText.setVisible(false); idleScreenTextColor.setVisible(false);
+                            imageCount.setVisible(true); imageTime.setVisible(true);
+                            for(int image=1; image<= 5; image++){
+                                Preference adImage = null;
+                                switch (image) {
+                                    case 1:
+                                        adImage = adImage1;
+                                        break;
+                                    case 2:
+                                        adImage = adImage2;
+                                        break;
+                                    case 3:
+                                        adImage = adImage3;
+                                        break;
+                                    case 4:
+                                        adImage = adImage4;
+                                        break;
+                                    case 5:
+                                        adImage = adImage5;
+                                        break;
+                                }
+                                if (adImage != null) {
+                                    adImage.setVisible(image <= PreferenceManager.getInt(getContext(), "ad_video_count")); // imageCount 이하일 경우 true
+                                }
+                            }
+                            videoCount.setVisible(false); adVideo1.setVisible(false); adVideo2.setVisible(false); adVideo3.setVisible(false); adVideo4.setVisible(false); adVideo5.setVisible(false);
+                        } else if (value.equals("video")) {
+                            Log.i("test", "video");
+                            PreferenceManager.setString(getContext(), "ad_type", "video");
+                            idleScreenText.setVisible(false); idleScreenTextColor.setVisible(false);
+                            imageCount.setVisible(false); imageTime.setVisible(false); adImage1.setVisible(false); adImage2.setVisible(false); adImage3.setVisible(false); adImage4.setVisible(false); adImage5.setVisible(false);
+                            videoCount.setVisible(true);
+                            for(int video=1; video<= 5; video++){
+                                Preference adVideo = null;
+                                switch (video) {
+                                    case 1:
+                                        adVideo = adVideo1;
+                                        break;
+                                    case 2:
+                                        adVideo = adVideo2;
+                                        break;
+                                    case 3:
+                                        adVideo = adVideo3;
+                                        break;
+                                    case 4:
+                                        adVideo = adVideo4;
+                                        break;
+                                    case 5:
+                                        adVideo = adVideo5;
+                                        break;
+                                }
+                                if (adVideo != null) {
+                                    adVideo.setVisible(video <= PreferenceManager.getInt(getContext(), "ad_video_count")); // imageCount 이하일 경우 true
+                                }
+                            }
+                        }
+                        return true;
+                    }
+                });
+            }else{
+                Log.i("test", "비어있음");
+            }
+
+            if(PreferenceManager.getString(getContext(), "ad_type").equals("text")){
+                idleScreenText.setVisible(true); idleScreenTextColor.setVisible(true);
+                imageCount.setVisible(false); imageTime.setVisible(false); adImage1.setVisible(false); adImage2.setVisible(false); adImage3.setVisible(false); adImage4.setVisible(false); adImage5.setVisible(false);
+                videoCount.setVisible(false); adVideo1.setVisible(false); adVideo2.setVisible(false); adVideo3.setVisible(false); adVideo4.setVisible(false); adVideo5.setVisible(false);
+            }else if(PreferenceManager.getString(getContext(), "ad_type").equals("image")){
+                idleScreenText.setVisible(false); idleScreenTextColor.setVisible(false);
+                imageCount.setVisible(true); imageTime.setVisible(true);
+                for(int image=1; image<= 5; image++){
+                    Preference adImage = null;
+                    switch (image) {
+                        case 1:
+                            adImage = adImage1;
+                            break;
+                        case 2:
+                            adImage = adImage2;
+                            break;
+                        case 3:
+                            adImage = adImage3;
+                            break;
+                        case 4:
+                            adImage = adImage4;
+                            break;
+                        case 5:
+                            adImage = adImage5;
+                            break;
+                    }
+                    if (adImage != null) {
+                        adImage.setVisible(image <= PreferenceManager.getInt(getContext(), "ad_image_count")); // imageCount 이하일 경우 true
+                    }
+                }
+                videoCount.setVisible(false); adVideo1.setVisible(false); adVideo2.setVisible(false); adVideo3.setVisible(false); adVideo4.setVisible(false); adVideo5.setVisible(false);
+            } else if(PreferenceManager.getString(getContext(), "ad_type").equals("video")){
+                idleScreenText.setVisible(false); idleScreenTextColor.setVisible(false);
+                imageCount.setVisible(false); imageTime.setVisible(false); adImage1.setVisible(false); adImage2.setVisible(false); adImage3.setVisible(false); adImage4.setVisible(false); adImage5.setVisible(false);
+                videoCount.setVisible(true);
+                for(int video=1; video<= 5; video++){
+                    Preference adVideo = null;
+                    switch (video) {
+                        case 1:
+                            adVideo = adVideo1;
+                            break;
+                        case 2:
+                            adVideo = adVideo2;
+                            break;
+                        case 3:
+                            adVideo = adVideo3;
+                            break;
+                        case 4:
+                            adVideo = adVideo4;
+                            break;
+                        case 5:
+                            adVideo = adVideo5;
+                            break;
+                    }
+                    if (adVideo != null) {
+                        adVideo.setVisible(video <= PreferenceManager.getInt(getContext(), "ad_video_count")); // imageCount 이하일 경우 true
+                    }
+                }
+            }
             idleScreenText.setOnPreferenceChangeListener((preference, newValue) -> {
                 PreferenceManager.setString(getContext(), "message_idle", newValue.toString());
                 idleScreenText.setText(newValue.toString());
                 return true;
             });
-
-            EditTextPreference idleScreenTextColor = findPreference("message_color");
             idleScreenTextColor.setOnPreferenceChangeListener((preference, newValue) -> {
                 PreferenceManager.setString(getContext(), "message_color", newValue.toString());
                 idleScreenTextColor.setText(newValue+"");
+                return true;
+            });
+
+            imageCount.setOnPreferenceChangeListener((preference, newValue) -> {
+                Object obj = newValue;
+                if (Integer.parseInt((String) obj) <=5){
+                    PreferenceManager.setInt(getContext(), "ad_image_count", Integer.parseInt(newValue.toString()));
+                    for(int image=1; image<= 5; image++){
+                        Preference adImage = null;
+                        switch (image) {
+                            case 1:
+                                adImage = adImage1;
+                                break;
+                            case 2:
+                                adImage = adImage2;
+                                break;
+                            case 3:
+                                adImage = adImage3;
+                                break;
+                            case 4:
+                                adImage = adImage4;
+                                break;
+                            case 5:
+                                adImage = adImage5;
+                                break;
+                        }
+                        if (adImage != null) {
+                            adImage.setVisible(image <= Integer.parseInt((String) obj)); // imageCount 이하일 경우 true
+                        }
+                    }
+                }else{
+                    Toast.makeText(getContext(), "이미지 광고 개수는 5개 이하로 설정해주세요.", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+                return true;
+            });
+            videoCount.setOnPreferenceChangeListener((preference, newValue) -> {
+                PreferenceManager.setInt(getContext(), "ad_video_count", Integer.parseInt(newValue.toString()));
+                Object obj = newValue;
+                if(Integer.parseInt((String) obj) <= 5) {
+                    for (int video = 1; video <= 5; video++) {
+                        Preference adVideo = null;
+                        switch (video) {
+                            case 1:
+                                adVideo = adVideo1;
+                                break;
+                            case 2:
+                                adVideo = adVideo2;
+                                break;
+                            case 3:
+                                adVideo = adVideo3;
+                                break;
+                            case 4:
+                                adVideo = adVideo4;
+                                break;
+                            case 5:
+                                adVideo = adVideo5;
+                                break;
+                        }
+                        if (adVideo != null) {
+                            adVideo.setVisible(video <= Integer.parseInt((String) obj)); // imageCount 이하일 경우 true
+                        }
+                    }
+                }else{
+                    Toast.makeText(getContext(), "영상 광고 개수는 5개 이하로 설정해주세요.", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+                return true;
+            });
+
+            setupImagePicker(adImage1, 1);
+            setupImagePicker(adImage2, 2);
+            setupImagePicker(adImage3, 3);
+            setupImagePicker(adImage4, 4);
+            setupImagePicker(adImage5, 5);
+            setupVideoPicker(adVideo1, 1);
+            setupVideoPicker(adVideo2, 2);
+            setupVideoPicker(adVideo3, 3);
+            setupVideoPicker(adVideo4, 4);
+            setupVideoPicker(adVideo5, 5);
+        }
+        private void setupImagePicker(Preference preference, int num) {
+            preference.setOnPreferenceClickListener(pref -> {
+                PreferenceManager.setInt(pref.getContext(), "ad_image_temp", num);
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType("image/*");  // 이미지만 허용
+                String[] mimeTypes = {"image/*"}; // 허용할 MIME 타입
+                intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+                startActivityForResult(intent, 1);
+                return true;
+            });
+        }
+        private void setupVideoPicker(Preference preference, int num) {
+            preference.setOnPreferenceClickListener(pref -> {
+                PreferenceManager.setInt(pref.getContext(), "ad_video_temp", num);
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType("video/*");  // 비디오만 허용
+                String[] mimeTypes = {"video/*"}; // 허용할 MIME 타입
+                intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+                startActivityForResult(intent, 2); // 요청 코드 변경 (1과 다른 값으로 설정)
                 return true;
             });
         }
@@ -490,13 +725,11 @@ public class AdminSettingsActivity extends AppCompatActivity implements
             if (mimeType != null) {
                 if (mimeType.startsWith("image/")) {
                     Log.i("URI 테스트", "이미지");
-                    PreferenceManager.setString(this, "ad_uri", data.getData().toString());
-                    PreferenceManager.setString(this, "ad_type", "image");
+                    PreferenceManager.setString(this, "ad_image"+PreferenceManager.getInt(this, "ad_image_temp"), data.getData().toString());
                     Toast.makeText(this, "대기화면 광고 이미지가 교체되었습니다", Toast.LENGTH_SHORT).show();
                 } else if (mimeType.startsWith("video/")) {
                     Log.i("URI 테스트", "비디오");
-                    PreferenceManager.setString(this, "ad_uri", data.getData().toString());
-                    PreferenceManager.setString(this, "ad_type", "video");
+                    PreferenceManager.setString(this, "ad_video"+PreferenceManager.getInt(this, "ad_video_temp"), data.getData().toString());
                     Toast.makeText(this, "대기화면 광고 영상이 교체되었습니다", Toast.LENGTH_SHORT).show();
                 }
             }
