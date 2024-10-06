@@ -43,6 +43,15 @@ public class CheckoutManager {
         send(activity, sendData);
     }
 
+    //todo 주석 제거 후, price에는 checkout할 때 책정된 가격 넣으면 되고(PreferenceManager.setString, getString 쓰면 될 것 같아요)
+    //todo etAgreenum.getText().toString(), etAgreedate.getText().toString() 얘네만 채워넣으면 되는데, checkout할 때 activityResult로 값 반환받거나, 아니면 같이 보내드린 앱 보시고 어떤식으로 저장되는지 찾아서 넣어주세요(이것도 PreferenceManager.setString getString 쓰시면 될 것 같아요)
+
+//    public static void cancel(Activity activity){
+//        String sendData = "";
+//        sendData = "0420" + fs + "10" + fs + "I" + fs + price + fs + "91" + fs + "0" + fs + "00" + fs + etAgreenum.getText().toString() + fs + etAgreedate.getText().toString() + fs + "2393300001" + fs + fs + fs + fs + "" + fs + fs + fs + "" + fs + "" + fs + fs + "" + fs + "" + fs + fs + fs + fs + fs + fs + fs + fs + fs + fs;
+//        send(activity, sendData);
+//    }
+
     public static void saveCheckoutCache(Context context, Intent data) {
         CheckoutCache cache = new CheckoutCache(
                 data.getStringExtra("TOTAL_AMOUNT"),
@@ -70,5 +79,5 @@ public class CheckoutManager {
         }
     }
 
-
 }
+
