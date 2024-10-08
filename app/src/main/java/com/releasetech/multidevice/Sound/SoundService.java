@@ -21,6 +21,8 @@ public class SoundService extends IntentService {
     public static final String DESSERT_FAIL = "dessert_fail";
     public static final String WARN = "warn";
     private static final String TAG = "[SOUND]";
+    public static final String DESSERT = "dessert";
+    public static final String OUT_OF_ORDER = "out_of_order";
 
     private static MediaPlayer player_checkout_fail = null;
     private static MediaPlayer player_checkout_ok = null;
@@ -32,6 +34,8 @@ public class SoundService extends IntentService {
     private static MediaPlayer player_dessert_ok = null;
     private static MediaPlayer player_dessert_fail = null;
     private static AudioManager audioManager = null;
+    private static MediaPlayer player_dessert = null;
+    private static MediaPlayer player_out_of_order = null;
 
 
 
@@ -137,6 +141,24 @@ public class SoundService extends IntentService {
                             player_dessert_fail.setOnCompletionListener(mediaPlayer -> mediaPlayer.seekTo(0));
                         } else {
                             player_dessert_fail.start();
+                        }
+                        break;
+                    case DESSERT:
+                        if (player_dessert == null) {
+                            player_dessert = MediaPlayer.create(getApplicationContext(), R.raw.dessert, new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ALARM).build(), audioManager.generateAudioSessionId());
+                            player_dessert.setOnPreparedListener(MediaPlayer::start);
+                            player_dessert.setOnCompletionListener(mediaPlayer -> mediaPlayer.seekTo(0));
+                        } else {
+                            player_dessert.start();
+                        }
+                        break;
+                    case OUT_OF_ORDER:
+                        if (player_out_of_order == null) {
+                            player_out_of_order = MediaPlayer.create(getApplicationContext(), R.raw.out_of_order, new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ALARM).build(), audioManager.generateAudioSessionId());
+                            player_out_of_order.setOnPreparedListener(MediaPlayer::start);
+                            player_out_of_order.setOnCompletionListener(mediaPlayer -> mediaPlayer.seekTo(0));
+                        } else {
+                            player_out_of_order.start();
                         }
                         break;
                 }

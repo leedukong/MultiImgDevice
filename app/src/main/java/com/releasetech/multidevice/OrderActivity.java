@@ -1,6 +1,7 @@
 package com.releasetech.multidevice;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,11 +27,13 @@ import com.releasetech.multidevice.Manager.CheckoutManager;
 import com.releasetech.multidevice.Manager.PasswordManager;
 import com.releasetech.multidevice.Manager.PreferenceManager;
 import com.releasetech.multidevice.MultiDevice.MultiDevice;
+import com.releasetech.multidevice.Sound.SoundService;
 import com.releasetech.multidevice.Stock.Stock;
 import com.releasetech.multidevice.Tool.Cache;
 import com.releasetech.multidevice.Tool.Utils;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Stack;
 
 public class OrderActivity extends AppCompatActivity {
@@ -89,6 +92,31 @@ public class OrderActivity extends AppCompatActivity {
 
         Button button = findViewById(R.id.button_checkout);
         button.setOnClickListener(view -> {
+
+            ArrayList arrayList1 = new ArrayList();
+            for(int i=0; i< cartManager.getCount(); i++){
+                arrayList1.add(cartManager.getItem(i).number);
+            }
+            Collections.sort(arrayList1);
+
+            int count = Integer.parseInt(PreferenceManager.getString(this, "product_" + arrayList1.get(0) + "_current_count")) - 1;
+            if (count < 0) {
+                Toast.makeText(getApplicationContext(), arrayList1.get(0) + "번 재고 부족", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            for (int j = 0; j < arrayList1.size() - 1; j++) {
+                if (arrayList1.get(j) == arrayList1.get(j + 1)) {
+                    count--;
+                } else {
+                    count = Integer.parseInt(PreferenceManager.getString(this, "product_" + arrayList1.get(j+1) + "_current_count")) - 1;
+                }
+                if (count < 0) {
+                    Toast.makeText(getApplicationContext(), arrayList1.get(j+1) + "번 재고 부족", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+
             Log.i("테스트", "-------------------");
             checkout();
         });
@@ -161,13 +189,13 @@ public class OrderActivity extends AppCompatActivity {
 
         buttonAdd.setOnClickListener(view -> {
             try {
-                if (adapter.getItemCount() < 5) {
-                    if(cartManager.getCount()<5) {
+                if (adapter.getItemCount() < Integer.parseInt(PreferenceManager.getString(this, "cart_quantity"))) {
+                    if(cartManager.getCount() < Integer.parseInt(PreferenceManager.getString(this, "cart_quantity"))) {
                         cartView(number);
                     }
                 } else {
                     try {
-                        Utils.showToast(this, "한 번에 5개까지 주문 가능합니다");
+                        Utils.showToast(this, "한 번에 " + Integer.parseInt(PreferenceManager.getString(this, "cart_quantity"))+ "개까지 주문 가능합니다");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -276,7 +304,7 @@ public class OrderActivity extends AppCompatActivity {
                 textPrice = findViewById(R.id.total_price);
 
                 itemIncr.setOnClickListener(view -> {
-                    if(cartManager.getCount()<5) {
+                    if(cartManager.getCount() < Integer.parseInt(PreferenceManager.getString(OrderActivity.this, "cart_quantity"))) {
                         int position = getAdapterPosition();
                         int count = Integer.parseInt(itemCount.getText().toString());
                         CartItem.set(position, new CartItem(CartItem.get(position).categoryName, CartItem.get(position).productName, CartItem.get(position).price, (count + 1), CartItem.get(position).number));
@@ -325,7 +353,9 @@ public class OrderActivity extends AppCompatActivity {
             Log.i("테스트", "결제 완료2");
             if (resultCode == RESULT_OK) {
                 Log.i("테스트", "결제 완료3");
+                recvFS(data.getStringExtra("NVCATRECVDATA"));
                 Toast.makeText(getApplicationContext(), "결제 완료", Toast.LENGTH_SHORT).show();
+                SoundService.play(OrderActivity.this, SoundService.CHECKOUT_OK);
 
                 Stack stack = new Stack();
                 ArrayList throwOutProduct = new ArrayList();
@@ -338,10 +368,18 @@ public class OrderActivity extends AppCompatActivity {
                 }
                 Log.i("테스트", throwOutProduct.toString());
 
-                Intent intent = new Intent(OrderActivity.this, ThrowOutActivity.class);
-                intent.putExtra("stack", stack);
-                intent.putExtra("throwOutProduct", throwOutProduct);
-                startActivity(intent);
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable(){
+                    @Override
+                    public void run(){
+                        Intent intent = new Intent(OrderActivity.this, ThrowOutActivity.class);
+                        intent.putExtra("stack", stack);
+                        intent.putExtra("throwOutProduct", throwOutProduct);
+                        startActivity(intent);
+                    }
+                }, 2000);
+
+
 
                 //MultiDevice.testThrow(this, 1);
 //                Stack stack = new Stack();
@@ -372,9 +410,186 @@ public class OrderActivity extends AppCompatActivity {
 //                });
             } else if (resultCode == RESULT_CANCELED) {
                 Toast.makeText(getApplicationContext(), "결제 실패", Toast.LENGTH_SHORT).show();
+                SoundService.play(this, SoundService.CHECKOUT_FAIL);
             }
         }
     }
 
-
+    String strRecv01, strRecv02, strRecv03, strRecv04, strRecv05, strRecv06, strRecv07, strRecv08, strRecv09, strRecv10, strRecv11, strRecv12, strRecv13, strRecv14, strRecv15, strRecv16, strRecv17, strRecv18, strRecv19, strRecv20, strRecv21, strRecv22, strRecv23, strRecv24, strRecv25, strRecv26, strRecv27, strRecv28, strRecv29, strRecv30;
+    String cardNum;
+    int strPrice;
+    private void recvFS(String recvdata) {
+        int i, j = 0, k = 0;
+        for (i = 0; i < recvdata.length(); i++) {
+            if (recvdata.substring(i, i + 1).equals(String.valueOf(fs))) {
+                k++;
+                switch (k) {
+                    case 1: //거래구분
+                        strRecv01 = recvdata.substring(j, i);
+                        Log.i("환불 테스트 거래 구분", strRecv01);
+                        j = i + 1;
+                        break;
+                    case 2: //거래유형
+                        strRecv02 = recvdata.substring(j, i);
+                        Log.i("환불 테스트 거래 유형", strRecv02);
+                        j = i + 1;
+                        break;
+                    case 3: //응답코드
+                        strRecv03 = recvdata.substring(j, i);
+                        Log.i("환불 테스트 응답 코드", strRecv03);
+                        j = i + 1;
+                        break;
+                    case 4: //거래금액
+                        strRecv04 = recvdata.substring(j, i);
+                        strPrice = Integer.valueOf(strRecv04);
+                        PreferenceManager.setInt(this, "prev_nice_checkout_approval_price", strPrice);
+                        Log.i("환불 테스트 거래 금액", strRecv04);
+                        j = i + 1;
+                        break;
+                    case 5: //부가세
+                        strRecv05 = recvdata.substring(j, i);
+                        Log.i("환불 테스트 부가세", strRecv05);
+                        j = i + 1;
+                        break;
+                    case 6: //봉사료
+                        strRecv06 = recvdata.substring(j, i);
+                        Log.i("환불 테스트 봉사료", strRecv06);
+                        j = i + 1;
+                        break;
+                    case 7: //할부
+                        strRecv07 = recvdata.substring(j, i);
+                        Log.i("환불 테스트 할부", strRecv07);
+                        j = i + 1;
+                        break;
+                    case 8: //승인번호
+                        strRecv08 = recvdata.substring(j, i);
+                        PreferenceManager.setString(this, "prev_nice_checkout_approval_no", strRecv08.replaceAll(" " , ""));
+                        Log.i("나이스 테스트 8", PreferenceManager.getString(this, "prev_nice_checkout_approval_no"));
+                        Log.i("환불 테스트 승인 번호", strRecv08);
+                        j = i + 1;
+                        break;
+                    case 9: //승인일자
+                        strRecv09 = recvdata.substring(j, i);
+                        if(strRecv09.replaceAll(" ", "").length() > 6) {
+                            PreferenceManager.setString(this, "prev_nice_checkout_approval_date", strRecv09.replaceAll(" ", "").substring(0, 6));
+                            Log.i("나이스 테스트 9", PreferenceManager.getString(this, "prev_nice_checkout_approval_date"));
+                            Log.i("환불 테스트 승인 일자", strRecv09);
+                        }else {
+                            PreferenceManager.setString(this, "prev_nice_checkout_approval_date", "");
+                            Log.i("나이스 테스트 9-2", PreferenceManager.getString(this, "prev_nice_checkout_approval_date"));
+                            Log.i("환불 테스트 승인 일자", strRecv09);
+                        }
+                        j = i + 1;
+                        break;
+                    case 10: //발급사코드
+                        strRecv10 = recvdata.substring(j, i);
+                        Log.i("환불 테스트 발급사 코드", strRecv10);
+                        j = i + 1;
+                        break;
+                    case 11: //발급사명
+                        strRecv11 = recvdata.substring(j, i);
+                        Log.i("환불 테스트 발급사 이름", strRecv11);
+                        j = i + 1;
+                        break;
+                    case 12: //매입사코드
+                        strRecv12 = recvdata.substring(j, i);
+                        Log.i("환불 테스트 매입사 코드", strRecv12);
+                        j = i + 1;
+                        break;
+                    case 13: //매입사명
+                        strRecv13 = recvdata.substring(j, i);
+                        Log.i("환불 테스트 매입사 이름", strRecv13);
+                        j = i + 1;
+                        break;
+                    case 14: //가맹점번호
+                        strRecv14 = recvdata.substring(j, i);
+                        Log.i("환불 테스트 가맹점 번호", strRecv14);
+                        j = i + 1;
+                        break;
+                    case 15: //승인CATID
+                        strRecv15 = recvdata.substring(j, i);
+                        Log.i("환불 테스트 승인 CATID", strRecv15);
+                        j = i + 1;
+                        break;
+                    case 16: //잔액
+                        strRecv16 = recvdata.substring(j, i);
+                        Log.i("환불 테스트 잔액", strRecv16);
+                        j = i + 1;
+                        break;
+                    case 17: //응답메시지
+                        strRecv17 = recvdata.substring(j, i);
+                        Log.i("환불 테스트 응답 메시지", strRecv17);
+                        j = i + 1;
+                        break;
+                    case 18: //카드BIN
+                        strRecv18 = recvdata.substring(j, i);
+                        cardNum = strRecv18.substring(0,6);
+                        Log.i("환불 테스트 카드 BIN", cardNum);
+                        j = i + 1;
+                        break;
+                    case 19: //카드구분
+                        strRecv19 = recvdata.substring(j, i);
+                        Log.i("환불 테스트 카드 구분", strRecv19);
+                        j = i + 1;
+                        break;
+                    case 20: //전문관리번호
+                        strRecv20 = recvdata.substring(j, i);
+                        Log.i("환불 테스트 전문 관리 번호", strRecv20);
+                        j = i + 1;
+                        break;
+                    case 21: //거래일련번호
+                        strRecv21 = recvdata.substring(j, i);
+                        Log.i("환불 테스트 거래 일련 번호", strRecv21);
+                        //etCashnum.setText(strRecv21);
+                        j = i + 1;
+                        break;
+                    case 22: //발생포인트(할인금액)
+                        strRecv22 = recvdata.substring(j, i);
+                        Log.i("환불 테스트 발생 포인트", strRecv22);
+                        j = i + 1;
+                        break;
+                    case 23: //가용포인트(지불금액)
+                        strRecv23 = recvdata.substring(j, i);
+                        Log.i("환불 테스트 가용 포인트", strRecv23);
+                        j = i + 1;
+                        break;
+                    case 24: //누적포인트(잔액한도)
+                        strRecv24 = recvdata.substring(j, i);
+                        Log.i("환불 테스트 누적 포인트", strRecv24);
+                        j = i + 1;
+                        break;
+                    case 25: //캐시백가맹점
+                        strRecv25 = recvdata.substring(j, i);
+                        Log.i("환불 테스트 캐시백 가맹점", strRecv25);
+                        j = i + 1;
+                        break;
+                    case 26: //캐시백승인번호
+                        strRecv26 = recvdata.substring(j, i);
+                        Log.i("환불 테스트 캐시백 승인 번호", strRecv26);
+                        j = i + 1;
+                        break;
+                    case 27:
+                        strRecv27 = recvdata.substring(j, i);
+                        Log.i("환불 테스트 27", strRecv27);
+                        j = i + 1;
+                        break;
+                    case 28:
+                        strRecv28 = recvdata.substring(j, i);
+                        Log.i("환불 테스트 28", strRecv28);
+                        j = i + 1;
+                        break;
+                    case 29:
+                        strRecv29 = recvdata.substring(j, i);
+                        Log.i("환불 테스트 29", strRecv29);
+                        j = i + 1;
+                        break;
+                    case 30:
+                        strRecv30 = recvdata.substring(j, i);
+                        Log.i("환불 테스트 30", strRecv30);
+                        j = i + 1;
+                        break;
+                }
+            }
+        }
+    }
 }

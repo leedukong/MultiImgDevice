@@ -19,8 +19,10 @@ import com.releasetech.multidevice.Database.Data.DessertItem;
 import com.releasetech.multidevice.Database.Data.Product;
 import com.releasetech.multidevice.Database.DataLoader;
 import com.releasetech.multidevice.MainActivity;
+import com.releasetech.multidevice.Manager.CheckoutManager;
 import com.releasetech.multidevice.Manager.PreferenceManager;
 import com.releasetech.multidevice.Sound.SoundService;
+import com.releasetech.multidevice.ThrowOutActivity;
 
 import java.lang.ref.WeakReference;
 import java.util.Stack;
@@ -83,15 +85,17 @@ public class MultiDevice implements DevicesStateListener, View.OnClickListener, 
             public void onSuccess(int i, int i1) {
                 Log.i("출하", "성공");
 
-                SoundService.play(context, SoundService.DESSERT_OK);
+//                SoundService.play(context, SoundService.DESSERT_OK);
                 throwOutNext(context, stack, onThrowOutDoneListener);
             }
 
             @Override
             public void onFailure(int i, String s, String s1) {
                 Log.i("출하", "실패");
-                SoundService.play(context, SoundService.DESSERT_FAIL);
-                throwOutNext(context, stack, onThrowOutDoneListener);
+                SoundService.play(context, SoundService.OUT_OF_ORDER);
+                ThrowOutActivity throwOutActivity = (ThrowOutActivity) context;
+                CheckoutManager.cancel(throwOutActivity);
+                throwOutActivity.finish();
             }
         });
     }

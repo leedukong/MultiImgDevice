@@ -57,6 +57,11 @@
         android:requestLegacyExternalStorage="true"
         android:testOnly="false">
 
+        <service
+            android:name=".Sound.SoundService"
+            android:exported="false"
+            android:launchMode="singleInstance" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

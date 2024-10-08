@@ -13,6 +13,7 @@ import androidx.lifecycle.Lifecycle;
 
 import com.releasetech.multidevice.Database.DBManager;
 import com.releasetech.multidevice.Manager.PreferenceManager;
+import com.releasetech.multidevice.Sound.SoundService;
 import com.releasetech.multidevice.Stock.Stock;
 import com.releasetech.multidevice.Tool.Utils;
 
@@ -35,6 +36,7 @@ public class ThrowOutActivity extends AppCompatActivity {
 
         Utils.hideNavBar(getWindow());
 
+        SoundService.play(getApplicationContext(), SoundService.DESSERT);
         throwOutView();
         throwOutProduct();
     }
@@ -128,6 +130,7 @@ public class ThrowOutActivity extends AppCompatActivity {
                     throwOutImage[arrayList.size()-1].setColorFilter(Color.parseColor("#00AF50"));
                     stock.decreaseStockCount((Integer) arrayList.get(i));
                 });
+                SoundService.play(getApplicationContext(), SoundService.THANK_YOU);
                 finish();
             }
         });
