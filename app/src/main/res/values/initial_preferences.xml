@@ -32,4 +32,6 @@
     <string name="pos_dev_corp_name">ReleaseTech</string>
     <string name="pos_solution_name">MultiDevice</string>
     <string name="pos_solution_version">Ver 1.0.0.0</string>
+
+    <bool name="initial_product_settings">false</bool>
 </resources>

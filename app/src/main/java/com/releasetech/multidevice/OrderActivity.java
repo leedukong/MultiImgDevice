@@ -418,6 +418,7 @@ public class OrderActivity extends AppCompatActivity {
     String strRecv01, strRecv02, strRecv03, strRecv04, strRecv05, strRecv06, strRecv07, strRecv08, strRecv09, strRecv10, strRecv11, strRecv12, strRecv13, strRecv14, strRecv15, strRecv16, strRecv17, strRecv18, strRecv19, strRecv20, strRecv21, strRecv22, strRecv23, strRecv24, strRecv25, strRecv26, strRecv27, strRecv28, strRecv29, strRecv30;
     String cardNum;
     int strPrice;
+    int CATID;
     private void recvFS(String recvdata) {
         int i, j = 0, k = 0;
         for (i = 0; i < recvdata.length(); i++) {
@@ -508,6 +509,8 @@ public class OrderActivity extends AppCompatActivity {
                         break;
                     case 15: //승인CATID
                         strRecv15 = recvdata.substring(j, i);
+                        CATID = Integer.valueOf(strRecv15);
+                        PreferenceManager.setInt(this, "prev_nice_checkout_approval_CATID", CATID);
                         Log.i("환불 테스트 승인 CATID", strRecv15);
                         j = i + 1;
                         break;

@@ -170,6 +170,26 @@ public class ProductManageFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         timer.schedule(timerTask, 0, 33);
 
+        if(!PreferenceManager.getBoolean(getContext(), "initial_product_settings")) {
+            for (int i = 0; i < 6; i++) {
+                addCategory();
+                //todo
+                for (int j = 0; j < 6; j++) {
+                    long category = productCategories.get(i).id;
+                    ImageSet is = new ImageSet();
+                    long imageSetID = dbManager.insertColumn(DBManager.PRODUCT_IMAGE, is);
+                    Product p = new Product.ProductBuilder(0, "제품" + (j + 1), category, (j + 1))
+                            .setAvailable(1)
+                            .setPrice(1000)
+                            .setNumber(6*i+(j+1))
+                            .setTotalCount(0)
+                            .setImageSet(imageSetID)
+                            .build();
+                    dbManager.insertColumn(DBManager.PRODUCT_DESSERT, p);
+                }
+            }
+            PreferenceManager.setBoolean(getContext(), "initial_product_settings", true);
+        }
 
         productLayout = requireView().findViewById(R.id.productLayout);
 
