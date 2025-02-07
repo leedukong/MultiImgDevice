@@ -1,14 +1,18 @@
 package com.releasetech.multidevice.ProductSetting;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.releasetech.multidevice.Database.DBManager;
@@ -167,6 +171,39 @@ public class DessertSettingsActivity extends AppCompatActivity {
             }
         }
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.dessert_settings_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.menu_settings) {
+            View childLayout = LayoutInflater.from(this).inflate(R.layout.dessert_test_layout, gridLayout, false);
+            for (int i = 1; i <= 36; i++) {
+                String totalCount = PreferenceManager.getString(this, "product_" + i + "_total_count");
+                AtomicReference<String> currentCount = new AtomicReference<>(PreferenceManager.getString(this, "product_" + i + "_current_count"));
+                TextView dessertCurrent = childLayout.findViewById(R.id.dessert_product_current);
+                Button testButton = childLayout.findViewById(R.id.button_test);
+
+                PreferenceManager.setString(this, "product_" + i + "_current_count", totalCount);
+                currentCount.set(PreferenceManager.getString(this, "product_" + i + "_current_count"));
+                dessertCurrent.setText(currentCount + " / " + totalCount);
+                if (Objects.equals(currentCount.get(), totalCount))
+                    childLayout.setBackgroundColor(0xFFA2C1A6);
+                else if (Integer.parseInt(currentCount.get()) == 0)
+                    childLayout.setBackgroundColor(0xFFC1A2A2);
+                else
+                    childLayout.setBackgroundColor(getResources().getColor(R.color.silver_sand));
+                testButton.setEnabled(true);
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
 
     @Override
     protected void onResume() {

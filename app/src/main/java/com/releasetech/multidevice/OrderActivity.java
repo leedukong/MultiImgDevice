@@ -92,33 +92,48 @@ public class OrderActivity extends AppCompatActivity {
 
         Button button = findViewById(R.id.button_checkout);
         button.setOnClickListener(view -> {
+            if(!PreferenceManager.getBoolean(this, "free_of_charge")) {
+                ArrayList arrayList1 = new ArrayList();
+                    for(int i=0; i< cartManager.getCount(); i++){
+                        arrayList1.add(cartManager.getItem(i).number);
+                    }
+                    Collections.sort(arrayList1);
 
-            ArrayList arrayList1 = new ArrayList();
-            for(int i=0; i< cartManager.getCount(); i++){
-                arrayList1.add(cartManager.getItem(i).number);
-            }
-            Collections.sort(arrayList1);
+                    int count = Integer.parseInt(PreferenceManager.getString(this, "product_" + arrayList1.get(0) + "_current_count")) - 1;
+                    if (count < 0) {
+                        Toast.makeText(getApplicationContext(), arrayList1.get(0) + "번 재고 부족", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
-            int count = Integer.parseInt(PreferenceManager.getString(this, "product_" + arrayList1.get(0) + "_current_count")) - 1;
-            if (count < 0) {
-                Toast.makeText(getApplicationContext(), arrayList1.get(0) + "번 재고 부족", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            for (int j = 0; j < arrayList1.size() - 1; j++) {
-                if (arrayList1.get(j) == arrayList1.get(j + 1)) {
-                    count--;
-                } else {
-                    count = Integer.parseInt(PreferenceManager.getString(this, "product_" + arrayList1.get(j+1) + "_current_count")) - 1;
+                    for (int j = 0; j < arrayList1.size() - 1; j++) {
+                        if (arrayList1.get(j) == arrayList1.get(j + 1)) {
+                            count--;
+                        } else {
+                            count = Integer.parseInt(PreferenceManager.getString(this, "product_" + arrayList1.get(j+1) + "_current_count")) - 1;
+                        }
+                        if (count < 0) {
+                            Toast.makeText(getApplicationContext(), arrayList1.get(j+1) + "번 재고 부족", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
+                checkout();
+            }else{
+                Stack stack = new Stack();
+                ArrayList throwOutProduct = new ArrayList();
+                for(int i=0; i< cartManager.getCount(); i++){
+                    Log.i("테스트", "상품이름"+cartManager.getItem(i).productName);
+                    Log.i("테스트", "전체금액 "+cartManager.getTotalPrice()+"");
+//                    stack.push(DataLoader.loadProductByNumber(dbManager, cartManager.getItem(i).number));
+                    stack.push(cartManager.getItem(i).number);
+                    throwOutProduct.add(cartManager.getItem(i).productName);
                 }
-                if (count < 0) {
-                    Toast.makeText(getApplicationContext(), arrayList1.get(j+1) + "번 재고 부족", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-            }
+                Log.i("테스트", throwOutProduct.toString());
 
-            Log.i("테스트", "-------------------");
-            checkout();
+                Intent intent = new Intent(OrderActivity.this, ThrowOutActivity.class);
+                intent.putExtra("stack", stack);
+                intent.putExtra("throwOutProduct", throwOutProduct);
+                startActivity(intent);
+            }
         });
 
         RecyclerView recyclerView = findViewById(R.id.cart_recyclerView);
@@ -418,7 +433,6 @@ public class OrderActivity extends AppCompatActivity {
     String strRecv01, strRecv02, strRecv03, strRecv04, strRecv05, strRecv06, strRecv07, strRecv08, strRecv09, strRecv10, strRecv11, strRecv12, strRecv13, strRecv14, strRecv15, strRecv16, strRecv17, strRecv18, strRecv19, strRecv20, strRecv21, strRecv22, strRecv23, strRecv24, strRecv25, strRecv26, strRecv27, strRecv28, strRecv29, strRecv30;
     String cardNum;
     int strPrice;
-    int CATID;
     private void recvFS(String recvdata) {
         int i, j = 0, k = 0;
         for (i = 0; i < recvdata.length(); i++) {
@@ -509,8 +523,7 @@ public class OrderActivity extends AppCompatActivity {
                         break;
                     case 15: //승인CATID
                         strRecv15 = recvdata.substring(j, i);
-                        CATID = Integer.valueOf(strRecv15);
-                        PreferenceManager.setInt(this, "prev_nice_checkout_approval_CATID", CATID);
+                        PreferenceManager.setString(this, "prev_nice_checkout_approval_CATID", strRecv15);
                         Log.i("환불 테스트 승인 CATID", strRecv15);
                         j = i + 1;
                         break;

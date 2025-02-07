@@ -39,13 +39,14 @@ public class CheckoutManager {
 
     public static void checkout(Activity activity, int price) {
         String sendData;
-        sendData = "0200" + fs + "10" + fs + "I" + fs + price + fs + "91" + fs + "0" + fs + "00" + fs + fs + fs + PreferenceManager.getInt(activity, "prev_nice_checkout_approval_CATID") + fs + fs + fs + fs + "0" + fs + fs + fs + "" + fs + "" + fs + fs + "" + fs + "" + fs + fs + fs + fs + fs + fs + fs + fs + fs + fs;
+        sendData = "0200" + fs + "10" + fs + "I" + fs + price + fs + "91" + fs + "0" + fs + "00" + fs + fs + fs + PreferenceManager.getString(activity, "prev_nice_checkout_approval_CATID") + fs + fs + fs + fs + "0" + fs + fs + fs + "" + fs + "" + fs + fs + "" + fs + "" + fs + fs + fs + fs + fs + fs + fs + fs + fs + fs;
+//        sendData = "0200" + fs + "10" + fs + "I" + fs + price + fs + "91" + fs + "0" + fs + "00" + fs + fs + fs + "2393300001" + fs + fs + fs + fs + "0" + fs + fs + fs + "" + fs + "" + fs + fs + "" + fs + "" + fs + fs + fs + fs + fs + fs + fs + fs + fs + fs;
         send(activity, sendData);
     }
 
     public static void cancel(Activity activity){
         String sendData = "";
-        sendData = "0420" + fs + "10" + fs + "I" + fs + PreferenceManager.getInt(activity, "prev_nice_checkout_approval_price") + fs + "91" + fs + "0" + fs + "00" + fs + PreferenceManager.getString(activity, "prev_nice_checkout_approval_no") + fs + PreferenceManager.getString(activity, "prev_nice_checkout_approval_date") + fs + PreferenceManager.getInt(activity, "prev_nice_checkout_approval_CATID") + fs + fs + fs + fs + "" + fs + fs + fs + "" + fs + "" + fs + fs + "" + fs + "" + fs + fs + fs + fs + fs + fs + fs + fs + fs + fs;
+        sendData = "0420" + fs + "10" + fs + "I" + fs + PreferenceManager.getInt(activity, "prev_nice_checkout_approval_price") + fs + "91" + fs + "0" + fs + "00" + fs + PreferenceManager.getString(activity, "prev_nice_checkout_approval_no") + fs + PreferenceManager.getString(activity, "prev_nice_checkout_approval_date") + fs + PreferenceManager.getString(activity, "prev_nice_checkout_approval_CATID") + fs + fs + fs + fs + "" + fs + fs + fs + "" + fs + "" + fs + fs + "" + fs + "" + fs + fs + fs + fs + fs + fs + fs + fs + fs + fs;
         send(activity, sendData);
     }
 

@@ -269,6 +269,16 @@ public class AdminSettingsActivity extends AppCompatActivity implements
                 //CheckoutManager.openSettings(getActivity());
                 return true;
             });
+
+            EditTextPreference catid = findPreference("prev_nice_checkout_approval_CATID");
+            catid.setOnPreferenceChangeListener((preference, newValue) -> {
+                catid.setSummary(newValue.toString());
+                PreferenceManager.setString(getContext(), "prev_nice_checkout_approval_CATID", String.valueOf(newValue));
+                return true;
+            });
+            if (PreferenceManager.getString(getContext(), "prev_nice_checkout_approval_CATID") != null) {
+                catid.setSummary(PreferenceManager.getString(getContext(), "prev_nice_checkout_approval_CATID"));
+            }
         }
     }
 

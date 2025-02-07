@@ -182,7 +182,7 @@ public class ProductManageFragment extends Fragment {
                             .setAvailable(1)
                             .setPrice(1000)
                             .setNumber(6*i+(j+1))
-                            .setTotalCount(0)
+                            .setTotalCount(5)
                             .setImageSet(imageSetID)
                             .build();
                     dbManager.insertColumn(DBManager.PRODUCT_DESSERT, p);

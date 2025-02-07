@@ -37,4 +37,10 @@
             app:title="카드 가맹점 설정" />
     </PreferenceCategory>
 
+    <EditTextPreference
+        app:key="prev_nice_checkout_approval_CATID"
+        app:summary="CATID를 입력해주세요."
+        app:title="CATID"
+        android:inputType="number" />
+
 </PreferenceScreen>

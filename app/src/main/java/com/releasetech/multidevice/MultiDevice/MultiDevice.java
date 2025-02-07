@@ -23,6 +23,7 @@ import com.releasetech.multidevice.Manager.CheckoutManager;
 import com.releasetech.multidevice.Manager.PreferenceManager;
 import com.releasetech.multidevice.Sound.SoundService;
 import com.releasetech.multidevice.ThrowOutActivity;
+import com.releasetech.multidevice.Tool.Utils;
 
 import java.lang.ref.WeakReference;
 import java.util.Stack;
@@ -59,6 +60,7 @@ public class MultiDevice implements DevicesStateListener, View.OnClickListener, 
             @Override
             public void onFailure(int i, String s, String s1) {
                 Log.i("출하", "실패");
+                Utils.restart(context);
                 locked = false;
             }
         });
