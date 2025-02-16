@@ -43,4 +43,11 @@
         app:title="CATID"
         android:inputType="number" />
 
+    <PreferenceCategory app:title="">
+    <Preference
+        app:fragment="com.releasetech.multidevice.AdminSettings.AdminSettingsActivity$SalesFragment"
+        app:key="checkout_history"
+        app:title="매출 확인" />
+    </PreferenceCategory>
+
 </PreferenceScreen>

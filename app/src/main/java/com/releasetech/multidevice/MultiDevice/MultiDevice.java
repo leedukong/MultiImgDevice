@@ -40,28 +40,34 @@ public class MultiDevice implements DevicesStateListener, View.OnClickListener, 
     public static void throwOut(Context context, int number, OnThrowOutListener onThrowOutDoneListener) {
         if (locked) return;
         locked = true;
-        int a = 10 * ((int) (number - 1) / 6);
+
+        int a = 10 * ((number - 1) / 6);
         int b = (number - 1) % 6;
         int coordinate = a + b;
-        onThrowOutDoneListener.onThrowOut(PreferenceManager.getString(context, "product_"+number+"_name"));
-        //DBManager dbManager = new DBManager(context);
+
+        onThrowOutDoneListener.onThrowOut(PreferenceManager.getString(context, "product_" + number + "_name"));
+
         openConnect(context);
-        Log.i("작동 테스트", coordinate+"");
+        Log.i("작동 테스트", coordinate + "");
+
+        final boolean[] retried = {false};
+
         PortController.outGoods(coordinate, new ResultCallBack() {
             @Override
             public void onSuccess(int i, int i1) {
-                Log.i("작동 테스트", "8");
-                Log.i("출하", "성공");
-                //dbManager.updateColumnTodecreaseCount(product.id);
                 if (onThrowOutDoneListener != null) onThrowOutDoneListener.onThrowOutDone();
                 locked = false;
             }
 
             @Override
             public void onFailure(int i, String s, String s1) {
-                Log.i("출하", "실패");
-                Utils.restart(context);
-                locked = false;
+                if (!retried[0]) {
+                    retried[0] = true;
+                    PortController.outGoods(coordinate, this);
+                } else {
+                    Utils.restart(context);
+                    locked = false;
+                }
             }
         });
     }
@@ -86,7 +92,6 @@ public class MultiDevice implements DevicesStateListener, View.OnClickListener, 
             @Override
             public void onSuccess(int i, int i1) {
                 Log.i("출하", "성공");
-
 //                SoundService.play(context, SoundService.DESSERT_OK);
                 throwOutNext(context, stack, onThrowOutDoneListener);
             }

@@ -1,9 +1,11 @@
 package com.releasetech.multidevice;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -26,6 +28,7 @@ import com.releasetech.multidevice.Manager.CartManager;
 import com.releasetech.multidevice.Manager.CheckoutManager;
 import com.releasetech.multidevice.Manager.PasswordManager;
 import com.releasetech.multidevice.Manager.PreferenceManager;
+import com.releasetech.multidevice.Manager.SalesManager;
 import com.releasetech.multidevice.MultiDevice.MultiDevice;
 import com.releasetech.multidevice.Sound.SoundService;
 import com.releasetech.multidevice.Stock.Stock;
@@ -63,15 +66,36 @@ public class OrderActivity extends AppCompatActivity {
     private int settingsCount = 0;
     private PasswordManager passwordManager;
     DBManager dbManager;
+
+    private Handler handler = new Handler();
+    private Runnable returnToMainRunnable = new Runnable() {
+        @Override
+        public void run() {
+            Intent intent = new Intent(OrderActivity.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+            finish();
+        }
+    };
+    private View rootView;
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        resetTimeout();
+        return super.dispatchTouchEvent(ev);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order);
 
+
         passwordManager = new PasswordManager(this);
         dbManager = new DBManager(this);
         dbManager.open();
         dbManager.create();
+        resetTimeout();
 
         Button hiddenButton = findViewById(R.id.setting_button);
         hiddenButton.setOnClickListener(view -> {
@@ -141,9 +165,11 @@ public class OrderActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onResume() {
         super.onResume();
+        resetTimeout();
         dbManager.open();
         dbManager.create();
 
@@ -164,6 +190,20 @@ public class OrderActivity extends AppCompatActivity {
             TextView textPrice = findViewById(R.id.total_price);
             textPrice.setText("합계 : 0원");
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        handler.removeCallbacks(returnToMainRunnable);
+        if (rootView != null){
+            rootView.setOnTouchListener(null);
+        }
+    }
+
+    private void resetTimeout(){
+        handler.removeCallbacks(returnToMainRunnable);
+        handler.postDelayed(returnToMainRunnable, Integer.parseInt(PreferenceManager.getString(this, "idle_screen_time"))* 1000);
     }
 
     public void numberClick() {
@@ -198,8 +238,10 @@ public class OrderActivity extends AppCompatActivity {
             });
         }
         buttonBack.setOnClickListener(view -> {
+            if(number.length()>0){
             number.delete(number.length()-1, number.length());
             numberText.setText(number);
+            }
         });
 
         buttonAdd.setOnClickListener(view -> {
@@ -368,6 +410,8 @@ public class OrderActivity extends AppCompatActivity {
             Log.i("테스트", "결제 완료2");
             if (resultCode == RESULT_OK) {
                 Log.i("테스트", "결제 완료3");
+                SalesManager salesManager = new SalesManager(this);
+                salesManager.addSale(cartManager.getTotalPrice());
                 recvFS(data.getStringExtra("NVCATRECVDATA"));
                 Toast.makeText(getApplicationContext(), "결제 완료", Toast.LENGTH_SHORT).show();
                 SoundService.play(OrderActivity.this, SoundService.CHECKOUT_OK);
@@ -375,54 +419,18 @@ public class OrderActivity extends AppCompatActivity {
                 Stack stack = new Stack();
                 ArrayList throwOutProduct = new ArrayList();
                 for(int i=0; i< cartManager.getCount(); i++){
-                    Log.i("테스트", "상품이름"+cartManager.getItem(i).productName);
-                    Log.i("테스트", "전체금액 "+cartManager.getTotalPrice()+"");
-//                    stack.push(DataLoader.loadProductByNumber(dbManager, cartManager.getItem(i).number));
                     stack.push(cartManager.getItem(i).number);
                     throwOutProduct.add(cartManager.getItem(i).productName);
                 }
                 Log.i("테스트", throwOutProduct.toString());
 
                 Handler handler = new Handler();
-                handler.postDelayed(new Runnable(){
-                    @Override
-                    public void run(){
-                        Intent intent = new Intent(OrderActivity.this, ThrowOutActivity.class);
-                        intent.putExtra("stack", stack);
-                        intent.putExtra("throwOutProduct", throwOutProduct);
-                        startActivity(intent);
-                    }
+                handler.postDelayed(() -> {
+                    Intent intent = new Intent(OrderActivity.this, ThrowOutActivity.class);
+                    intent.putExtra("stack", stack);
+                    intent.putExtra("throwOutProduct", throwOutProduct);
+                    startActivity(intent);
                 }, 2000);
-
-
-
-                //MultiDevice.testThrow(this, 1);
-//                Stack stack = new Stack();
-//                for(int i=0; i< cartManager.getCount(); i++){
-//                    Log.i("테스트", "상품이름"+cartManager.getItem(i).productName);
-//                    Log.i("테스트", "전체금액 "+cartManager.getTotalPrice()+"");
-//                    stack.push(DataLoader.loadProductByNumber(dbManager, cartManager.getItem(i).number));
-//                }
-//                MultiDevice.throwOutNext(this, stack, new MultiDevice.OnThrowOutListener() {
-//                    @Override
-//                    public void onThrowOut(String productName) {
-//                        String is = "를";
-//                        char lastName = productName.charAt(productName.length() - 1);
-//                        if (lastName >= 0xAC00 && lastName <= 0xD7A3) {
-//                            if ((lastName - 0xAC00) % 28 > 0) {
-//                                is = "을";
-//                            }
-//                        }
-//                        Utils.showToast(getApplicationContext(), productName + is + " 출하합니다.");
-//                    }
-//
-//                    @Override
-//                    public void onThrowOutDone() {
-//                        if (OrderActivity.this.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) {
-//                            runOnUiThread(OrderActivity.this::onResume);
-//                        }
-//                    }
-//                });
             } else if (resultCode == RESULT_CANCELED) {
                 Toast.makeText(getApplicationContext(), "결제 실패", Toast.LENGTH_SHORT).show();
                 SoundService.play(this, SoundService.CHECKOUT_FAIL);

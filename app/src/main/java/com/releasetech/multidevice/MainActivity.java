@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -23,6 +24,7 @@ import androidx.core.content.ContextCompat;
 import com.releasetech.multidevice.Database.DBManager;
 import com.releasetech.multidevice.Manager.PasswordManager;
 import com.releasetech.multidevice.Manager.PreferenceManager;
+import com.releasetech.multidevice.Manager.SalesManager;
 import com.releasetech.multidevice.Tool.Utils;
 
 import java.util.ArrayList;
@@ -41,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Utils.hideNavBar(getWindow());
         passwordManager = new PasswordManager(this);
     }
 
@@ -71,16 +72,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }else if(PreferenceManager.getString(this, "ad_type").equals("image")) {
             Log.i("테스트", "이미지");
-//            try {
-//                imageButton.setImageURI(Uri.parse(PreferenceManager.getString(this, "ad_uri")));
-//
-//                triggerButton.setVisibility(View.GONE);
-//                triggerButton.setActivated(false);
-//                videoButton.setVisibility(View.GONE);
-//                videoButton.setActivated(false);
-//            } catch (Exception e) {
-//                Utils.logD(TAG, "광고 이미지 로드 실패");
-//            }
             try {
                 List<String> imageUris = new ArrayList<>();
                 for (int i = 1; i <= PreferenceManager.getInt(this, "ad_image_count"); i++) {
@@ -188,5 +179,12 @@ public class MainActivity extends AppCompatActivity {
                 Utils.showToast(this, "패스워드 초기화까지 남은 횟수 : " + (100 - settingsCount));
             }
         });
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        Intent intent = new Intent(MainActivity.this, OrderActivity.class);
+        startActivity(intent);
+        return super.dispatchTouchEvent(ev);
     }
 }

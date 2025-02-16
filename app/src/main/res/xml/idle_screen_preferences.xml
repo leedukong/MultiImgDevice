@@ -7,6 +7,10 @@
 <!--        app:key="back_to_idle_time"-->
 <!--        app:title="사용자 입력 없을 시 대기화면 전환 시간 초"-->
 <!--        app:useSimpleSummaryProvider="true" />-->
+    <EditTextPreference
+        app:key="idle_screen_time"
+        app:title="대기화면 전환 시간 (초)"
+        app:defaultValue="@string/idle_screen_time"/>
 
     <ListPreference
         android:key="ad_type_preference"
@@ -55,6 +59,21 @@
     <Preference
         app:key="ad_image5"
         app:title="대기화면5 이미지 교체" />
+    <Preference
+        app:key="ad_image6"
+        app:title="대기화면6 이미지 교체" />
+    <Preference
+        app:key="ad_image7"
+        app:title="대기화면7 이미지 교체" />
+    <Preference
+        app:key="ad_image8"
+        app:title="대기화면8 이미지 교체" />
+    <Preference
+        app:key="ad_image9"
+        app:title="대기화면9 이미지 교체" />
+    <Preference
+        app:key="ad_image10"
+        app:title="대기화면10 이미지 교체" />
 
     <EditTextPreference
         app:key="ad_video"
@@ -75,4 +94,19 @@
     <Preference
         app:key="ad_video5"
         app:title="대기화면5 영상 교체" />
+    <Preference
+        app:key="ad_video6"
+        app:title="대기화면6 영상 교체" />
+    <Preference
+        app:key="ad_video7"
+        app:title="대기화면7 영상 교체" />
+    <Preference
+        app:key="ad_video8"
+        app:title="대기화면8 영상 교체" />
+    <Preference
+        app:key="ad_video9"
+        app:title="대기화면9 영상 교체" />
+    <Preference
+        app:key="ad_video10"
+        app:title="대기화면10 영상 교체" />
 </PreferenceScreen>

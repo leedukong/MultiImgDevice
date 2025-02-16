@@ -43,6 +43,7 @@ import androidx.preference.Preference;
 import com.releasetech.multidevice.AdminSettings.ProductManage.ProductManageFragment;
 import com.releasetech.multidevice.Manager.PasswordManager;
 import com.releasetech.multidevice.Manager.PreferenceManager;
+import com.releasetech.multidevice.Manager.SalesManager;
 import com.releasetech.multidevice.R;
 import com.releasetech.multidevice.Tool.MediaReplacer;
 import com.releasetech.multidevice.Tool.Utils;
@@ -402,6 +403,7 @@ public class AdminSettingsActivity extends AppCompatActivity implements
         public void onCreatePreferencesFix(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.idle_screen_preferences, rootKey);
             ListPreference adType = findPreference("ad_type_preference");
+            EditTextPreference idleScreenTime = findPreference("idle_screen_time");
             EditTextPreference idleScreenText = findPreference("message_idle");
             EditTextPreference idleScreenTextColor = findPreference("message_color");
             EditTextPreference imageTime = findPreference("ad_image_time");
@@ -411,12 +413,27 @@ public class AdminSettingsActivity extends AppCompatActivity implements
             Preference adImage3 = findPreference("ad_image3");
             Preference adImage4 = findPreference("ad_image4");
             Preference adImage5 = findPreference("ad_image5");
+            Preference adImage6 = findPreference("ad_image6");
+            Preference adImage7 = findPreference("ad_image7");
+            Preference adImage8 = findPreference("ad_image8");
+            Preference adImage9 = findPreference("ad_image9");
+            Preference adImage10 = findPreference("ad_image10");
             EditTextPreference videoCount = findPreference("ad_video");
             Preference adVideo1 = findPreference("ad_video1");
             Preference adVideo2 = findPreference("ad_video2");
             Preference adVideo3 = findPreference("ad_video3");
             Preference adVideo4 = findPreference("ad_video4");
             Preference adVideo5 = findPreference("ad_video5");
+            Preference adVideo6 = findPreference("ad_video6");
+            Preference adVideo7 = findPreference("ad_video7");
+            Preference adVideo8 = findPreference("ad_video8");
+            Preference adVideo9 = findPreference("ad_video9");
+            Preference adVideo10 = findPreference("ad_video10");
+
+            idleScreenTime.setOnPreferenceChangeListener((preference, newValue) -> {
+                PreferenceManager.setString(getContext(), "idle_screen_time", newValue.toString());
+                return true;
+            });
 
             if (adType != null) {
                 adType.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -434,14 +451,14 @@ public class AdminSettingsActivity extends AppCompatActivity implements
                             Log.i("test", "text");
                             PreferenceManager.setString(getContext(), "ad_type", "text");
                             idleScreenText.setVisible(true); idleScreenTextColor.setVisible(true);
-                            imageCount.setVisible(false); imageTime.setVisible(false); adImage1.setVisible(false); adImage2.setVisible(false); adImage3.setVisible(false); adImage4.setVisible(false); adImage5.setVisible(false);
-                            videoCount.setVisible(false); adVideo1.setVisible(false); adVideo2.setVisible(false); adVideo3.setVisible(false); adVideo4.setVisible(false); adVideo5.setVisible(false);
+                            imageCount.setVisible(false); imageTime.setVisible(false); adImage1.setVisible(false); adImage2.setVisible(false); adImage3.setVisible(false); adImage4.setVisible(false); adImage5.setVisible(false); adImage6.setVisible(false); adImage7.setVisible(false); adImage8.setVisible(false); adImage9.setVisible(false); adImage10.setVisible(false);
+                            videoCount.setVisible(false); adVideo1.setVisible(false); adVideo2.setVisible(false); adVideo3.setVisible(false); adVideo4.setVisible(false); adVideo5.setVisible(false); adVideo6.setVisible(false); adVideo7.setVisible(false); adVideo8.setVisible(false); adVideo9.setVisible(false); adVideo10.setVisible(false);
                         } else if (value.equals("image")) {
                             Log.i("test", "image");
                             PreferenceManager.setString(getContext(), "ad_type", "image");
                             idleScreenText.setVisible(false); idleScreenTextColor.setVisible(false);
                             imageCount.setVisible(true); imageTime.setVisible(true);
-                            for(int image=1; image<= 5; image++){
+                            for(int image=1; image<= 10; image++){
                                 Preference adImage = null;
                                 switch (image) {
                                     case 1:
@@ -459,19 +476,34 @@ public class AdminSettingsActivity extends AppCompatActivity implements
                                     case 5:
                                         adImage = adImage5;
                                         break;
+                                    case 6:
+                                        adImage = adImage6;
+                                        break;
+                                    case 7:
+                                        adImage = adImage7;
+                                        break;
+                                    case 8:
+                                        adImage = adImage8;
+                                        break;
+                                    case 9:
+                                        adImage = adImage9;
+                                        break;
+                                    case 10:
+                                        adImage = adImage10;
+                                        break;
                                 }
                                 if (adImage != null) {
                                     adImage.setVisible(image <= PreferenceManager.getInt(getContext(), "ad_video_count")); // imageCount 이하일 경우 true
                                 }
                             }
-                            videoCount.setVisible(false); adVideo1.setVisible(false); adVideo2.setVisible(false); adVideo3.setVisible(false); adVideo4.setVisible(false); adVideo5.setVisible(false);
+                            videoCount.setVisible(false); adVideo1.setVisible(false); adVideo2.setVisible(false); adVideo3.setVisible(false); adVideo4.setVisible(false); adVideo5.setVisible(false); adVideo6.setVisible(false); adVideo7.setVisible(false); adVideo8.setVisible(false); adVideo9.setVisible(false); adVideo10.setVisible(false);
                         } else if (value.equals("video")) {
                             Log.i("test", "video");
                             PreferenceManager.setString(getContext(), "ad_type", "video");
                             idleScreenText.setVisible(false); idleScreenTextColor.setVisible(false);
-                            imageCount.setVisible(false); imageTime.setVisible(false); adImage1.setVisible(false); adImage2.setVisible(false); adImage3.setVisible(false); adImage4.setVisible(false); adImage5.setVisible(false);
+                            imageCount.setVisible(false); imageTime.setVisible(false); adImage1.setVisible(false); adImage2.setVisible(false); adImage3.setVisible(false); adImage4.setVisible(false); adImage5.setVisible(false); adImage6.setVisible(false); adImage7.setVisible(false); adImage8.setVisible(false); adImage9.setVisible(false); adImage10.setVisible(false);
                             videoCount.setVisible(true);
-                            for(int video=1; video<= 5; video++){
+                            for(int video=1; video<= 10; video++){
                                 Preference adVideo = null;
                                 switch (video) {
                                     case 1:
@@ -489,6 +521,21 @@ public class AdminSettingsActivity extends AppCompatActivity implements
                                     case 5:
                                         adVideo = adVideo5;
                                         break;
+                                    case 6:
+                                        adVideo = adVideo5;
+                                        break;
+                                    case 7:
+                                        adVideo = adVideo5;
+                                        break;
+                                    case 8:
+                                        adVideo = adVideo5;
+                                        break;
+                                    case 9:
+                                        adVideo = adVideo5;
+                                        break;
+                                    case 10:
+                                        adVideo = adVideo5;
+                                        break;
                                 }
                                 if (adVideo != null) {
                                     adVideo.setVisible(video <= PreferenceManager.getInt(getContext(), "ad_video_count")); // imageCount 이하일 경우 true
@@ -504,12 +551,12 @@ public class AdminSettingsActivity extends AppCompatActivity implements
 
             if(PreferenceManager.getString(getContext(), "ad_type").equals("text")){
                 idleScreenText.setVisible(true); idleScreenTextColor.setVisible(true);
-                imageCount.setVisible(false); imageTime.setVisible(false); adImage1.setVisible(false); adImage2.setVisible(false); adImage3.setVisible(false); adImage4.setVisible(false); adImage5.setVisible(false);
-                videoCount.setVisible(false); adVideo1.setVisible(false); adVideo2.setVisible(false); adVideo3.setVisible(false); adVideo4.setVisible(false); adVideo5.setVisible(false);
+                imageCount.setVisible(false); imageTime.setVisible(false); adImage1.setVisible(false); adImage2.setVisible(false); adImage3.setVisible(false); adImage4.setVisible(false); adImage5.setVisible(false); adImage6.setVisible(false); adImage7.setVisible(false); adImage8.setVisible(false); adImage9.setVisible(false); adImage10.setVisible(false);
+                videoCount.setVisible(false); adVideo1.setVisible(false); adVideo2.setVisible(false); adVideo3.setVisible(false); adVideo4.setVisible(false); adVideo5.setVisible(false); adVideo6.setVisible(false); adVideo7.setVisible(false); adVideo8.setVisible(false); adVideo9.setVisible(false); adVideo10.setVisible(false);
             }else if(PreferenceManager.getString(getContext(), "ad_type").equals("image")){
                 idleScreenText.setVisible(false); idleScreenTextColor.setVisible(false);
                 imageCount.setVisible(true); imageTime.setVisible(true);
-                for(int image=1; image<= 5; image++){
+                for(int image=1; image<= 10; image++){
                     Preference adImage = null;
                     switch (image) {
                         case 1:
@@ -527,17 +574,32 @@ public class AdminSettingsActivity extends AppCompatActivity implements
                         case 5:
                             adImage = adImage5;
                             break;
+                        case 6:
+                            adImage = adImage6;
+                            break;
+                        case 7:
+                            adImage = adImage7;
+                            break;
+                        case 8:
+                            adImage = adImage8;
+                            break;
+                        case 9:
+                            adImage = adImage9;
+                            break;
+                        case 10:
+                            adImage = adImage10;
+                            break;
                     }
                     if (adImage != null) {
                         adImage.setVisible(image <= PreferenceManager.getInt(getContext(), "ad_image_count")); // imageCount 이하일 경우 true
                     }
                 }
-                videoCount.setVisible(false); adVideo1.setVisible(false); adVideo2.setVisible(false); adVideo3.setVisible(false); adVideo4.setVisible(false); adVideo5.setVisible(false);
+                videoCount.setVisible(false); adVideo1.setVisible(false); adVideo2.setVisible(false); adVideo3.setVisible(false); adVideo4.setVisible(false); adVideo5.setVisible(false); adVideo6.setVisible(false); adVideo7.setVisible(false); adVideo8.setVisible(false); adVideo9.setVisible(false); adVideo10.setVisible(false);
             } else if(PreferenceManager.getString(getContext(), "ad_type").equals("video")){
                 idleScreenText.setVisible(false); idleScreenTextColor.setVisible(false);
-                imageCount.setVisible(false); imageTime.setVisible(false); adImage1.setVisible(false); adImage2.setVisible(false); adImage3.setVisible(false); adImage4.setVisible(false); adImage5.setVisible(false);
+                imageCount.setVisible(false); imageTime.setVisible(false); adImage1.setVisible(false); adImage2.setVisible(false); adImage3.setVisible(false); adImage4.setVisible(false); adImage5.setVisible(false); adImage6.setVisible(false); adImage7.setVisible(false); adImage8.setVisible(false); adImage9.setVisible(false); adImage10.setVisible(false);
                 videoCount.setVisible(true);
-                for(int video=1; video<= 5; video++){
+                for(int video=1; video<= 10; video++){
                     Preference adVideo = null;
                     switch (video) {
                         case 1:
@@ -554,6 +616,21 @@ public class AdminSettingsActivity extends AppCompatActivity implements
                             break;
                         case 5:
                             adVideo = adVideo5;
+                            break;
+                        case 6:
+                            adVideo = adVideo6;
+                            break;
+                        case 7:
+                            adVideo = adVideo7;
+                            break;
+                        case 8:
+                            adVideo = adVideo8;
+                            break;
+                        case 9:
+                            adVideo = adVideo9;
+                            break;
+                        case 10:
+                            adVideo = adVideo10;
                             break;
                     }
                     if (adVideo != null) {
@@ -574,9 +651,9 @@ public class AdminSettingsActivity extends AppCompatActivity implements
 
             imageCount.setOnPreferenceChangeListener((preference, newValue) -> {
                 Object obj = newValue;
-                if (Integer.parseInt((String) obj) <=5){
+                if (Integer.parseInt((String) obj) <=10){
                     PreferenceManager.setInt(getContext(), "ad_image_count", Integer.parseInt(newValue.toString()));
-                    for(int image=1; image<= 5; image++){
+                    for(int image=1; image<= 10; image++){
                         Preference adImage = null;
                         switch (image) {
                             case 1:
@@ -594,13 +671,28 @@ public class AdminSettingsActivity extends AppCompatActivity implements
                             case 5:
                                 adImage = adImage5;
                                 break;
+                            case 6:
+                                adImage = adImage6;
+                                break;
+                            case 7:
+                                adImage = adImage7;
+                                break;
+                            case 8:
+                                adImage = adImage8;
+                                break;
+                            case 9:
+                                adImage = adImage9;
+                                break;
+                            case 10:
+                                adImage = adImage10;
+                                break;
                         }
                         if (adImage != null) {
                             adImage.setVisible(image <= Integer.parseInt((String) obj)); // imageCount 이하일 경우 true
                         }
                     }
                 }else{
-                    Toast.makeText(getContext(), "이미지 광고 개수는 5개 이하로 설정해주세요.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "이미지 광고 개수는 10개 이하로 설정해주세요.", Toast.LENGTH_SHORT).show();
                     return false;
                 }
                 return true;
@@ -608,8 +700,8 @@ public class AdminSettingsActivity extends AppCompatActivity implements
             videoCount.setOnPreferenceChangeListener((preference, newValue) -> {
                 PreferenceManager.setInt(getContext(), "ad_video_count", Integer.parseInt(newValue.toString()));
                 Object obj = newValue;
-                if(Integer.parseInt((String) obj) <= 5) {
-                    for (int video = 1; video <= 5; video++) {
+                if(Integer.parseInt((String) obj) <= 10) {
+                    for (int video = 1; video <= 10; video++) {
                         Preference adVideo = null;
                         switch (video) {
                             case 1:
@@ -627,13 +719,28 @@ public class AdminSettingsActivity extends AppCompatActivity implements
                             case 5:
                                 adVideo = adVideo5;
                                 break;
+                            case 6:
+                                adVideo = adVideo5;
+                                break;
+                            case 7:
+                                adVideo = adVideo5;
+                                break;
+                            case 8:
+                                adVideo = adVideo5;
+                                break;
+                            case 9:
+                                adVideo = adVideo5;
+                                break;
+                            case 10:
+                                adVideo = adVideo5;
+                                break;
                         }
                         if (adVideo != null) {
                             adVideo.setVisible(video <= Integer.parseInt((String) obj)); // imageCount 이하일 경우 true
                         }
                     }
                 }else{
-                    Toast.makeText(getContext(), "영상 광고 개수는 5개 이하로 설정해주세요.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "영상 광고 개수는 10개 이하로 설정해주세요.", Toast.LENGTH_SHORT).show();
                     return false;
                 }
                 return true;
@@ -644,11 +751,21 @@ public class AdminSettingsActivity extends AppCompatActivity implements
             setupImagePicker(adImage3, 3);
             setupImagePicker(adImage4, 4);
             setupImagePicker(adImage5, 5);
+            setupImagePicker(adImage6, 6);
+            setupImagePicker(adImage7, 7);
+            setupImagePicker(adImage8, 8);
+            setupImagePicker(adImage9, 9);
+            setupImagePicker(adImage10, 10);
             setupVideoPicker(adVideo1, 1);
             setupVideoPicker(adVideo2, 2);
             setupVideoPicker(adVideo3, 3);
             setupVideoPicker(adVideo4, 4);
             setupVideoPicker(adVideo5, 5);
+            setupVideoPicker(adVideo6, 6);
+            setupVideoPicker(adVideo7, 7);
+            setupVideoPicker(adVideo8, 8);
+            setupVideoPicker(adVideo9, 9);
+            setupVideoPicker(adVideo10, 10);
         }
         private void setupImagePicker(Preference preference, int num) {
             preference.setOnPreferenceClickListener(pref -> {
@@ -716,6 +833,20 @@ public class AdminSettingsActivity extends AppCompatActivity implements
             });
 
             String[] ports = SerialPortFinder.getAllDevicesPath();
+        }
+    }
+
+    public static class SalesFragment extends PreferenceFragmentCompat {
+        @Override
+        public void onCreatePreferencesFix(Bundle savedInstanceState, String rootKey) {
+            setPreferencesFromResource(R.xml.sales_history, rootKey);
+            SalesManager salesManager = new SalesManager(getContext());
+            Preference salesToday = findPreference("sales_today");
+            Preference salesWeek = findPreference("sales_week");
+            Preference salesMonth = findPreference("sales_month");
+            salesToday.setSummary(salesManager.getTodaySales()+" 원");
+            salesWeek.setSummary(salesManager.getThisWeekSales()+" 원");
+            salesMonth.setSummary(salesManager.getThisMonthSales()+" 원");
         }
     }
 

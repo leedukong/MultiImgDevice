@@ -65,7 +65,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:launchMode="singleInstance"
+            android:launchMode="standard"
             android:theme="@style/Theme.MultiDevice.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -77,7 +77,7 @@
         <activity
             android:name=".OrderActivity"
             android:exported="true"
-            android:launchMode="singleInstance"
+            android:launchMode="standard"
             android:theme="@style/Theme.MultiDevice.NoActionBar">
         </activity>
         <activity
@@ -98,7 +98,7 @@
         <activity
             android:name=".ThrowOutActivity"
             android:exported="true"
-            android:launchMode="singleInstance"
+            android:launchMode="standard"
             android:theme="@style/Theme.MultiDevice.NoActionBar" />
     </application>
 

@@ -28,6 +28,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class DessertSettingsActivity extends AppCompatActivity {
 
     private GridLayout gridLayout;
+    private Button rechargeAllButton;
     private int numRows = 6;
     private int numCols = 6;
 
@@ -37,6 +38,16 @@ public class DessertSettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dessert_setting);
         gridLayout = findViewById(R.id.gridLayout);
+        rechargeAllButton = findViewById(R.id.button_recharge_all);
+        rechargeAllButton.setOnClickListener(v ->{
+            for(int i=0; i<36; i++){
+                String totalCount = PreferenceManager.getString(this, "product_" + i + "_total_count");
+                PreferenceManager.setString(this, "product_" + i + "_current_count", totalCount);
+            }
+            Intent intent = getIntent();
+            finish();
+            startActivity(intent);
+        });
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         for (int row = 0; row < numRows; row++) {
@@ -126,33 +137,6 @@ public class DessertSettingsActivity extends AppCompatActivity {
                             });
                         }catch(Exception e){
                         }
-//                        try {
-//                            if (MultiDevice.locked) return;
-//                            if (Integer.parseInt(currentCount.get()) > 0) {
-//                                //todo 멀티디바이스 투출
-//                            MultiDevice.throwOut(this, product, new MultiDevice.OnThrowOutListener() {
-//                                @Override
-//                                public void onThrowOut(String productName) {
-//
-//                                    //Utils.showToast(getApplicationContext(), productName + is + " 출하합니다.");
-//                                }
-//
-//                                @Override
-//                                public void onThrowOutDone() {
-//                                    dessertCurrent.setText(currentCount + " / " + totalCount);
-//                                    if (currentCount.equals(totalCount))
-//                                        childLayout.setBackgroundColor(0xFFA2C1A6);
-//                                    else if (currentCount.get().equals("0"))
-//                                        childLayout.setBackgroundColor(0xFFC1A2A2);
-//                                    else
-//                                        childLayout.setBackgroundColor(getResources().getColor(R.color.silver_sand));
-//
-//                                }
-//                            });
-//                            } else {
-//                            }
-//                        } catch (Exception e) {
-//                        }
                     });
                 }catch (Exception e){
 

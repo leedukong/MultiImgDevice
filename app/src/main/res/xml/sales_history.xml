@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <Preference
+        android:key="sales_today"
+        android:title="일 매출"
+        android:inputType="number" />
+    <Preference
+        android:key="sales_week"
+        android:title="주 매출"
+        android:inputType="number" />
+    <Preference
+        android:key="sales_month"
+        android:title="월 매출"
+        android:inputType="number" />
+</androidx.preference.PreferenceScreen>

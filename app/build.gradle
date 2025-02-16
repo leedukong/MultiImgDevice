@@ -208,6 +208,7 @@ android {
         targetCompatibility JavaVersion.VERSION_1_9
     }
     buildFeatures {
+        buildConfig true
         viewBinding true
         compose true
     }
