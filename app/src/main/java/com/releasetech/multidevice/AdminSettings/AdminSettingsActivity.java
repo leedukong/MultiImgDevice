@@ -522,19 +522,19 @@ public class AdminSettingsActivity extends AppCompatActivity implements
                                         adVideo = adVideo5;
                                         break;
                                     case 6:
-                                        adVideo = adVideo5;
+                                        adVideo = adVideo6;
                                         break;
                                     case 7:
-                                        adVideo = adVideo5;
+                                        adVideo = adVideo7;
                                         break;
                                     case 8:
-                                        adVideo = adVideo5;
+                                        adVideo = adVideo8;
                                         break;
                                     case 9:
-                                        adVideo = adVideo5;
+                                        adVideo = adVideo9;
                                         break;
                                     case 10:
-                                        adVideo = adVideo5;
+                                        adVideo = adVideo10;
                                         break;
                                 }
                                 if (adVideo != null) {
@@ -720,19 +720,19 @@ public class AdminSettingsActivity extends AppCompatActivity implements
                                 adVideo = adVideo5;
                                 break;
                             case 6:
-                                adVideo = adVideo5;
+                                adVideo = adVideo6;
                                 break;
                             case 7:
-                                adVideo = adVideo5;
+                                adVideo = adVideo7;
                                 break;
                             case 8:
-                                adVideo = adVideo5;
+                                adVideo = adVideo8;
                                 break;
                             case 9:
-                                adVideo = adVideo5;
+                                adVideo = adVideo9;
                                 break;
                             case 10:
-                                adVideo = adVideo5;
+                                adVideo = adVideo10;
                                 break;
                         }
                         if (adVideo != null) {

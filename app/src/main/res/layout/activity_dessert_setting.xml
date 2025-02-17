@@ -22,7 +22,7 @@
     <Button
         android:id="@+id/button_recharge_all"
         android:layout_width="770dp"
-        android:layout_height="100dp"
+        android:layout_height="80dp"
         android:text="모든 재고 충전"
         android:layout_marginStart="15dp"
         app:layout_constraintStart_toStartOf="parent"

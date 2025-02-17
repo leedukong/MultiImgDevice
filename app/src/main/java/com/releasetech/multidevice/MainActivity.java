@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         passwordManager = new PasswordManager(this);
+        PreferenceManager.setString(this, "idle_screen_time", "1");
     }
 
     @Override
@@ -179,12 +180,5 @@ public class MainActivity extends AppCompatActivity {
                 Utils.showToast(this, "패스워드 초기화까지 남은 횟수 : " + (100 - settingsCount));
             }
         });
-    }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        Intent intent = new Intent(MainActivity.this, OrderActivity.class);
-        startActivity(intent);
-        return super.dispatchTouchEvent(ev);
     }
 }
