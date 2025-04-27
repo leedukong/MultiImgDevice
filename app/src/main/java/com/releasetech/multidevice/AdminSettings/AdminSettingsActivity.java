@@ -406,6 +406,7 @@ public class AdminSettingsActivity extends AppCompatActivity implements
             EditTextPreference idleScreenTime = findPreference("idle_screen_time");
             EditTextPreference idleScreenText = findPreference("message_idle");
             EditTextPreference idleScreenTextColor = findPreference("message_color");
+            EditTextPreference idleScreenTextSize = findPreference("message_size");
             EditTextPreference imageTime = findPreference("ad_image_time");
             EditTextPreference imageCount = findPreference("ad_image");
             Preference adImage1 = findPreference("ad_image1");
@@ -648,6 +649,11 @@ public class AdminSettingsActivity extends AppCompatActivity implements
                 idleScreenTextColor.setText(newValue+"");
                 return true;
             });
+            idleScreenTextSize.setOnPreferenceChangeListener((preference, newValue) -> {
+                PreferenceManager.setString(getContext(), "message_size", newValue.toString());
+                idleScreenTextSize.setText(newValue+"");
+                return true;
+            });
 
             imageCount.setOnPreferenceChangeListener((preference, newValue) -> {
                 Object obj = newValue;
@@ -770,7 +776,7 @@ public class AdminSettingsActivity extends AppCompatActivity implements
         private void setupImagePicker(Preference preference, int num) {
             preference.setOnPreferenceClickListener(pref -> {
                 PreferenceManager.setInt(pref.getContext(), "ad_image_temp", num);
-                Intent intent = new Intent(Intent.ACTION_PICK);
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.setType("image/*");  // 이미지만 허용
                 String[] mimeTypes = {"image/*"}; // 허용할 MIME 타입
                 intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
@@ -781,7 +787,7 @@ public class AdminSettingsActivity extends AppCompatActivity implements
         private void setupVideoPicker(Preference preference, int num) {
             preference.setOnPreferenceClickListener(pref -> {
                 PreferenceManager.setInt(pref.getContext(), "ad_video_temp", num);
-                Intent intent = new Intent(Intent.ACTION_PICK);
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.setType("video/*");  // 비디오만 허용
                 String[] mimeTypes = {"video/*"}; // 허용할 MIME 타입
                 intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
@@ -856,6 +862,11 @@ public class AdminSettingsActivity extends AppCompatActivity implements
         if (resultCode == RESULT_OK && data != null) {
             Uri selectedUri = data.getData();
             String mimeType = getContentResolver().getType(selectedUri);
+
+            getContentResolver().takePersistableUriPermission(
+                    selectedUri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+            );
 
 //            try{
 //                PreferenceManager.setString(this, "ad_uri", data.getData().toString());

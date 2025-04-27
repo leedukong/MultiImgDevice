@@ -3,6 +3,7 @@ package com.releasetech.multidevice.AdminSettings.ProductManage;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -53,6 +54,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Timer;
@@ -171,7 +174,7 @@ public class ProductManageFragment extends Fragment {
         timer.schedule(timerTask, 0, 33);
 
         if(!PreferenceManager.getBoolean(getContext(), "initial_product_settings")) {
-            for (int i = 0; i < 6; i++) {
+            for (int i = 0; i < 3; i++) {
                 addCategory();
                 //todo
                 for (int j = 0; j < 6; j++) {
@@ -241,10 +244,10 @@ public class ProductManageFragment extends Fragment {
 
         Button addCategoryButton = requireView().findViewById(R.id.addCategoryButton);
         addCategoryButton.setOnClickListener(v -> {
-            if(categoryListView.getCount() <5) {
+            if(categoryListView.getCount() <3) {
                 addCategory();
             }else{
-                Toast.makeText(getContext(), "디저트 카테고리는 최대 5개 까지 추가 가능합니다.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "카테고리는 최대 3개 까지 추가 가능합니다.", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -356,28 +359,6 @@ public class ProductManageFragment extends Fragment {
             }
         });
 
-        EditText numberEditText = requireView().findViewById(R.id.dessert_number);
-        numberEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                String text = editable.toString();
-                int value;
-                try {
-                    value = Integer.parseInt(text);
-                    productCache.product.number = value;
-                } catch (NumberFormatException ignored) {
-                }
-            }
-        });
-
         EditText totalCountEditText = requireView().findViewById(R.id.dessert_total_count);
         totalCountEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -406,8 +387,16 @@ public class ProductManageFragment extends Fragment {
         availableSwitch.setOnCheckedChangeListener((compoundButton, b) -> productCache.product.available = b ? 1 : 0);
 
 
-        //Button imageSetButton = requireView().findViewById(R.id.btn_image_set);
-        //imageSetButton.setOnClickListener(v -> imageSetDialog());
+        Button imageSetButton = requireView().findViewById(R.id.btn_image_set);
+        imageSetButton.setOnClickListener(v -> {
+            PreferenceManager.setInt(getContext(), "image_temp", productCache.product.number);
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.setType("image/*");  // 이미지만 허용
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+            String[] mimeTypes = {"image/*"}; // 허용할 MIME 타입
+            intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+            startActivityForResult(intent, 1);
+        });
 
 
         ScrollView scrollView = requireActivity().findViewById(R.id.product_setting_scrollview);
@@ -423,15 +412,15 @@ public class ProductManageFragment extends Fragment {
     private int getCategoryIndexById(long id) {
         for (int i = 0; i < productCategories.size(); i++) {
             Category c = productCategories.get(i);
+
             if (id == c.id) return i;
         }
         return -1;
     }
-
     private void addCategory() {
         int count;
         count = productCategoriesAdapter.getCount();
-        Category c = new Category(0, "카테고리 " + (count + 1), 1, count + 1, "");
+        Category c = new Category(0, "카테고리 " + (count + 1) +"("+count+" 행)", 1, count + 1, "");
         dbManager.insertColumn(DBManager.CATEGORY_DESSERT, c);
         loadCategories();
     }
@@ -507,29 +496,26 @@ public class ProductManageFragment extends Fragment {
     private void addProduct() {
         int count;
         count = productsAdapter.getCount();
-        long category = productCategories.get(currentCategory).id;
-        /*
-        for (int j = 0; j < 4; j++) {
-            long[] recipeIDs = new long[4];
-            for (int i = 0; i < 4; i++) {
-                Recipe recipe = new Recipe();
-                recipeIDs[i] = dbManager.insertColumn(DBManager.RECIPE, recipe);
-            }
-        }*/
-        ImageSet is = new ImageSet();
+        if(count <= 12) {
+            long category = productCategories.get(currentCategory).id;
+            ImageSet is = new ImageSet();
+            long imageSetID = dbManager.insertColumn(DBManager.PRODUCT_IMAGE, is);
+            Product p = new Product.ProductBuilder(0, "제품" + count, category, count)
+                    .setAvailable(1)
+                    .setPrice(0)
+                    .setNumber((int) ((category - 1) * 12 + count))
+                    .setTotalCount(0)
+                    .setImageSet(imageSetID)
+                    .build();
+            dbManager.insertColumn(DBManager.PRODUCT_DESSERT, p);
+            loadProducts();
+            loadProductSettings(count - 2);
 
-        long imageSetID = dbManager.insertColumn(DBManager.PRODUCT_IMAGE, is);
-
-        Product p = new Product.ProductBuilder(0, "제품" + count, category, count)
-                .setAvailable(1)
-                .setPrice(0)
-                .setNumber(0)
-                .setTotalCount(0)
-                .setImageSet(imageSetID)
-                .build();
-        dbManager.insertColumn(DBManager.PRODUCT_DESSERT, p);
-        loadProducts();
-        loadProductSettings(count - 2);
+            PreferenceManager.setString(getContext(), "category_"+category+"_count", count+"");
+        }else{
+            Toast.makeText(getContext(), "상품은 한 열에 12개까지 추가 가능합니다.", Toast.LENGTH_SHORT).show();
+        }
+        saveProduct();
     }
 
     private void removeProduct() {
@@ -612,20 +598,8 @@ public class ProductManageFragment extends Fragment {
         PreferenceManager.setString(getContext(), "product_"+number.getText()+"_current_count", totalCount.getText().toString());
         PreferenceManager.setString(getContext(), "product_"+number.getText()+"_total_count", totalCount.getText().toString());
 
-//        while (true) {
-//            try {
-//                loadProductSettings(currentProduct);
-//                break;
-//            } catch (NullPointerException e) {
-//                currentProduct--;
-//                if (currentProduct == 0) {
-//                    loadCategorySettings(currentCategory);
-//                    productLayout.setVisibility(View.GONE);
-//                    categorySettingLayout.setVisibility(View.GONE);
-//                    productSettingLayout.setVisibility(View.VISIBLE);
-//                }
-//            }
-//        }
+        PreferenceManager.setString(getContext(), "category_size", productCategories.size()+"");
+        Log.i("넘버 테스트1", PreferenceManager.getString(getContext(), "product_"+number.getText()+"_number"));
     }
 
     private void loadProducts() {
@@ -662,7 +636,7 @@ public class ProductManageFragment extends Fragment {
         EditText totalCountText = requireView().findViewById(R.id.dessert_total_count);
         totalCountText.setText("" + p.total_count);
 
-        EditText numberText = requireView().findViewById(R.id.dessert_number);
+        TextView numberText = requireView().findViewById(R.id.dessert_number);
         numberText.setText("" + p.number);
 
     }
@@ -750,6 +724,29 @@ public class ProductManageFragment extends Fragment {
         productsAdapter.notifyDataSetChanged();
     }
 
+    private String saveImageFromUri(Uri uri){
+        try {
+            InputStream inputStream = requireContext().getContentResolver().openInputStream(uri);
+            File file = new File(requireContext().getFilesDir(), "image"+PreferenceManager.getInt(getContext(), "image_temp")+".jpg");
+            OutputStream outputStream = new FileOutputStream(file);
+
+            byte[] buffer = new byte[4096];
+            int length;
+            while ((length = inputStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, length);
+            }
+
+            outputStream.close();
+            inputStream.close();
+
+            return file.getAbsolutePath();  // 저장된 파일 경로를 리턴
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -804,6 +801,30 @@ public class ProductManageFragment extends Fragment {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+
+            if (data != null) {
+                Uri selectedUri = data.getData();
+
+                // 명시적으로 READ 권한 요청
+                requireActivity().getContentResolver().takePersistableUriPermission(
+                        selectedUri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+                );
+
+                String mimeType = requireActivity().getContentResolver().getType(selectedUri);
+                if (mimeType != null && mimeType.startsWith("image/")) {
+                    String savedImagePath = saveImageFromUri(selectedUri);
+
+                    Log.i("이미지 로드 테스트", "시도");
+                    if (savedImagePath != null){
+                        PreferenceManager.setString(requireContext(), "image"+PreferenceManager.getString(getContext(), "image_temp"), savedImagePath);
+                        Log.i("이미지 로드 테스트", "경로 비어있지 않음1" +"  "+ savedImagePath);
+                        Log.i("이미지 로드 테스트", "경로 비어있지 않음2" +"  "+ PreferenceManager.getString(getContext(), "image"+PreferenceManager.getString(getContext(), "image_temp")));
+                    }else{
+                        Log.i("이미지 로드 테스트", "경로 비어있음");
+                    }
+                }
             }
         }
     }

@@ -108,6 +108,11 @@ public class SalesManager {
         }
     }
 
+    public void resetSalesData() {
+        editor.putString(KEY_SALES, "{}");
+        editor.apply();
+    }
+
     // 특정 월의 매출 조회
     public int getMonthlySales(String month) {
         try {

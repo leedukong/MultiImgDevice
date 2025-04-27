@@ -14,5 +14,4 @@ public class Category {
         this.index = index;
         this.image = image;
     }
-
 }

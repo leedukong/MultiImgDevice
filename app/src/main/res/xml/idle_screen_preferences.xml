@@ -34,6 +34,12 @@
         app:useSimpleSummaryProvider="true" />
 
     <EditTextPreference
+        app:defaultValue="40"
+        app:key="message_size"
+        app:title="대기화면 문구 크기"
+        app:useSimpleSummaryProvider="true" />
+
+    <EditTextPreference
         app:defaultValue="10"
         app:key="ad_image_time"
         app:title="이미지 전환 시간"

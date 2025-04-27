@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- 상단 -->
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="2">
+
+            <TextView
+                android:id="@+id/home"
+                android:text="처음\n(홈)"
+                android:textSize="25sp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/setting_button"
+                android:text="로고 및 이름"
+                android:gravity="end|center_vertical"
+                android:textSize="25sp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <!-- 상품 리스트 : 세 줄, 각각 좌우 스크롤 -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:scrollbars="horizontal">
+
+            <LinearLayout
+                android:id="@+id/row1"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:scrollbars="horizontal">
+
+            <LinearLayout
+                android:id="@+id/row2"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:scrollbars="horizontal">
+
+            <LinearLayout
+                android:id="@+id/row3"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <!-- 좌우 스크롤 텍스트 -->
+        <TextView
+            android:text="좌/우 스크롤"
+            android:gravity="end"
+            android:textSize="20sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="20dp"/>
+
+        <!-- 주문 방법 -->
+        <TextView
+            android:id="@+id/ment"
+            android:text="- 키오스크로 주문하는 방법 -"
+            android:gravity="center"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="20dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="30dp"/>
+
+        <!-- 1~4 단계 가이드 -->
+        <LinearLayout
+            android:id="@+id/layout_guide"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:orientation="horizontal"
+            android:layout_marginTop="12dp">
+
+            <!-- 1번 -->
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="12dp"
+                android:minHeight="100dp"
+                android:lineSpacingExtra="4dp"
+                android:textSize="18sp"
+                android:text="1\n- 상품 선택 -\n원하는 상품을\n장바구니에 추가"
+                android:textAlignment="center" />
+
+            <!-- 구분선 1 -->
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#000000" />
+
+            <!-- 2번 -->
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="12dp"
+                android:minHeight="100dp"
+                android:lineSpacingExtra="4dp"
+                android:textSize="18sp"
+                android:text="2\n- 주문 확인 -\n장바구니 상품을\n확인하고 추가/삭제"
+                android:textAlignment="center" />
+
+            <!-- 구분선 2 -->
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#000000" />
+
+            <!-- 3번 -->
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="12dp"
+                android:minHeight="100dp"
+                android:lineSpacingExtra="4dp"
+                android:textSize="18sp"
+                android:text="3\n- 금액 결제 -\n카드로\n결제 해주세요"
+                android:textAlignment="center" />
+
+            <!-- 구분선 3 -->
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#000000" />
+
+            <!-- 4번 -->
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="12dp"
+                android:minHeight="100dp"
+                android:lineSpacingExtra="4dp"
+                android:textSize="18sp"
+                android:text="4\n- 상품 수령 -\n구매하신\n상품을 찾아가세요"
+                android:textAlignment="center" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_cart"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingTop="12dp">
+
+            <!-- 상품 1 -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="220dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/cart1_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="상품이름"
+                    android:textSize="20sp"
+                    android:padding="2dp"/>
+
+                <TextView
+                    android:id="@+id/cart1_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="가격"
+                    android:textSize="20sp"
+                    android:padding="2dp"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="추가"
+                    android:textSize="12sp"
+                    android:id="@+id/plus1"/>
+
+                <Button
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="취소"
+                    android:textSize="12sp"
+                    android:id="@+id/minus1"/>
+            </LinearLayout>
+
+            <!-- 동일한 구조 4번 반복 -->
+            <!-- 상품 2 -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="220dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+                <TextView android:id="@+id/cart2_name" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="상품이름" android:textSize="20sp"/>
+                <TextView android:id="@+id/cart2_price" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="가격" android:textSize="20sp"/>
+                <Button android:id="@+id/plus2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="추가" android:textSize="12sp"/>
+                <Button android:id="@+id/minus2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="취소" android:textSize="12sp"/>
+            </LinearLayout>
+
+            <!-- 상품 3 -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="220dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+                <TextView android:id="@+id/cart3_name" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="상품이름" android:textSize="20sp"/>
+                <TextView android:id="@+id/cart3_price" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="가격" android:textSize="20sp"/>
+                <Button android:id="@+id/plus3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="추가" android:textSize="12sp"/>
+                <Button android:id="@+id/minus3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="취소" android:textSize="12sp"/>
+            </LinearLayout>
+
+            <!-- 상품 4 -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="220dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+                <TextView android:id="@+id/cart4_name" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="상품이름" android:textSize="20sp"/>
+                <TextView android:id="@+id/cart4_price" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="가격" android:textSize="20sp"/>
+                <Button android:id="@+id/plus4" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="추가" android:textSize="12sp"/>
+                <Button android:id="@+id/minus4" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="취소" android:textSize="12sp"/>
+            </LinearLayout>
+
+            <!-- 상품 5 -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="220dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+                <TextView android:id="@+id/cart5_name" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="상품이름" android:textSize="20sp"/>
+                <TextView android:id="@+id/cart5_price" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="가격" android:textSize="20sp"/>
+                <Button android:id="@+id/plus5" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="추가" android:textSize="12sp"/>
+                <Button android:id="@+id/minus5" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="취소" android:textSize="12sp"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:background="#000000" />
+
+        <!-- 주문취소 / 결제하기 버튼 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="8dp"
+            android:paddingBottom="16dp"
+            android:gravity="center_vertical">
+
+            <!-- 주문취소 버튼 -->
+            <Button
+                android:id="@+id/btn_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="    주문취소"
+                android:layout_gravity="start"
+                android:background="@android:color/transparent"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:textColor="#000000" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/text_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_gravity="center"
+                android:background="@android:color/transparent"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:textColor="#000000" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <!-- 결제하기 버튼 -->
+            <Button
+                android:id="@+id/btn_pay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="결제하기    "
+                android:layout_gravity="end"
+                android:background="@android:color/transparent"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:textColor="#000000" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

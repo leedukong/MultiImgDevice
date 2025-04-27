@@ -44,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         passwordManager = new PasswordManager(this);
-        PreferenceManager.setString(this, "idle_screen_time", "1");
     }
 
     @Override
@@ -87,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
                 Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
-                        Log.i("testt", PreferenceManager.getString(getApplicationContext(), "ad_image_time"));
                         imageButton.setImageURI(Uri.parse(imageUris.get(currentIndex[0])));
                         currentIndex[0] = (currentIndex[0] + 1) % imageUris.size();
                         handler.postDelayed(this, Integer.parseInt(PreferenceManager.getString(getApplicationContext(), "ad_image_time"))*1000); // 30초 = 30000ms
@@ -96,17 +94,12 @@ public class MainActivity extends AppCompatActivity {
                 };
 
                 handler.postDelayed(runnable, 0);
-
-                // 불필요한 뷰 숨기기
-                triggerButton.setVisibility(View.GONE);
-                triggerButton.setActivated(false);
                 videoButton.setVisibility(View.GONE);
                 videoButton.setActivated(false);
             } catch (Exception e) {
                 Utils.logD(TAG, "이미지 로드 실패");
             }
         }else if(PreferenceManager.getString(this, "ad_type").equals("video")) {
-            Log.i("테스트", "비디오");
             try {
                 List<String> videoUris = new ArrayList<>();
                 for(int i=1; i<=PreferenceManager.getInt(this, "ad_video_count"); i++){
@@ -114,11 +107,8 @@ public class MainActivity extends AppCompatActivity {
                 }
                 int[] currentIndex ={0};
                 videoButton.setVideoURI(Uri.parse(videoUris.get(currentIndex[0])));
-                videoButton.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                    @Override
-                    public void onPrepared(MediaPlayer mp) {
-                        mp.setLooping(false);  // 단일 동영상에서는 루프 비활성화
-                    }
+                videoButton.setOnPreparedListener(mp -> {
+                    mp.setLooping(false);  // 단일 동영상에서는 루프 비활성화
                 });
                 videoButton.start();
                 videoButton.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -132,9 +122,6 @@ public class MainActivity extends AppCompatActivity {
                         videoButton.start();
                     }
                 });
-
-                triggerButton.setVisibility(View.GONE);
-                triggerButton.setActivated(false);
                 imageButton.setVisibility(View.GONE);
                 imageButton.setActivated(false);
             } catch (Exception e) {
@@ -145,21 +132,21 @@ public class MainActivity extends AppCompatActivity {
         videoButton.setOnClickListener(v -> {
             if (clickInterceptor.getVisibility() == View.VISIBLE) {
             } else {
-                Intent intent = new Intent(MainActivity.this, OrderActivity.class);
+                Intent intent = new Intent(MainActivity.this, Order2Activity.class);
                 startActivity(intent);
             }
         });
         triggerButton.setOnClickListener(v -> {
             if (clickInterceptor.getVisibility() == View.VISIBLE) {
             } else {
-                Intent intent = new Intent(MainActivity.this, OrderActivity.class);
+                Intent intent = new Intent(MainActivity.this, Order2Activity.class);
                 startActivity(intent);
             }
         });
         imageButton.setOnClickListener(v -> {
             if (clickInterceptor.getVisibility() == View.VISIBLE) {
             } else {
-                Intent intent = new Intent(MainActivity.this, OrderActivity.class);
+                Intent intent = new Intent(MainActivity.this, Order2Activity.class);
                 startActivity(intent);
             }
         });
@@ -169,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
             settingsCount++;
             clickInterceptor.setVisibility(View.VISIBLE);
             Utils.logD(TAG, "설정 진입 버튼 : " + settingsCount);
-            if (settingsCount == 10) {
+            if (settingsCount == 5) {
                 //if (passwordManager.wrongPasswordCount >= 10) return;
                 passwordManager.passwordDialog(this);
                 settingsCount = 0;

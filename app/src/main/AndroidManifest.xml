@@ -81,6 +81,12 @@
             android:theme="@style/Theme.MultiDevice.NoActionBar">
         </activity>
         <activity
+            android:name=".Order2Activity"
+            android:exported="true"
+            android:launchMode="standard"
+            android:theme="@style/Theme.MultiDevice.NoActionBar">
+        </activity>
+        <activity
             android:name=".ProductSetting.DessertSettingsActivity"
             android:exported="false"
             android:launchMode="singleInstance"
@@ -94,7 +100,8 @@
             android:name=".AdminSettings.AdminSettingsActivity"
             android:exported="false"
             android:label="관리자 설정"
-            android:launchMode="singleInstance" />
+            android:launchMode="singleInstance"
+            android:parentActivityName=".MainActivity"/>
         <activity
             android:name=".ThrowOutActivity"
             android:exported="true"

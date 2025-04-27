@@ -1,49 +1,47 @@
 package com.releasetech.multidevice;
-import android.annotation.SuppressLint;
+
 import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Lifecycle;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.preference.Preference;
 
-import com.releasetech.multidevice.Database.DBManager;
 import com.releasetech.multidevice.Database.Data.CartItem;
-import com.releasetech.multidevice.Database.Data.DessertItem;
-import com.releasetech.multidevice.Database.DataLoader;
+import com.releasetech.multidevice.Database.Data.Category;
 import com.releasetech.multidevice.Manager.CartManager;
 import com.releasetech.multidevice.Manager.CheckoutManager;
 import com.releasetech.multidevice.Manager.PasswordManager;
 import com.releasetech.multidevice.Manager.PreferenceManager;
 import com.releasetech.multidevice.Manager.SalesManager;
-import com.releasetech.multidevice.MultiDevice.MultiDevice;
 import com.releasetech.multidevice.Sound.SoundService;
-import com.releasetech.multidevice.Stock.Stock;
-import com.releasetech.multidevice.Tool.Cache;
 import com.releasetech.multidevice.Tool.Utils;
-import java.io.IOException;
+
+import org.checkerframework.checker.units.qual.C;
+import org.w3c.dom.Text;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Stack;
 
-public class OrderActivity extends AppCompatActivity {
+public class Order2Activity extends AppCompatActivity {
 
-    private static final String TAG = "[ORDER]";
-    private ArrayList<CartItem> arrayList = new ArrayList<>();
-
+    LinearLayout row1, row2, row3;
+    private int settingsCount = 0;
     int SEND_REQUEST_CODE = 1;
     int SEND_REQUEST_CHKVALID = 2;
     int SEND_REQUEST_CHKCARDBIN = 3;
@@ -51,95 +49,181 @@ public class OrderActivity extends AppCompatActivity {
     int SEND_REQUEST_CHKMEMBERSHIP = 5;
     int SEND_REQUEST_NORMAL = 6;
     char fs = 0x1C;
-
-    /* Order */
     CartManager cartManager;
-    boolean loadCartCache = false;
-
-    /* Stock */
-    private Stock stock;
-    DessertItem dessertItem;
-
-    CartViewAdapter adapter = new CartViewAdapter();
-
-    /* Password Related */
-    private int settingsCount = 0;
+    private static final String TAG = "[ORDER]";
     private PasswordManager passwordManager;
-    DBManager dbManager;
-
-    private Handler handler = new Handler();
-    private Runnable returnToMainRunnable = new Runnable() {
-        @Override
-        public void run() {
-            Intent intent = new Intent(OrderActivity.this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(intent);
-            finish();
-        }
-    };
-    private View rootView;
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        resetTimeout();
-        return super.dispatchTouchEvent(ev);
-    }
+    private LinearLayout layoutGuide;
+    private LinearLayout layoutCart;
+    private TextView ment;
+    private TextView priceText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_order);
+        setContentView(R.layout.order);
 
+        cartManager = new CartManager(5);
+        ment = findViewById(R.id.ment);
+        layoutCart = findViewById(R.id.layout_cart);
+        layoutGuide = findViewById(R.id.layout_guide);
+        priceText = findViewById(R.id.text_price);
+        layoutCart.setVisibility(View.GONE);
+        priceText.setVisibility(View.GONE);
+        LayoutInflater inflater = LayoutInflater.from(this);
+        row1 = findViewById(R.id.row1);
+        row2 = findViewById(R.id.row2);
+        row3 = findViewById(R.id.row3);
 
-        passwordManager = new PasswordManager(this);
-        dbManager = new DBManager(this);
-        dbManager.open();
-        dbManager.create();
-        resetTimeout();
-
-        Button hiddenButton = findViewById(R.id.setting_button);
-        hiddenButton.setOnClickListener(view -> {
-            settingsCount++;
-            Utils.logD(TAG, "설정 진입 버튼 : " + settingsCount);
-            if (settingsCount == 5) {
-                //if (passwordManager.wrongPasswordCount >= 10) return;
-                passwordManager.passwordDialog(this);
-                settingsCount = 0;
-            } else if (settingsCount == 100) {
-                passwordManager.resetPasswords();
-                settingsCount = 0;
-            } else if (settingsCount > 90) {
-                Utils.showToast(this, "패스워드 초기화까지 남은 횟수 : " + (100 - settingsCount));
+        TextView home = findViewById(R.id.home);
+        home.setOnClickListener(v -> {
+            Intent intent = new Intent(Order2Activity.this, MainActivity.class);
+            startActivity(intent);
+        });
+        TextView cancle = findViewById(R.id.btn_cancel);
+        cancle.setOnClickListener(v -> {
+            if (cartManager.getCount()>0) {
+                cartManager.clear();
+                updateCart(cartManager);
+                ment.setText("- 키오스크로 주문하는 방법 -");
+                layoutGuide.setVisibility(View.VISIBLE);
+                layoutCart.setVisibility(View.GONE);
             }
         });
-        numberClick();
 
-        Button button = findViewById(R.id.button_checkout);
+        ViewGroup[] rows = { row1, row2, row3 };
+
+        int category1count = Integer.parseInt(PreferenceManager.getString(getApplicationContext(), "category_1_count"));
+        int category2count = Integer.parseInt(PreferenceManager.getString(getApplicationContext(), "category_2_count"));
+        int category3count = Integer.parseInt(PreferenceManager.getString(getApplicationContext(), "category_3_count"));
+        int categorySize = Integer.parseInt(PreferenceManager.getString(getApplicationContext(), "category_size"));
+
+        for (int r = 0; r < categorySize; r++) {
+            int count = 0;
+            if (r == 0) {
+                count = category1count;
+            } else if (r == 1) {
+                count = category2count;
+            } else if (r == 2) {
+                count = category3count;
+            }
+
+            for (int i = 0; i < count; i++) {
+                View productView = inflater.inflate(R.layout.item_product, rows[r], false);
+
+                ImageButton productImageButton = productView.findViewById(R.id.product_image_button);
+
+                TextView productName = productView.findViewById(R.id.product_name);
+                TextView productPrice = productView.findViewById(R.id.product_price);
+
+                String imagePath = "/data/user/0/com.releasetech.multidevice/files/image"+(i+12*r+1)+".jpg";
+                File imageFile = new File(imagePath);
+                if (imageFile.exists()) {
+                    Uri imageUri = Uri.fromFile(imageFile);
+                    productImageButton.setImageURI(imageUri);
+                } else {
+                }
+
+                productName.setText(PreferenceManager.getString(getApplicationContext(),"product_"+((i+12*r+1)+"_name")));
+                productPrice.setText(PreferenceManager.getString(getApplicationContext(),"product_"+ (i+12*r+1) +"_price"));
+
+                int finalI = i;
+                int finalR = r;
+                try {
+                    productImageButton.setOnClickListener(v -> {
+                        if (cartManager.getCount() == 0) {
+                            ment.setText("장바구니");
+                            layoutGuide.setVisibility(View.GONE);
+                            layoutCart.setVisibility(View.VISIBLE);
+                            priceText.setVisibility(View.VISIBLE);
+                        }
+                        if (cartManager.getCount() > 5) {
+                            Toast.makeText(getApplicationContext(), "상품은 다섯 개까지 추가 가능합니다.", Toast.LENGTH_SHORT);
+                        } else {
+                            String productNumber = String.valueOf((12 * finalR + finalI + 1));
+                            String itemCategory = PreferenceManager.getString(this, "product_" + productNumber + "_category");
+                            String itemName = PreferenceManager.getString(this, "product_" + productNumber + "_name");
+                            int itemPrice = Integer.parseInt(PreferenceManager.getString(this, "product_" + productNumber + "_price"));
+                            int number = Integer.parseInt(PreferenceManager.getString(this, "product_" + productNumber + "_number"));
+
+                            CartItem cartItem = new CartItem(itemCategory.toString(), itemName, itemPrice, 1, number);
+                            cartManager.add(cartItem);
+                            updateCart(cartManager);
+                            priceText.setText("합계 : "+cartManager.getTotalPrice()+"");
+                        }
+                    });
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                rows[r].addView(productView);
+            }
+        }
+        Button[] plusButtons = {findViewById(R.id.plus1), findViewById(R.id.plus2), findViewById(R.id.plus3), findViewById(R.id.plus4), findViewById(R.id.plus5)
+        };
+
+        Button[] minusButtons = {findViewById(R.id.minus1), findViewById(R.id.minus2), findViewById(R.id.minus3), findViewById(R.id.minus4), findViewById(R.id.minus5)
+        };
+
+        for (int i = 0; i < plusButtons.length; i++) {
+            final int index = i; // 람다 안에서 사용하려면 final 또는 effectively final이어야 해
+            plusButtons[i].setOnClickListener(v -> {
+                if (cartManager.getItem(index) != null) {
+                    if (cartManager.getCount() > 5) {
+                        Toast.makeText(getApplicationContext(), "상품은 다섯 개까지 추가 가능합니다.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        cartManager.add(cartManager.getItem(index));
+                        priceText.setText("합계 : "+cartManager.getTotalPrice()+"");
+                        updateCart(cartManager);
+                    }
+                }else{
+                    Toast.makeText(getApplicationContext(), "상품을 클릭하여 추가해주세요.", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            minusButtons[i].setOnClickListener(v -> {
+                if (cartManager.getItem(index) != null) {
+                    if (cartManager.getCount() > 0) {
+                        if (cartManager.getCount() == 1){
+                            ment.setText("- 키오스크로 주문하는 방법 -");
+                            layoutGuide.setVisibility(View.VISIBLE);
+                            layoutCart.setVisibility(View.GONE);
+                            priceText.setVisibility(View.GONE);
+                        }
+                        cartManager.remove(cartManager.getItem(index));
+                        updateCart(cartManager);
+                        priceText.setText("합계 : "+cartManager.getTotalPrice()+"");
+                    }
+                }else{
+                    Toast.makeText(getApplicationContext(), "취소할 상품이 없습니다.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        Button button = findViewById(R.id.btn_pay);
         button.setOnClickListener(view -> {
             if(!PreferenceManager.getBoolean(this, "free_of_charge")) {
                 ArrayList arrayList1 = new ArrayList();
-                    for(int i=0; i< cartManager.getCount(); i++){
-                        arrayList1.add(cartManager.getItem(i).number);
-                    }
-                    Collections.sort(arrayList1);
+                for(int i=0; i< cartManager.getCount(); i++){
+                    arrayList1.add(cartManager.getItem(i).number);
+                }
+                Collections.sort(arrayList1);
 
-                    int count = Integer.parseInt(PreferenceManager.getString(this, "product_" + arrayList1.get(0) + "_current_count")) - 1;
+                int count = Integer.parseInt(PreferenceManager.getString(this, "product_" + arrayList1.get(0) + "_current_count")) - 1;
+                if (count < 0) {
+                    Toast.makeText(getApplicationContext(), arrayList1.get(0) + "번 재고 부족", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                for (int j = 0; j < arrayList1.size() - 1; j++) {
+                    if (arrayList1.get(j) == arrayList1.get(j + 1)) {
+                        count--;
+                    } else {
+                        count = Integer.parseInt(PreferenceManager.getString(this, "product_" + arrayList1.get(j+1) + "_current_count")) - 1;
+                    }
                     if (count < 0) {
-                        Toast.makeText(getApplicationContext(), arrayList1.get(0) + "번 재고 부족", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), arrayList1.get(j+1) + "번 재고 부족", Toast.LENGTH_SHORT).show();
                         return;
                     }
-
-                    for (int j = 0; j < arrayList1.size() - 1; j++) {
-                        if (arrayList1.get(j) == arrayList1.get(j + 1)) {
-                            count--;
-                        } else {
-                            count = Integer.parseInt(PreferenceManager.getString(this, "product_" + arrayList1.get(j+1) + "_current_count")) - 1;
-                        }
-                        if (count < 0) {
-                            Toast.makeText(getApplicationContext(), arrayList1.get(j+1) + "번 재고 부족", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                    }
+                }
                 checkout();
             }else{
                 Stack stack = new Stack();
@@ -153,117 +237,61 @@ public class OrderActivity extends AppCompatActivity {
                 }
                 Log.i("테스트", throwOutProduct.toString());
 
-                Intent intent = new Intent(OrderActivity.this, ThrowOutActivity.class);
+                Intent intent = new Intent(Order2Activity.this, ThrowOutActivity.class);
                 intent.putExtra("stack", stack);
                 intent.putExtra("throwOutProduct", throwOutProduct);
                 startActivity(intent);
             }
         });
 
-        RecyclerView recyclerView = findViewById(R.id.cart_recyclerView);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
-    @Override
-    protected void onResume() {
-        super.onResume();
-        resetTimeout();
-        dbManager.open();
-        dbManager.create();
-
-        if (loadCartCache) {
-            try {
-                cartManager = ((CartManager) Cache.Read(this, "cart_cache")).clone();
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-            //cartManager.setOnUpdateListner(dataManager -> stock.applyCart(cartManager));
-            loadCartCache = false;
-        } else {
-            cartManager = new CartManager(Integer.parseInt(PreferenceManager.getString(this, "cart_quantity")));
-            //cartManager.setOnUpdateListner(dataManager -> stock.applyCart(cartManager));
-            clearCart();
-            adapter.CartItem.clear();
-            adapter.notifyDataSetChanged();
-            TextView textPrice = findViewById(R.id.total_price);
-            textPrice.setText("합계 : 0원");
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        handler.removeCallbacks(returnToMainRunnable);
-        if (rootView != null){
-            rootView.setOnTouchListener(null);
-        }
-    }
-
-    private void resetTimeout(){
-        handler.removeCallbacks(returnToMainRunnable);
-        handler.postDelayed(returnToMainRunnable, Integer.parseInt(PreferenceManager.getString(this, "idle_screen_time"))* 1000);
-    }
-
-    public void numberClick() {
-
-        Button buttonNumber[] = new Button[10];
-        buttonNumber[0] = findViewById(R.id.button0);
-        buttonNumber[1] = findViewById(R.id.button1);
-        buttonNumber[2] = findViewById(R.id.button2);
-        buttonNumber[3] = findViewById(R.id.button3);
-        buttonNumber[4] = findViewById(R.id.button4);
-        buttonNumber[5] = findViewById(R.id.button5);
-        buttonNumber[6] = findViewById(R.id.button6);
-        buttonNumber[7] = findViewById(R.id.button7);
-        buttonNumber[8] = findViewById(R.id.button8);
-        buttonNumber[9] = findViewById(R.id.button9);
-        Button buttonBack = findViewById(R.id.buttonBack);
-        Button buttonAdd = findViewById(R.id.buttonOk);
-
-        StringBuilder number = new StringBuilder();
-        EditText numberText = findViewById(R.id.numberText);
-
-        for (int i = 0; i < 10; i++) {
-            buttonNumber[i].setOnClickListener(view -> {
-                Button btn1 = (Button) view;
-                if (number.length() == 0 && btn1.getText().toString().equals("0")) {
-                    return;
-                } else if (number.length() >= 2) {
-                    return;
+        passwordManager = new PasswordManager(this);
+        TextView settingText = findViewById(R.id.setting_button);
+        settingText.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                settingsCount++;
+                Utils.logD(TAG, "설정 진입 버튼 : " + settingsCount);
+                if (settingsCount == 5) {
+                    //if (passwordManager.wrongPasswordCount >= 10) return;
+                    passwordManager.passwordDialog(Order2Activity.this);
+                    settingsCount = 0;
+                } else if (settingsCount == 100) {
+                    passwordManager.resetPasswords();
+                    settingsCount = 0;
+                } else if (settingsCount > 90) {
+                    Utils.showToast(getApplicationContext(), "패스워드 초기화까지 남은 횟수 : " + (100 - settingsCount));
                 }
-                number.append(btn1.getText().toString());
-                numberText.setText(number);
-            });
-        }
-        buttonBack.setOnClickListener(view -> {
-            if(number.length()>0){
-            number.delete(number.length()-1, number.length());
-            numberText.setText(number);
             }
         });
 
-        buttonAdd.setOnClickListener(view -> {
-            try {
-                if (adapter.getItemCount() < Integer.parseInt(PreferenceManager.getString(this, "cart_quantity"))) {
-                    if(cartManager.getCount() < Integer.parseInt(PreferenceManager.getString(this, "cart_quantity"))) {
-                        cartView(number);
-                    }
-                } else {
-                    try {
-                        Utils.showToast(this, "한 번에 " + Integer.parseInt(PreferenceManager.getString(this, "cart_quantity"))+ "개까지 주문 가능합니다");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }catch(Exception e){
-                e.printStackTrace();
+        TextView homeText = findViewById(R.id.home);
+        homeText.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Order2Activity.this, MainActivity.class);
+                startActivity(intent);
             }
-
-            number.setLength(0);
-            numberText.setText(number);
         });
+    }
+
+    private void updateCart(CartManager cartManager){
+        TextView[] cartItemNames = {findViewById(R.id.cart1_name),findViewById(R.id.cart2_name),findViewById(R.id.cart3_name),findViewById(R.id.cart4_name), findViewById(R.id.cart5_name)};
+        TextView[] cartItemPrices = {findViewById(R.id.cart1_price),findViewById(R.id.cart2_price),findViewById(R.id.cart3_price),findViewById(R.id.cart4_price),findViewById(R.id.cart5_price)};
+
+        for(int i=0; i<5; i++) {
+            cartItemNames[i].setText("");
+            cartItemPrices[i].setText("");
+            if(cartManager.getItem(i) != null) {
+                Log.i("카트매니저 테스트", i + cartManager.getItem(i).productName + "\n");
+            }
+        }
+
+        for(int i=0; i<cartManager.getCount(); i++) {
+            cartItemNames[i].setText(cartManager.getItem(i).productName + "");
+            cartItemPrices[i].setText(cartManager.getItem(i).price + "");
+            if(cartManager.getItem(i) != null) {
+            }
+        }
     }
 
     private void checkout(){
@@ -273,148 +301,18 @@ public class OrderActivity extends AppCompatActivity {
         }
         //CheckoutManager.checkout(this, cartManager.getTotalPrice());
         CheckoutManager.checkout(this, 1004);
-        loadCartCache = true;
-    }
-
-    private void clearCart() {
-        if (cartManager != null) {
-            cartManager.clear();
-        }
-    }
-
-    public void cartView(StringBuilder sb) {
-
-        String productNumber = sb.toString();
-        String itemCategory = PreferenceManager.getString(this, "product_"+productNumber+"_category");
-        String itemName = PreferenceManager.getString(this, "product_"+productNumber+"_name");
-        int itemPrice = Integer.parseInt(PreferenceManager.getString(this, "product_"+productNumber+"_price"));
-        int number = Integer.parseInt(PreferenceManager.getString(this, "product_"+productNumber+"_number"));
-
-        CartItem cartItem = new CartItem(itemCategory.toString(), itemName, itemPrice, 1, number);
-
-        TextView textPrice = findViewById(R.id.total_price);
-
-        for (CartItem item : arrayList){
-            if (item.number == cartItem.number) {
-                cartManager.add(cartItem);
-                item.count++;
-                adapter.notifyDataSetChanged();
-                textPrice.setText("합계 : " + cartManager.getTotalPrice() + "원");
-                return;
-            }
-        }
-        cartManager.add(cartItem);
-        Log.i("임시 테스트", cartManager.getCount()+"");
-
-        arrayList.add(cartItem);
-        textPrice.setText("합계 : " + cartManager.getTotalPrice() + "원");
-
-        adapter.setItems(arrayList);
-    }
-
-    private class CartViewAdapter extends RecyclerView.Adapter<CartViewAdapter.ViewHolder> {
-
-        ArrayList<CartItem> CartItem = new ArrayList<>();
-
-        @NonNull
-        @Override
-        public CartViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cart_layout, parent, false);
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
-            CartItem item = CartItem.get(position);
-            viewHolder.setItem(item);
-        }
-
-        public void setItems(ArrayList<CartItem> items) {
-            this.CartItem = items;
-            notifyDataSetChanged();
-        }
-
-        @Override
-        public int getItemCount() {
-            return CartItem.size();
-        }
-
-        public class ViewHolder extends RecyclerView.ViewHolder {
-
-            TextView itemName;
-            TextView itemPrice;
-            Button itemIncr;
-            Button itemDecr;
-            TextView itemCount;
-            Button itemRemove;
-            TextView textPrice;
-
-            public ViewHolder(@NonNull View itemView) {
-                super(itemView);
-                itemName = itemView.findViewById(R.id.product_cart_name);
-                itemPrice = itemView.findViewById(R.id.product_cart_price);
-                itemIncr = itemView.findViewById(R.id.cart_incr);
-                itemDecr = itemView.findViewById(R.id.cart_decr);
-                itemCount = itemView.findViewById(R.id.product_cart_count);
-                itemRemove = itemView.findViewById(R.id.cart_remove);
-
-                textPrice = findViewById(R.id.total_price);
-
-                itemIncr.setOnClickListener(view -> {
-                    if(cartManager.getCount() < Integer.parseInt(PreferenceManager.getString(OrderActivity.this, "cart_quantity"))) {
-                        int position = getAdapterPosition();
-                        int count = Integer.parseInt(itemCount.getText().toString());
-                        CartItem.set(position, new CartItem(CartItem.get(position).categoryName, CartItem.get(position).productName, CartItem.get(position).price, (count + 1), CartItem.get(position).number));
-                        cartManager.add(CartItem.get(position));
-                        adapter.notifyDataSetChanged();
-                    }
-                    textPrice.setText("합계 : " + cartManager.getTotalPrice() + "원");
-                });
-
-                itemDecr.setOnClickListener(view -> {
-                    if(cartManager.getCount() >0) {
-                        int position = getAdapterPosition();
-                        int count = Integer.parseInt(itemCount.getText().toString());
-                        if (Integer.parseInt(itemCount.getText().toString()) > 1) {
-                            CartItem.set(position, new CartItem(CartItem.get(position).categoryName, CartItem.get(position).productName, CartItem.get(position).price, (count - 1), CartItem.get(position).number));
-                            cartManager.remove(CartItem.get(position));
-                            adapter.notifyDataSetChanged();
-                        }
-                    }
-                    textPrice.setText("합계 : " + cartManager.getTotalPrice() + "원");
-                });
-
-                itemRemove.setOnClickListener(view -> {
-                    int position = getAdapterPosition();
-                    cartManager.removeSameIndex(CartItem.get(position));
-                    CartItem.remove(position);
-                    adapter.notifyItemRemoved(position);
-                    adapter.notifyItemRangeChanged(position, CartItem.size());
-                    textPrice.setText("합계 : " + cartManager.getTotalPrice() + "원");
-                });
-            }
-
-            public void setItem(CartItem item) {
-                itemName.setText(item.getProductName());
-                itemPrice.setText(String.format("%,d₩",item.getPrice() * item.count));
-                itemCount.setText(item.count + "");
-            }
-        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.i("테스트", "결제 완료1");
         if (requestCode == SEND_REQUEST_CODE) { //SEND_REQUEST_CODE에 대한 응답
-            Log.i("테스트", "결제 완료2");
             if (resultCode == RESULT_OK) {
-                Log.i("테스트", "결제 완료3");
                 SalesManager salesManager = new SalesManager(this);
                 salesManager.addSale(cartManager.getTotalPrice());
                 recvFS(data.getStringExtra("NVCATRECVDATA"));
                 Toast.makeText(getApplicationContext(), "결제 완료", Toast.LENGTH_SHORT).show();
-                SoundService.play(OrderActivity.this, SoundService.CHECKOUT_OK);
+                SoundService.play(Order2Activity.this, SoundService.CHECKOUT_OK);
 
                 Stack stack = new Stack();
                 ArrayList throwOutProduct = new ArrayList();
@@ -426,7 +324,7 @@ public class OrderActivity extends AppCompatActivity {
 
                 Handler handler = new Handler();
                 handler.postDelayed(() -> {
-                    Intent intent = new Intent(OrderActivity.this, ThrowOutActivity.class);
+                    Intent intent = new Intent(Order2Activity.this, ThrowOutActivity.class);
                     intent.putExtra("stack", stack);
                     intent.putExtra("throwOutProduct", throwOutProduct);
                     startActivity(intent);
@@ -616,4 +514,5 @@ public class OrderActivity extends AppCompatActivity {
             }
         }
     }
+
 }
