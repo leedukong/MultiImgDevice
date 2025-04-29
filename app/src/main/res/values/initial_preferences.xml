@@ -11,6 +11,11 @@
 
     <string name="idle_screen_time">10</string>
 
+    <string name="category_1_count">5</string>
+    <string name="category_2_count">5</string>
+    <string name="category_3_count">5</string>
+    <string name="category_size">3</string>
+
     <string name="device_name">MultiDevice</string>
     <string name="staff_phone_number">010-0000-0000</string>
     <string name="manager_password">1111</string>
